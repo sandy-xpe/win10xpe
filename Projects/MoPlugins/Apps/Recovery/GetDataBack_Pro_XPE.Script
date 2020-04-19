@@ -1,0 +1,203 @@
+[Main]
+Title=GetDataBack Pro Data Recovery
+Type=XPEPlugin
+Description=Our flagship product GetDataBack Pro is the most powerful Data Recovery software. Lightning fast, for NTFS, FAT, exFAT, EXT, HFS+, and APFS. Recover your lost data now!
+Author=KYHI
+Date=2020.02.10
+Credits=TheOven.org Forum
+Contact=
+Version=002
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Plugin Created 2019.08.04
+History002=KYHI - Support Update - 2020.02.10
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=gdbpro4848.ico,1,5,145,35,48,48
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://www.runtime.org
+Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update-Encode Container File"
+KeyType1="GetDataBack-Pro License Key",1,11,10,190,200,20,True
+KeyType2="GetDataBack-NTFS License Key",1,11,10,210,200,20,False
+KeyType3="GetDataBack-FAT License Key",1,11,10,230,200,20,False
+KeyType4="GetDataBack-Simple License Key",1,11,10,250,200,20,False
+RegName="Registered Name:",1,0,10,290,200,21,
+RegKey="Registration Key:",1,0,10,330,200,21,
+RegBevel=RegBevel,1,12,4,185,215,175
+
+[Variables]
+%ProgramTitle%=GetDataBack Pro
+%ProgramEXE%=gdbpro.exe
+%ProgramFolder%=GetDataBack Pro
+%SetupFile%=gdbprosetup.exe
+%FileContainer%=%ScriptDir%\GetDataBack_Pro_XPE_File.Script
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
+%SetupURL%=http://download.runtime.org/gdbprosetup.exe
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+DirMake,%Target_Prog%\%ProgramFolder%
+//--
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Set,%Tapp%,%Target_Prog%\%ProgramFolder%
+If,%Architecture%,Equal,x86,Run,%ScriptFile%,Filesx86
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,Filesx64
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\windows\system32\OEMDefaultAssociations.dll
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+Set,%RegistryKey%,GetDataBackPro
+If,%KeyType2%,Equal,True,Set,%RegistryKey%,GetDataBackNT
+If,%KeyType3%,Equal,True,Set,%RegistryKey%,GetDataBack
+If,%KeyType4%,Equal,True,Run,%ScriptFile%,GetDataBackSimple
+//--
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro",InstallDir,"%PE_Programs%\%ProgramFolder%"
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro",InstalledBy,gdbpro
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro",Language,
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro",Version,5.50
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\%RegistryKey%\License",Date,20190804094429
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\%RegistryKey%\License",Key,%RegKey%
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\%RegistryKey%\License",Name,"%RegName%"
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro\Options",DefaultRecoverDir,
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro\Options",DefaultTempDir,
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro\Options",DiskExplorerPath,
+RegWrite,HKLM,0x1,"Tmp_Software\Runtime Software\GetDataBackPro\Options",ExcludedFiles,
+If,%KeyType2%,Equal,True,Begin
+RegWrite,HKLM,0x4,Tmp_Software\RTS\H,AR,2
+RegWrite,HKLM,0x1,Tmp_Software\RTS\H,NK,
+End
+If,%KeyType3%,Equal,True,Begin
+RegWrite,HKLM,0x4,Tmp_Software\RTS\G,AR,2
+RegWrite,HKLM,0x1,Tmp_Software\RTS\G,NK,
+End
+RegHiveUnLoad,Tmp_Software
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Filesx86]
+Echo,"Copying %ScriptTitle% Program Files..."
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,gdbpro,1.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,gdbpro,1.jdbg
+FileCopy,%Sapp%\wp_type1ttf.dll,%Tapp%
+FileCopy,%Sapp%\wpdecodejp.dll,%Tapp%
+FileCopy,%Sapp%\wPDFView04.dll,%Tapp%
+
+[Filesx64]
+Echo,"Copying %ScriptTitle% Program Files..."
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,gdbpro,2.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,gdbpro,2.jdbg
+FileCopy,%Sapp%\wp_type1ttf64.dll,%Tapp%
+FileCopy,%Sapp%\wpdecodejp64.dll,%Tapp%
+FileCopy,%Sapp%\wPDFView04x64.dll,%Tapp%
+
+[CopyR]
+StrFormat,EXT,#4,#9
+If,Not,#4-,Equal,-,Begin
+StrFormat,REPLACE,#4,#9,"",#8
+StrFormat,LTrim,#9,1,#9
+If,#5-,Equal,-,Set,#5,#3.#9
+CopyOrExpand,"#1\#3#$c#8.#9","#2\#5"
+End
+Else,Begin
+If,#5-,Equal,-,Set,#5,#3
+CopyOrExpand,"#1\#3","#2\#5"
+End
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//--
+Echo,"Extracting %ScriptTitle% Setup File..."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/c %GTools%\innounp.exe -x -b -a -d#$q%GTemp%\%ProgramFolder%#$q #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q",%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/C ren #$q%GTemp%\%ProgramFolder%\{app}#$q #$q%ProgramFolder%#$q"
+
+[Launch_Program]
+Run,%ScriptFile%,Extract
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+//
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x86
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx86
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x64
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx64
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\%HostOSArch%
+OpenDir,%Tapp%
+//Start,,%ProgramEXE%,,%Tapp%
+
+[Update_Container]
+Echo,"Your Files Are Being Downloaded... Please Wait.."
+If,ExistFile,%ProvideFiles%\%SetupFile%,FileDeleteQ,%ProvideFiles%\%SetupFile%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%SetupFile%,%SetupURL%
+If,Not,ExistFile,%ProvideFiles%\%SetupFile%,EchoExtended,"Error: %SetupFile% has not been downloaded.",Warn,,Message,5,Exit
+Encode,%Filecontainer%,Folder,%ProvideFiles%\%SetupFile%
+DirDeleteQ,%ProvideFiles%
+
+[GetDataBackSimple]
+Set,%RegistryKey%,GetDataBackNT
+Set,%RegName%,User 2k10
+Set,%RegKey%,H2VJVTA2W3Y6EW9QZ4T3QFVDB9H
+RegWrite,HKLM,0x4,Tmp_Software\RTS\H,AR,2
+RegWrite,HKLM,0x1,Tmp_Software\RTS\H,NK,
+
+[AuthorEncoded]
+gdbpro4848.ico=1364,1819
+Logo=gdbpro4848.ico
+
+[EncodedFile-AuthorEncoded-gdbpro4848.ico]
+lines=0
+0=eJztWF1II1cYvfljZfugq1BEKG4XpMEn0RffspSFFoRiQeiCIMI+uLAg+xYfKgZK8DEPRQp9CSyELQslIEIpFBwbu1urJTRV22JlFAW3aJulKzRZf07vSXKXMUzG+QlOH/rJ58E4M/d8957v3JsRIiB/+vqE/H1TfNEjxJtCiKhM+ZEYF9XPGYke8X+4jAngsyFgfgF4328uTkMHOsPAqyBwKgB0AXtzwP0i0OY3NzuRAh4q7ipZz3XgmOtSAKJ+c7SKDuDQyL2+DuK7wDcZ4K7fXOsjCww34m7MCFCuaWs/CUxRc35zZ9wBvg4AZ3ZqMCY15zf3PNDnlDeTfSHnv8Vv/pNyGkPAiRPu7Afe52XcQuHvKNPLMzh/qjedprz3ppexh4YK80JoGBhYW81kDlx5gplnXpZcK+5xXrjr+nEnuTMDAe2M2NGxfJhM6lPV/9mLt4FtN3PvdX+enNxKhcPaK1WDSvXZ2NhmOpc7GrR6hvJMp/p5B/jFC3dd11va2pb/quduVge1lU4fjPMes2dxHitaMHi7VVJrXj1zbm7/fjConVrxV6mua29fPrLqEfZiHJh9A3hp1Q/N8Mze3h/W7XCvz2z2+fBlzya3NDB+C9iqX5NmeObiYvG2G+5dXc/2nY6VAwY/Ah4be6QZnmnWt1ZJf0qldl1rlmccaotnUC/cjZ7pJFlvsVj0/QzfyDOtMhJZKk9M/OZp3poR9D96iJv5z+eLfX7z5zknGl3ZIJ9QaOnErnfS//3mbgzuqSMjG0/s1mHHM52ErqPlrafYjW9jVv/HvRexl+Px7dkbN3J/NuJOvTXad91GahcPAxrOwpr0Uw0Y2cCTxSJuu30e+fF8oPY0tSbs2+lpPdE85tXoWcGv5K1S1XHre/yePsA418fts43aikS0spNzqJ1Y+EOeOQ3czfL6tzhuhrbcfh+wiqEC5qmdy2oILcnvchI/XMeXXrTVzKjM5yW865O1RpZQ1o/9f0cxuYWU0rrd5PVjm0j7zZ09SV07nX9mvghPe+fCgvf3sPTMoCa/Ezjgzev7f8Sal3HzedYOeXbGXjKJqWLR3XvY6Ao23Mx99jk87Z2jo3gUDkvNyhqIkQjKY2NIFwr238Pa8UyzbF/GkZe9QN7bqbgbkzUQBwawmslc/h72g5+RteOZ9X2b1DHlljuDejHjrzIYlHqW2NGBQ17Lek3nQXof9yPOp9K1Hf5ePJPr1t4ux2vAvdGaUFtWa87zwcAaVo3nBjPuo5t45JY7I5vFsJpfuxkI4GxwEN/ZeX7uCIP0dXI1q8OrZ5KHU/5M1u1kHGqEOu96ir1me6bTpN68+EXmAHff+wlfefXMe/fwuVXfmmUohBP2sJdxmxHcn5xyV3tDI/+5ykil5Hcj2YdOudN3/ObOePAAnyo9OKmh2jP/jaAOpqeRsOP/9KjeXqz7zblRpNMY7++nn5mvCfnbOUP4HdQHNU6tG+vw6plXHdQWfVKep/fJPx7HrN+c3AZ1c5WeiUpU8FkNEwpjNWytoghcwPPXGJJYlscKYmnmVFyT+KK1hqGS4P074uMaxhRq3XwbJmZKNTzneAkxU+GTEFVeQmGgiprEHJ8rkW/TTkMSu+VVn0ii1yQeSAyIi3dX/z6v4BkJSyzFaiiJEl+EJGGiJErcEd2J1grGdmpY4jiaiKGKM5V5SrxGXEASJZZqeF5DEq3gywr+CwMKTWN4nONLT0kqKMo3sTCx0MtMzmcYBSML7FOF0Gys2OUf8LWyMjABAFuPBzbOQnkAAQAAAAIAAAAqAAAABgUAAAAAAAABAAAAAAAAAAAAAAA
+
+[InterfaceEncoded]
+gdbpro4848.ico=1364,1819
+Launch.bmp=913,1218
+
+[EncodedFile-InterfaceEncoded-gdbpro4848.ico]
+lines=0
+0=eJztWF1II1cYvfljZfugq1BEKG4XpMEn0RffspSFFoRiQeiCIMI+uLAg+xYfKgZK8DEPRQp9CSyELQslIEIpFBwbu1urJTRV22JlFAW3aJulKzRZf07vSXKXMUzG+QlOH/rJ58E4M/d8957v3JsRIiB/+vqE/H1TfNEjxJtCiKhM+ZEYF9XPGYke8X+4jAngsyFgfgF4328uTkMHOsPAqyBwKgB0AXtzwP0i0OY3NzuRAh4q7ipZz3XgmOtSAKJ+c7SKDuDQyL2+DuK7wDcZ4K7fXOsjCww34m7MCFCuaWs/CUxRc35zZ9wBvg4AZ3ZqMCY15zf3PNDnlDeTfSHnv8Vv/pNyGkPAiRPu7Afe52XcQuHvKNPLMzh/qjedprz3ppexh4YK80JoGBhYW81kDlx5gplnXpZcK+5xXrjr+nEnuTMDAe2M2NGxfJhM6lPV/9mLt4FtN3PvdX+enNxKhcPaK1WDSvXZ2NhmOpc7GrR6hvJMp/p5B/jFC3dd11va2pb/quduVge1lU4fjPMes2dxHitaMHi7VVJrXj1zbm7/fjConVrxV6mua29fPrLqEfZiHJh9A3hp1Q/N8Mze3h/W7XCvz2z2+fBlzya3NDB+C9iqX5NmeObiYvG2G+5dXc/2nY6VAwY/Ah4be6QZnmnWt1ZJf0qldl1rlmccaotnUC/cjZ7pJFlvsVj0/QzfyDOtMhJZKk9M/OZp3poR9D96iJv5z+eLfX7z5zknGl3ZIJ9QaOnErnfS//3mbgzuqSMjG0/s1mHHM52ErqPlrafYjW9jVv/HvRexl+Px7dkbN3J/NuJOvTXad91GahcPAxrOwpr0Uw0Y2cCTxSJuu30e+fF8oPY0tSbs2+lpPdE85tXoWcGv5K1S1XHre/yePsA418fts43aikS0spNzqJ1Y+EOeOQ3czfL6tzhuhrbcfh+wiqEC5qmdy2oILcnvchI/XMeXXrTVzKjM5yW865O1RpZQ1o/9f0cxuYWU0rrd5PVjm0j7zZ09SV07nX9mvghPe+fCgvf3sPTMoCa/Ezjgzev7f8Sal3HzedYOeXbGXjKJqWLR3XvY6Ao23Mx99jk87Z2jo3gUDkvNyhqIkQjKY2NIFwr238Pa8UyzbF/GkZe9QN7bqbgbkzUQBwawmslc/h72g5+RteOZ9X2b1DHlljuDejHjrzIYlHqW2NGBQ17Lek3nQXof9yPOp9K1Hf5ePJPr1t4ux2vAvdGaUFtWa87zwcAaVo3nBjPuo5t45JY7I5vFsJpfuxkI4GxwEN/ZeX7uCIP0dXI1q8OrZ5KHU/5M1u1kHGqEOu96ir1me6bTpN68+EXmAHff+wlfefXMe/fwuVXfmmUohBP2sJdxmxHcn5xyV3tDI/+5ykil5Hcj2YdOudN3/ObOePAAnyo9OKmh2jP/jaAOpqeRsOP/9KjeXqz7zblRpNMY7++nn5mvCfnbOUP4HdQHNU6tG+vw6plXHdQWfVKep/fJPx7HrN+c3AZ1c5WeiUpU8FkNEwpjNWytoghcwPPXGJJYlscKYmnmVFyT+KK1hqGS4P074uMaxhRq3XwbJmZKNTzneAkxU+GTEFVeQmGgiprEHJ8rkW/TTkMSu+VVn0ii1yQeSAyIi3dX/z6v4BkJSyzFaiiJEl+EJGGiJErcEd2J1grGdmpY4jiaiKGKM5V5SrxGXEASJZZqeF5DEq3gywr+CwMKTWN4nONLT0kqKMo3sTCx0MtMzmcYBSML7FOF0Gys2OUf8LWyMjABAFuPBzbOQnkAAQAAAAIAAAAqAAAABgUAAAAAAAABAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

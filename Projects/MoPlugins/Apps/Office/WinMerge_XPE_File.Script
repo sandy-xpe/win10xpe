@@ -1,0 +1,82 @@
+[Main]
+Title=WinMerge - File Container
+Type=XPEPlugin
+Description=WinMerge v2.16.4.0 File Container
+Author=KYHI
+Date=2019.09.07
+Credits=
+Contact=
+Version=004
+Level=0
+Download_Level=2
+Selected=None
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Plugin Created 2018.12.07
+History004=KYHI - Update Version 2.16.4 - 2019.09.07
+
+[Interface]
+Hide_TextBox="To Hide Plugin From Tree - Edit Container File Plugin [Main] Level=5 to Level=0",1,1,10,60,531,18,8,Bold
+
+[Variables]
+%ProgramFolder%=WinMerge
+%dllib%=ShellExtensionU.dll
+%dllibx64%=ShellExtensionx64.dll
+%SetupFile%=WinMerge.7z
+%SetupFilex64%=WinMerge64.7z
+%DLSetupFile%=winmerge-2.16.4-exe.zip
+%DLSetupFilex64%=winmerge-2.16.4-x64-exe.zip
+%SetupURL%=https://managedway.dl.sourceforge.net/project/winmerge/stable/2.16.4/%DLSetupFile%
+%SetupURLx64%=https://iweb.dl.sourceforge.net/project/winmerge/stable/2.16.4/%DLSetupFilex64%
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
+
+[Process]
+Run,%ScriptFile%,Update_Process
+Set,%t%,x64
+Run,%ScriptFile%,Update_Process
+
+[Update_Process]
+Echo,"Updating %ScriptTitle%"
+If,%t%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+If,Not,ExistDir,%GTemp%\%ProgramFolder%\%ProgramFolder%,DirMake,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Download,%ProvideFiles%\%DLSetupFile%,%SetupURL%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ProvideFiles%\%DLSetupFile%#$q -y -o#$q%ProvideFiles%#$q"
+Set,%Sapp%,%ProvideFiles%\%ProgramFolder%
+Set,%Tapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+DirCopy,%Sapp%\Filters,%Tapp%
+DirCopy,%Sapp%\MergePlugins,%Tapp%
+DirMake,%Tapp%\Docs
+FileCopy,%Sapp%\Docs\WinMerge.chm,%Tapp%\Docs
+FileCopy,%Sapp%\%dllib%,%Tapp%
+If,ExistFile,%Sapp%\MergeLang.dll,FileCopy,%Sapp%\MergeLang.dll,%Tapp%
+FileCopy,%Sapp%\vcomp140.dll,%Tapp%
+FileCopy,%Sapp%\WinMergeU.exe,%Tapp%
+ShellExecute,Hide,%GTools%\7z.exe,"a -y -m0=lzma2 -mx=9 -aoa -t7z #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q #$q%Tapp%\*#$q"
+Encode,%ScriptFile%,Folder,%GTemp%\%ProgramFolder%\%SetupFile%
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+
+[PluginSetx64]
+Set,%SetupFile%,%SetupFilex64%
+Set,%dllib%,%dllibx64%
+Set,%SetupURL%,%SetupURLx64%
+
+[AuthorEncoded]
+WinMergeU4848.ico=3670,4894
+Logo=WinMergeU4848.ico
+
+[InterfaceEncoded]
+
+[EncodedFolders]
+Folder
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-WinMergeU4848.ico]
+lines=1
+0=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
+1=g/hfUQHU0laNfcQkt9BfJJ+5qkLTBVXobLZh7kHvzrp85IhN7fPXMfwd9PfvHx/KLjfRDmDaeunPdJHCrm9TTeR2F9ctZbYX0WfcZ29HYaID22EbJPfoaW4nj0GFXoMdVz7h8tn3taIug+fiy4f43/YH5x8l4T6zv1OdpJcxPll1byupb3qlgf0224xfuHrJfo1BTT/s2HWZEPh60DuTt+TJ7/iPvGpquGjLj/btmchLHmPoI/1130Os8vGoGnvkLML3m8R8j7pMzr16KFHm5eODqyQ2G8GIT2Wimqso4jP+w57pvOxuuc+5bX5jDdZ4419+H8/9S9lPfB2+rIQwryegXvI7LeeS/dq9j3GOx7pDb5BdruTlzd/++ojN+ANmU+ZBHkmddmj7ln/PFnfvF3L2XfP7BeIeuP8/5hySHeP+/I3sn7u5a092FKXofW/M9hUJbwfdtScorrHrxi7pn7yX0E/z9yL3Wblfx7CZZfuNebZPw7DIcqh/uJfa/UXXWe79sbaQcg2/cq7dWFCH3j6bOSMcqRt8P/Xo5+esZgKI5cRveoBQhb9aNE+tNP3G/uA/zHBNuf4fH05gXx9Gen/SW4j/WR/Pr98/n/hkNw47DoEufvNUrvLIZJ/rLxT/IZJ8bxYpwormuSGGeKcZEYfy9GUb9xYhwvxolinCTq/Pthev8PZPcITXicEwzPzPNNLUpPDTWxMLHQy0zOZxgFIwjsU4XQrHzY5ZmOSMYwMAEAX/cH+e894XUBAAAAAgAAAC0AAAAFDgAAAAAAAAEAAAAAAAAAAAAAAA
+

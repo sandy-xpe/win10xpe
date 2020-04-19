@@ -1,0 +1,89 @@
+[Main]
+Title=PassReset
+Type=XPEPlugin
+Description=Plugin Adds PassReset Version 5.0.1.0
+Author=KYHI
+Date=2019.04.01
+Credits=
+Contact=
+Version=002
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Plugin Created 2018.05.10
+History002=KYHI - M&M Check - 2019.04.01
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=,1,5,145,45,300,225
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,_Launch_Program_,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://theoven.org/index.php?board=39.0
+
+[Variables]
+%ProgramTitle%=PassReset
+%ProgramExe%=PassReset.exe
+%ProgramFolder%=PassReset
+%SetupFile%=PassReset.7z
+%SetupFilex64%=PassReset64.7z
+%FileContainer%=%ScriptDir%\PassReset_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+//--
+Run,%ScriptFile%,Extract
+//--
+If,Not,ExistDir,%Target_Prog%,DirMake,%Target_Prog%
+If,ExistDir,%Target_Prog%\%ProgramFolder%,Shellexecute,Hide,cmd.exe,"/C rd /s /q #$q%Target_Prog%\%ProgramFolder%#$q"
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDelete,%Target_Prog%\%ProgramFolder%
+DirCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%,%Target_Prog%
+//--
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Extract]
+If,ExistDir,%GTemp%\%ProgramFolder%,Shellexecute,Hide,cmd.exe,"/C rd /s /q #$q%GTemp%\%ProgramFolder%#$q"
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDelete,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+
+[Launch_Program]
+If,%HostOSArch%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+Run,%ScriptFile%,Extract
+//OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[AuthorEncoded]
+Logo=PassReset4848.ico
+PassReset4848.ico=4146,5528
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+
+[EncodedFolders]
+Folder
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-PassReset4848.ico]
+lines=1
+0=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
+1=yoAF/NPPxAKP1OVX7vkIO4XWvq1KkX1yyfCxtLc/l9/NsE6zY+A663fEdYwa2cH5zjfuEPMWBXMXyTy5BE+BPJ4sj8HgLmca/0A39eKNWSKDJ+3NI+So1/uro/ROPvzfmuge9Lq3PPo/rpp58upgW7ALG+8NmyEiNHjrw7adKkK/Pnz3+2ifx2kriEdV1FfeMazfe2l+LSMM4nD5ahpYigpCC3g0oCThNHOVF9cKEzrPB/BX7WPxX4Bx0sRQvruCKh9GnV6Xclfsotaso9Jf411gvQokWLc/T6TLJWEyZM6Er7s+XfK7gOb968GUeOHJHxxPlx8+ZNrDv1AP/xL8JBqg0kJxDGOUFmRzG5mno2xu9PHDfR3EaN//V35KLpeNdoofRc1f69lfAdTjzi9NL/ffr04d6Pf8/lms73d3wHxncZtUaNGtWfzsd5xIgRsdxPMjeFhobiyOXbGLYzF7bRpRL7dtKtzP1nqYYw/uVz58LILUwNP98Xauh0qVbeVh4UK5M8HBdL/FnhPjCbYYouXbrcoLe8yLin4/sorotcW74RitZqoa2t3VFPT89UX19/N/HwHfoY6M/0xIw12yX2C97eiCf9tItqwTRLGzX9oLe1ADpzQqqdt6+PyZMnR4f5baBEDETaRT9YzJ3Nd8m5HTp0iNbS0uJ7VNboa8v3Y1nJlmpqajrp6uqeHjZsWCbHuLOdHSJJg3P92m5vD3PiUS/KhUVJr/BzDdAesoh/Z6pu3qoNim9d2kNOoOda5CccBdJCERbkDZd1djLvuP6Qj5/w/XJlo9eL+P3VhNGf6nQs1YvU8+dxhmLGZuFCTFzggG3Z+SCpBMowrM3hfqEUbe3vFdDX/iB+3x2h2jAyMtKiPZy1mPsrAr1ckBV/BnhIwjE7GWmJUUiMjURiQpzkonju9alOp1Jfk01clEWvpUREIIhixnbJElBOZQ4fPtyypUX4sH/ufZFjEl6MCecLMWB/Prp7PEOrZTE7yrHX1P3sy0E+7UexHMh+tbGyhIebMwL370FURJga/vALF7CfNIabszOsqL7y+vHjxwePGTPGXCgxLeOi+apUrXZrHvVvs+LWAB2zE5xDfFf2+v1qjQ8+j4kTJ/YnX66kPe1hnuVaUdkIrx+tW0t8NFwo96a1/2hcwJneAM+iYtaRc1n5TM8LGsm5UY6G8npK7ddmlTKfKZ+XVcz8fkn5TM+FRqW5RDTn/6vh5Vwgust5C83EaGV8ZjSXMMjeQhSUzzk8L31thvqsem2uTXNK+fOU8r/7oBnqs+odc+1K38OzBhS8lWfeRyPIj2qsw/MZsZT9+18vmgWaeJwTDEgsLg5KLU4tMbEwsdDLTM5nGAUjCOxThdAP+bHLv/fdM4mBCQDSwQpMG+e7cAEAAAACAAAALQAAAOEPAAAAAAAAAQAAAAAAAAAAAAAA
+

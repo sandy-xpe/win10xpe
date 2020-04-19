@@ -1,0 +1,36 @@
+[Main]
+Title=Hasleo WinToHDD - File Container
+Type=XPEPlugin
+Description=Hasleo WinToHDD v File Container
+Author=KYHI
+Date=2019.04.01
+Credits=http://TheOven.org
+Contact=
+Version=001
+Level=0
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Container Plugin Created 2019.02.01
+History002=KYHI - M&M Check - 2019.04.01
+
+[Interface]
+pTextBox1="To Hide Container File Plugin From Tree - Set Container File [Main] Level=0",1,1,10,60,531,18,8,Bold
+
+[Process]
+Echo,"File Container Plugin - There Is Nothing To Process"
+
+[AuthorEncoded]
+WinToHDD4848.ico=1176,1568
+Logo=WinToHDD4848.ico
+
+[EncodedFile-AuthorEncoded-WinToHDD4848.ico]
+lines=0
+0=eJztmvtPW1UcwK8yxWRMAgZIVLZl2RKjQRu3/SAYBc0e6nwkauJ8Lj5ilhlwZmhcjPEPMZkaMxfHSguDZivlMdirwwGj2vf79kFbXB9rbTv6/fo9l1Fx2pdbubeG03x7Tk7ubT/3m889j9ty3B30ksk4et/IHdvCcY0cxz1EQV3cPm6xn5VvtnAFi7G//gFDb82HBnn1fkPPGmkEsZiUtR9YTjQ15mPX/fxgvUmx1mXouRNM8ipk9fL28r5cx5TaLuVYS1+9efqHprW5+G2nZU+z42ynHoZE8Awm5i+Ba7RdNH73+C5I/P4LxOc0aFVtEvr1vfe05uK3j7Z2sPOu+VS4VFIxI7I+MeJ6gs9yRF0/4eL1cW35+Nk1xryDwM7JZDKQjOhFy3867gbGwFgizqM3vrcwv+3UIxAPjpE/WvH9mZ8kf9Tkz+ai+MVypdgoJv9SHX+K9aeS+cX2oxL9MSvrwDX8BASmDqB1oFnS+bco16F7tA0D050YdXyHqfAMZhbiNEIKwyS6NNskkX/jiSqwKOvBPfYUBqa6IGL/HlIRHbGms2P68nqp7RzatuL3r8DaV4fO4VZwnG4Bl2YrJsM6yFz/4x98N7dXnr8KzIoacI20AXMgbD8CyaszkFlICBzB2cPgGd+Vl7mc/Pnc8114HZkDAAuYq4R0h5Hx/9dSTv9Dv36dzVWufIqd/9vCPyFNf+aJv1AR/JmocH9EzH+l8+f157dVf8T0hx9rx6DuK2L8EoJXvqC6GwMzn8Hc9Kc0l3Xh3FQnODXbwa7agP7L+8E/+RHF++jTvgc+7TsUb6L3/KvgOfsyeM+9iPzEHmo/j/z4buBpr+UZ30lrudqy+eMefRKDs59j8MohDM4cJPYuYR22GJ/g3OWPKX8ytA02o39yH/ovvYt+7Vvou/gGcb+C3nMvUexBz9kXKJ4jz3ZT7CT+Hcif6UCe1koW5b2V7Y+mwsefW+QXff4arvDxZ9UfceevMvozX+H592n3Yjpmpv0LVGT+WW3sYfvyOtqXPwtsHmPPVVMRPW3JkpLIfyH+vz7n7/t368kGdI+1g0MtA9fwdkxFTbQnTknKn9JiDVpPNtFeeAeGaM0Rcx+74V5GVH/+Lf+ltC197JnQMxCaPYRR11FIRw3InrOI6c+ttIVr6m+ga+qg++kgWgfXS8Sf8oQU81/Kef93frH9uB3+WAfWQ8T5I0Z5OdjVj4qWf8fQVojyvRB2HEFzf2PR/kTcx7PzCvv9WCz+ZNSYHVev2r4t2p94YCQ7n6TjTtFcWUiGshwxj7ygP0v/H3COtEH6mo3YPeA5/5po+fdefBvSCR+kaI6zDz0u9OuP5/7/gGlwc4NJUcsvnn8XGuV3iz7+GOXVwNYiQp+ixqFX3LcuFz8retWGjRbVpk6buqXbpn5MItHSbR64/4C5t675Zt4we6vlOAerq1frlaqX8v4n6dG4KHicEwjPzAvJ93BxMbEwsdDLTM5nGAUjCexThdAeLNjlozY8ZWJgAgDxtgg1t+YhpgEAAAACAAAALAAAAEgEAAAAAAAAAQAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

@@ -1,0 +1,224 @@
+[Main]
+Title=XMouse Button Control
+Type=XPEPlugin
+Description=(v2.18.7.0) The XMouse Button Control Program Files Will Be Added To Build
+Author=KYHI
+Date=2019.07.29
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Packed Plugin Created 2019.07.29
+History002=
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=XMouseButtonControl4848.ico,1,5,145,35,48,48
+Button_Launch_Program=Extract,1,8,4,142,133,25,Launch_Program,Launch.bmp,False,"__Click Here To Extract Program Files"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://www.highrez.co.uk/downloads/xmousebuttoncontrol.htm
+Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update-Encode Container File"
+ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,2.18.8,"__Program File Version To Download"
+Profile_Button="XMouse Custom Profiles",1,8,4,182,133,25,Profiles_OpenDir,0,False,"__Copy Custom ( XMBCSettings.xml ) and ( * XMBC Profile.xmbcp ) Profiles Here To Be Included With Build"
+Lang_ScrollBox=English,1,4,4,222,133,21,Czech,English,Espanol-LatinoAmerica,Finnish,French,German,Greek,Hungarian,Italian,Japanese2,Korean,Nederlands,Polish,Portugues-Brasil,Romanian,Russian,Simplified_Chinese,Slovak,Slovenian,Spanish,"Traditional Chinese",Turkish,Ukrainian
+AutoRun_CheckBox="AutoRun XMouse App",1,3,4,257,133,18,False,"__Launch XMouse App At System Startup"
+
+[Variables]
+%ProgramTitle%=X-Mouse Button Control
+%ProgramExe%=XMouseButtonControl.exe
+%ProgramFolder%=X-Mouse Button Control
+%SetupFile%=XMouseButtonControl_Setup.exe
+%SetupURL%=https://dvps.highrez.co.uk/downloads/XMouseButtonControlSetup.%ProgramVer_TextBox%.exe
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
+%FileContainer%=%ScriptDir%\XMouseButtonControl_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+Run,%ScriptFile%,Extract
+//--
+Set,%Tapp%,%Target_Prog%\%ProgramFolder%
+Set,%SourceProfile%,%GTemp%\%ProgramFolder%\$APPDATA\Highresolution Enterprises\XMouseButtonControl
+//
+If,ExistDir,%Tapp%,DirDeleteQ,%Tapp%
+If,Not,ExistDir,%Tapp%,DirMake,%Tapp%
+If,%Architecture%,Equal,x86,Run,%ScriptFile%,Filesx86
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,Filesx64
+//--
+If,Not,%Lang_ScrollBox%,Equal,English,Begin
+If,%Lang_ScrollBox%,Equal,Espanol-LatinoAmerica,FileRename,%SourceProfile%\Español-LatinoAmerica.xmbclp,%SourceProfile%\Espanol-LatinoAmerica.xmbclp
+FileCopy,%SourceProfile%\%Lang_ScrollBox%.xmbclp,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\XMBCSettings.xml,%Tapp%
+TXTReplace,%Tapp%\XMBCSettings.xml,<Language filename=#$q#$q />,<Language filename=#$q%Lang_ScrollBox%.xmbclp#$q />
+End
+//--
+If,ExistDir,%GCustom%\XMouseProfiles,Begin
+Retrieve,FOLDERSIZE,%GCustom%\XMouseProfiles,%XMouseProfilesSize%
+If,%XMouseProfilesSize%,Bigger,1,FileCopy,%GCustom%\XMouseProfiles\*,%Tapp%
+End
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Registry
+
+[FilesX86]
+FileCopy,%GTemp%\%ProgramFolder%\XMouseButtonControl_1.exe,%Tapp%\%ProgramExe%
+FileCopy,%GTemp%\%ProgramFolder%\BugTrapU.dll,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\XMouseButtonHook_1.dll,%Tapp%\XMouseButtonHook.dll
+FileCopy,%GTemp%\%ProgramFolder%\X-Mouse Button Control User Guide.pdf,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\License.txt,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\uninstaller.exe,%Tapp%
+
+[FilesX64]
+FileCopy,%GTemp%\%ProgramFolder%\XMouseButtonControl.exe,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\BugTrapU-x64.dll,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\XMouseButtonHook.dll,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\X-Mouse Button Control User Guide.pdf,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\License.txt,%Tapp%
+FileCopy,%GTemp%\%ProgramFolder%\uninstaller.exe,%Tapp%
+
+[AddFiles]
+\Windows\System32\audiodev.dll
+\Windows\System32\C_874.NLS
+\Windows\System32\C_1255.NLS
+\Windows\System32\C_1256.NLS
+\Windows\System32\cscui.dll
+\Windows\System32\EhStorAPI.dll
+\Windows\System32\globinputhost.dll
+\Windows\System32\OEMDefaultAssociations.dll
+\Windows\System32\PlayToDevice.dll
+\Windows\System32\sas.dll
+\Windows\System32\wpdshext.dll
+\Windows\System32\??-??\audiodev.dll.mui
+\Windows\System32\??-??\cscui.dll.mui
+\Windows\System32\??-??\EhStorAPI.dll.mui
+\Windows\System32\??-??\PlayToDevice.dll.mui
+\Windows\System32\??-??\wpdshext.dll.mui
+\Windows\SystemResources\wpdshext.dll.mun
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Default,%RegDefault%
+RegWrite,HKLM,0x4,"Tmp_Default\Control Panel\Desktop",LowLevelHooksTimeout,1000
+RegHiveUnLoad,Tmp_Default
+//--
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,Tmp_Software\Classes\.xmbclp,,"X-Mouse Button Control Language Pack"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\.xmbcp,,"X-Mouse Button Control Profile"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\.xmbcs,,"X-Mouse Button Control Application Settings"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Application Settings",,"X-Mouse Button Control Application Settings"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Application Settings\DefaultIcon",,"%PE_Programs%\%ProgramFolder%\%ProgramExe%,0"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Application Settings\shell",,open
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Application Settings\shell\open\command",,"#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q /import:#$q#$p1#$q"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Language Pack",,"X-Mouse Button Control Language Pack"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Language Pack\DefaultIcon",,"%PE_Programs%\%ProgramFolder%\%ProgramExe%,0"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Language Pack\shell",,open
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Language Pack\shell\open\command",,"#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q /install:#$q#$p1#$q"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Profile",,"X-Mouse Button Control Profile"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Profile\DefaultIcon",,"%PE_Programs%\%ProgramFolder%\%ProgramExe%,0"
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Profile\shell",,open
+RegWrite,HKLM,0x1,"Tmp_Software\Classes\X-Mouse Button Control Profile\shell\open\command",,"#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q /profile:#$q#$p1#$q"
+RegWrite,HKLM,0x1,"Tmp_Software\Highresolution Enterprises\XMouseButtonControl",InstallLocation,"%PE_Programs%\%ProgramFolder%"
+RegWrite,HKLM,0x1,"Tmp_Software\Highresolution Enterprises\XMouseButtonControl",SettingsFolder,"%PE_Programs%\%ProgramFolder%"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\App Paths\XMouseButtonControl.exe",,"%PE_Programs%\%ProgramFolder%\%ProgramExe%"
+If,%AutoRun_CheckBox%,Equal,True,RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Run,XMouseButtonControl,"%PE_Programs%\%ProgramFolder%\%ProgramExe% /notportable /delay"
+RegHiveUnLoad,Tmp_Software
+
+[Saved]
+If,%Architecture%,Equal,x86,Begin
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayName,"X-Mouse Button Control 2.18.7"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",UninstallString,"%PE_Programs%\%ProgramFolder%\uninstaller.exe"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayIcon,"%PE_Programs%\%ProgramFolder%\%ProgramExe%"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayVersion,2.18.7
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",URLInfoAbout,http://www.highrez.co.uk/downloads/XMouseButtonControl.htm
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",Publisher,"Highresolution Enterprises"
+End
+If,%Architecture%,Equal,x64,Begin
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\App Paths\XMouseButtonControl.exe",,"%PE_Programs%\%ProgramFolder%\%ProgramExe%"
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayName,"X-Mouse Button Control 2.18.7"
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",UninstallString,"%PE_Programs%\%ProgramFolder%\uninstaller.exe"
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayIcon,"%PE_Programs%\%ProgramFolder%\%ProgramExe%"
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",DisplayVersion,2.18.7
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",URLInfoAbout,http://www.highrez.co.uk/downloads/XMouseButtonControl.htm
+RegWrite,HKLM,0x1,"Tmp_Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\X-Mouse Button Control",Publisher,"Highresolution Enterprises"
+End
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//--
+Echo,"Extracting %ScriptTitle% Setup File..."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -aou -o#$q%GTemp%\%ProgramFolder%#$q"
+ExtractFile,%ScriptFile%,Folder,XMBCSettings.xml,%GTemp%\%ProgramFolder%
+
+[Launch_Program]
+Run,%ScriptFile%,Extract
+OpenDir,%GTemp%\%ProgramFolder%
+//Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%
+
+[Update_Container]
+Echo,"The Container Files Is Being Updated... Please Wait.."
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%SetupFile%,%SetupURL%
+If,Not,ExistFile,%ProvideFiles%\%SetupFile%,EchoExtended,"Error: %SetupFile% has not been downloaded.",Warn,,Message,5,Exit
+Encode,%Filecontainer%,Folder,%ProvideFiles%\%SetupFile%
+DirDeleteQ,%ProvideFiles%
+
+[Profiles_OpenDir]
+If,Not,ExistDir,%GCustom%\XMouseProfiles,DirMake,%GCustom%\XMouseProfiles
+OpenDir,%GCustom%\XMouseProfiles
+
+[AuthorEncoded]
+XMouseButtonControl4848.ico=1903,2538
+Logo=XMouseButtonControl4848.ico
+
+[EncodedFile-AuthorEncoded-XMouseButtonControl4848.ico]
+lines=0
+0=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
+
+[InterfaceEncoded]
+XMouseButtonControl4848.ico=1903,2538
+Launch.bmp=913,1218
+
+[EncodedFile-InterfaceEncoded-XMouseButtonControl4848.ico]
+lines=0
+0=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
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+XMBCSettings.xml=1437,1916
+
+[EncodedFile-Folder-XMBCSettings.xml]
+lines=0
+0=eJztnM1y4jgQx88zT+HyAwyYfM4WzFQSMhtq8lUhyc5V2B3QIiSvJIcwrzaHfaR9hW1LNo4NA75hqnQKSH+1W93tX3cOyX+//u1+fZsx7xWkooL3/OBT2//65WNXCqG/fPzQzTa8GflbyJ7f8b0Z5emn4NT3JLxSe+zE90YJZVHPb/teKz149/JCQ7gRiQLvkpMRg57/QpiCbP+aLNC0d5vMRmANm+WLRCohvWEMgMYCtHbJJ4SHcC8o1yDvJYTZM4PckhiPKR97fapWH/NAfgppveiLBLcvGA2n3+hbWTYMpWDsrwkA87LPlEdi/sQjkNannq9lUtZfi3DqnS9iotQZY7nALmTeRJXnzEl8SHh05J2xOVmoirMwExr6oKZaxF6qPU+0FlyZI0tt9aLZ9wHHZGmIrG9ly4+SLAYh5nE4EfPSTR6AcqUJY1dCTNfH8Bx3heC3QlPMKdFpPeQptZZMMktmb8QrzIDrR2Hd8S4wi2NYE8oHUKCHGrOyyKwWMfsOi+Xn1Wf8ycSIoN96CgtVKTLc/9C1W21rBkvpRkR4g9RKVqW5JNgu6WyXHGyXHG6XHG2XHG+XnGyXnG6XfK4RujrhrRHfoEaAgxoRDmqEOKgR46BGkIMaUQ5qhDmoEedOjTh3NsS52yq9LksE58Lvv3mHjOj7lrcoF23Mcy7amOhctDHTuWhjqnPRxlznoo3JzkUbs52LNqY7F23M9zKY9UJeK+ab3q5ua6UQ0tVbwbFXIsJv1Fh591KEoFS5CdJZwgh2nPSIlmIKyhuMcToA7OoMe2NJfQ0v2jTfZS+6WIQr7RpuSLy0O+Bxoiutxsiwfz9Sph8gBqKr48WAU00J6wMjeONOG69phdlK0M4vfjGBcPqcTTh9046P/MrzzkGTag+nOpzccTNV3GHPXefhWajpK97hjmf9b90MVIhWbb3XPVOVEDbUSURFp411gfdf1+XNwwA4dvEYr1q0U+uYHTnsBJAde4CI4kSlzeRTuaaQOnUQxw88GU/ICLBJ4yiwqEwHZkTpw0gkOKZV/f8mxewpXn59pDPcO8oTMOAkDQHVi3RDrowf6apIdM8/yE9gqY0EkRGWLG5414JET8NLPmZUTcp+3UsqJFouSjfonK6rXC+vi3wTiAwnXiIxIBOtY/VHqzWfzz+NhRgz+BSKWUsZydd/esthlo8TMgbvhTLgJL1jttOHF5Iw7aW5lTSCbLDNHP3tbJvtvxuD7XRns47T7rtqT9ev8Ko/Bcc5blVhV+7RPVVZu6Y8XTvANAkZwvB+sBScvVGVjrfGkC2fd/OoYUeWLGuqNCiX59JlbRc+G0g8V0q4tGoLxby8dv1qrfrqvfoQ1QX1vDwPJNFCmXeW2RGy/X5Nm6OB+WUGA2kkwfIpkb0Chzcdo6C6Xqo4iziPmHcm9cb30k6buoA/8+WO+SYNkDD0h7458LqkxygF5ywNWb4icfgXM6ogsnWaPZLEcWo6AhXm1Yb8pOPJjl24oVHEYLc+/Nh9Jn40IBVpj9x9JEyn3n0wTIt7ihvgRF/M+W7dMIAM0o87g2UDaNkEXDaCl00AZiOI2RBkNoWZzYBmY6jZKrBpqdlxBG1CkTqCOoI6gu4PQTsFQQ8cQZtQpI6gjqCOoPtD0IOCoIeOoE0oUkdQR1BH0P0h6GFB0CNH0CYUqSOoI6gj6P4Q9Kgg6LEjaBOK1BHUEdQRdH8IelwQ9MQRtAlF6gjqCOoIuj8EPSkIeuoI2oQidQR1BHUE3R+CnhYE/ewI2oQidQR1BHUE3R+CptjstrK/8/rysduy/zrhf3AM4Xl4nBOI8HVyDk4tKcnMSy/Wq8jNYRgFIwlEO0JoP1bs8kyeS2UYmADr8QgIpvr1bAEAAAACAAAAKwAAAE4FAAAAAAAAAQAAAAAAAAAAAAAA
+

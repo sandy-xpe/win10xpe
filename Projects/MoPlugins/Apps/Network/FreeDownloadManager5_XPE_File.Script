@@ -1,0 +1,38 @@
+[Main]
+Title=Free Download Manager v5 - File Container
+Type=XPEPlugin
+Description=Free Download Manager v5.1.38.7312 File Container
+Author=KYHI
+Date=2019.12.18
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=0
+Download_Level=2
+Selected=None
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Container Plugin Created 2019.12.18
+History002=
+
+[Interface]
+pTextBox1="To Hide Container File Plugin From Tree - Set Container File [Main] Level=0",1,1,10,60,531,18,8,Bold
+
+[Variables]
+
+[Process]
+Echo,"File Container Plugin - There Is Nothing To Process"
+
+[AuthorEncoded]
+fdm4848.ico=1216,1622
+Logo=fdm4848.ico
+
+[EncodedFile-AuthorEncoded-fdm4848.ico]
+lines=0
+0=eJzVmX9sE2UYx5/tJkNQUKMwFNZOnZE/WACRgQIHBjMGIxGUqDEibJFEE1QSxCUEaEIkIYOEEBMlQnAqiTFKDBCMEBdcJ3Nsbt3SbYC4rF2bbrCNdt1v7u7xfXtvDTvasuv96O3bfPtNLs29nz157t4fA0gjn/nzgXzb4YdcgBkA8DwxuQRbQL5O5cgFo8URTyV+gng2sY3YboCziCfryJ1OPIUxLyIuJH6TeDPIJdTba9jfoIdozR8lzuM42FD6IRy78D00tvwOIV8NoFEGYE2lTRkgt+vSd18HR8OvEDCSWWd+WveZxLxjR9rXnssgmMWuAz+tO31GXz5Y/tl5b+1U07h14H8A5Gdn2fGTx8tbGleLZrNr4KfsTxG/8jPRdV9dMBXsSfJH2DmOe7WiouIiEjW4t92ZIPyZxDbCXlBVVeWk7CKRr3ZKSthV8k9iv13vdDr/RKZwODigZryAKxt9Vziz+Sk7XQMUnf6uzIN3qcvfOqxmvKDnYxwddOOtlhVm8VP2bOK1RxxbWlGhro5GVeNR/qgGuk9hoD7LSP5I3ckEta6kcFZ9f1+PEl8TP5Uk9JFrO5LuqQT8kbpP4mD9xheh/o+zX93Drgd/VMn2VBx+Oq8+Seq+ZtNiaPqoaBqOjgwZyp9sT8Xgp2vgx4lXkrrXvL8K8Ms9ryUcU2+p6akY/HTfsbBgHpym7NQ/HdtpKn9U4+kpBT9dS2YvssNewi1F+c+WO1LCH1WinlLwP5SRAUvfWw5dUXYr8FP931OJ+WesmguH7ma3Cr8w4sHua2vvxz/nrSXQYCl+ScBw4DD646yxFPz2Yh4GrMI/0l+LXe4Fap5fu5L9fvySJKIoBMdtSYw9j4y5pxCOzBO+K+lq35+q+fWev4Zun8FAw+xk5y/D+UMdu2PeRxjxY8/1DcmsH+aYyd/nU95Lwv7OL9Bf97Bq9jYnhGHs+ZWp/KMDTXizebFq7qjdF8FFmKeZzS+Jgxjy7tK8D6v8EcpA3o+bxt99tQA7XTmauKk9l2Fo/3Z4BuixtIn8ern6F/gc5HU+TDT+v+ryWwnrg3CvLM9ffaO05+i3+3MUfWN5/ubWjYKnt6WjsrIyLw57UvyhXj821e4e6zrmvzW68UDf1RtnOntDN2+LonjH5XIVgbw/jCfV/Gapra1tG8j7q0SyJL/X690V410zIfgJe6z3pOX56br83Kmy30A+hxqvLME/PBjGbw5/cEEluyX4/22uxr0lCypAPqtXq5Txe/+pxxMH3sHilek1zz42Zk2pmb/0bRse+oQ3xAe3v4SfvjErMs5WHq7l50T+lxlvfkqK3wwX8+BdPRdyNbCnjL9kBQQK8+A5jewp4Sc94143D57WgZ0qy0R2afMyOMnb4BGd2KkmG81cwkP71uVwYlM+vACJ12KqhNgeqQKigyXIKbEUWA6zDLJsZ3mJpYMlyCmxFFgOswyybGd5SZEOM5JjmanI6SxtLHmW+1iinGksOZaZLKcr0saSZ7mPJcrJ0fwPuUEvxnic405LyTWxMLHQy0zOZxgFIw7sU4XQpSzY5bfyJp9kYAIAsT8G0KpO3TMBAAAAAgAAACcAAAB1BAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

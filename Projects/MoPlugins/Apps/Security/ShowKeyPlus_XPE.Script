@@ -1,0 +1,114 @@
+[Main]
+Title=ShowKeyPlus
+Type=XPEPlugin
+Description=Plugin Adds ShowKeyPlus Version 1.0.7060 (Requires NET Framework)
+Author=KYHI
+Date=2019.06.19
+Credits=
+Contact=
+Version=004
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Plugin Created 2018.07.17
+History004=KYHI - Updated To Version 1.0.7060 - 2019.06.19
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=,1,5,145,45,300,225
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,_Launch_Program_,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://www.tenforums.com/software-apps/2577-showkey.html
+
+[Variables]
+%ProgramTitle%=ShowKeyPlus
+%ProgramExe%=ShowKeyPlus.exe
+%ProgramExex64%=ShowKeyPlus_x64.exe
+%ProgramFolder%=ShowKeyPlus
+%SetupFile%=ShowKeyPlus.7z
+%FileContainer%=%ScriptDir%\ShowKeyPlus_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+Iniread,%ProjectDir%\Script.Project,Features,DotNET,%DotNET%
+//If,%DotNET%,Equal,False,EchoExtended,"You Need To Enable > Microsoft .NETFx4 < In Build Core To Run %ProgramTitle%",,,Message,4,Exit
+If,%DotNET%,Equal,False,Exec,%ProjectDir%\Features\DotNET.script,Process
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+If,Not,ExistDir,%Target_Prog%\%ProgramFolder%,DirMake,%Target_Prog%\%ProgramFolder%
+FileCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%\%ProgramExe%,%Target_Prog%\%ProgramFolder%
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\Windows\System32\spp\tokens\pkeyconfig
+\Windows\System32\Pidgenx.dll
+\Windows\Fonts\webdings.ttf
+\windows\system32\ucrtbase_clr0400.dll
+\windows\system32\VCRUNTIME140_CLR0400.dll
+
+[Add_Registry]
+RegHiveLoad,Tmp_Default,%RegDefault%
+If,Not,ExistRegKey,HKLM,"Tmp_Default\Control Panel\Colors",Window,RegWrite,HKLM,0x1,"Tmp_Default\Control Panel\Colors",Window,"255 255 255"
+RegHiveUnLoad,Tmp_Default
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Extract]
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+If,Not,ExistDir,%GTemp%\%ProgramFolder%,DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+//ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -aou -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+
+[PluginSetx64]
+//Set,%ProgramFolder%,%ProgramFolderx64%
+Set,%ProgramExe%,%ProgramExex64%
+//Set,%SetupFile%,%SetupFilex64%
+
+[Launch_Program]
+If,%HostOSArch%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+Run,%ScriptFile%,Extract
+//OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[AuthorEncoded]
+Logo=ShowKeyPlus4848.ico
+ShowKeyPlus4848.ico=2518,3358
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+
+[EncodedFolders]
+Folder
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-ShowKeyPlus4848.ico]
+lines=0
+0=eJzVmgtcjlkex58Qmf2MGMyOsYbIZeWSJl0oeVO5FNXqrnt5u27jFmOW1ZIuNEIuIyMrISlFKbpQyLViJJd0obGl0ics5e29/PZ/3iefWWsGOzO95d/n13k657zv8z3n/M85/+c5cZwS/WhqcvR7GJc4kuM+5ThuDImyOHeOz2cWMpLr6taT4/GHkD7mGPqHYz04ntufNJuk1p7X1Y31cW+S2qczvU+PCi8DXQeTJpE+4rr+GDB2TRXVoVtNrwI6yWD8W0gzSZ+TlDuV7t2mMTYy56leYCYE2TJobWuA8sDxJyh/GWkcSaWT+d5qQ52PPBGUAZN8UqGzuw4TQiow0OsqG4MdJC2OH58ua8M9M6GXIcFE4Qlo7aiB7u4qDPApZvxRpNEcvyZ1WRvukQ6tPa34s+dJBNYCE8JL8G1hK+MP4vi1tHsnI77VGP/EnS8xzCUDAcSvGX4DtODspyJDjufv0vNXzT0dpoXAMM90Of+X4ddZ328mfUUaxXV1/3fPgPVdYDT5v/+/iD/kMoYtCK+gohiODyG6PL/VdfKbQOJ/CGivPAu7TEBZSWkT9yHMX/fjsKR9S3txOryrqf9X5OPIj8Ao9eErqPhPXBePIVj/zyP+yUuPY34J7b9fF6Bnd/n8tSOxiLNXJyO+1Rj/nEvEvzgVc2ge6y3PhdbqtHoqYv7DYqB3+T9bn/qQ+neGhntkwKwAmBiULOfXX5wJi9PyGCiOZEwa/DOf68P9tK6yaw3SlM4Q4zcm3rH+iXL+qUHHMOeUnD+F5EES/MznNNq5uSN+g9CZYvym54Fx/odgfgEwDDoK85OAmcZHiLQZgAMLP3vjM+1t6P+KvzNNvn5eo3WH+K1oHk8LOAIL4vfz80NxcTFaWlpeq98V+Z3Kid/vAFxpHzPyO/xB8auR/7hUs/h5P3xp3TfyOYg5xB8QEPCr+GUSERpK9qMy1UeuhuJ98ryOqMNshOcJOFcCGp7/hB/FDwJhwm/ib7yWgIpkj9fE7t0RdZipe5+CDT2/qDnEyvmNvfZhFvH7+/vjypUrePHixf/FX5Xm+8Z9Wf91RB2ZTAZ1Ya58/vadtw1+FP8Ye8ZheoYUnp6eyMrKQnV1tXwMWN334a9OD3rnfX9rHcYiFovR3NyMEQvz4FFF8U5gPHwfEL/LbsxYGA9rB2fExMQgNTUVpaWlaGpqgkgkQtI7+JvK0t64L/OF36sOY29tbUVNTQ2SkpKhEZgEb+JeWM1LWMEruvghRgh8sCx4OeLj41FQUICqqiokeH/G+A1+cf5KxWi6eRQPsoLlYtcs7/eoI5W0yX2hqPga/Javg93uIkRefwwv4ve6TyJ+FoMG0t97KpowOjAT6lZrYWHng9DQ9UhLS0O0w0DGb0IaqOj1k/V74aWrmB28Ax5Zz3GKOM83AG7E7Nkuxu9LOtYshn5EDbQiazH2q5PQcQhF0OJgLDHrx/idOP5dnZKi+Jm/F9+4BfPIdMw9JsK6K8DXZ/8NmyIpHG5Kae+Swe2eDK4kd9rHjjW9hFNcKeZGl8JwSy10w8ow2SUMcyb1/+/3cz0Vxd/Q+BhO0ekwSxHBOqUFJvsbYXGiFZaFYjhcl2DBLSmcmW5L4XhDCttrUlhdBBxzn8L50D3M21sLh/gfMc7EifiV2PPxLNIniojRDvsOgp/wL7BKb4FXrhRGsTWYceg5ZmaIMe+sGPOLJHD4QQJHaod9iQQ2VyWwOC+B9XlaR9ncLpPAKbEKgdRe8z01+HikcS6xL+D455uON3WDgUbRF2s2/yCDy5FGGO1rhmmyGDOOt2F2XhvmFrZRX/OypGuLgjbMyRPDt1IGIc1rj2raj4tEcEysw8z45xjle6iJ694rhL5ZTxH4Yzw3LPzm3FOk3ZNCN6YGJikSCBJeQv/gS0zPEkGQQ8oVwShbhGmnRJhKeUKK6dwrpFhQxuaHBLY3gfkJD6C/4xkmRVbTGExL5ngf6nDTWn4oK6O6FRvPPMHU7x9jOnFrb2+FMfX/jGwxDLPEMCAZnxLDlP62Oi2G/QXivsTLmnxp5qU2uKY8gs63tfI1abDFqmv01TaK4NcLP1NZ9xxwiHsAg32tMEwUYUMNUEZbhvTV+kRikY6sPSWXwdk24PAT8h3az4zOASbHnkJnYyW+jGrCKGFiA8fPgQ43w5235EHk5LDbMI08gwXR2QjYkIyVm5MRujMdG/bmYNOhfGzcn4vIfdlYuycLK2NPYGlcDgLi8uAemwPz6JPQTyWf23AX2pufYdyKcyJF8Qtiy+X8WmvvYrL96lbKciMNJ3V73+8YOdl+uyDhGbRDb0I/thXjV+QzfoX4j8n2knuNFPrb7HyI8bOXvKCsQI4/m3jfd2vdxk5x3GO2qxY6EXdgeqAV6m7fPeIUNH9nbcxOu9gIROU8x1TXGLb/RHD8u5EB3LvHQIlTVe2rPsX5zNT1dzDr+3rYJTVjkMD/MpXpdzg8mfna5KV7K2QoozYYLMpBD5U+GRz/boTFAOw9yC+1gZ3dqfT9fIKFmd82ybQN92GbRvtEXDX6jBHspTJ1RfDbRiSpusQVPaqj9WR1SiN07cOkhLaNihzb28DGoVd7O5TaU/Z+qm+PHr11DKyCblhG3YDxtoe0h0sxZXlSfbc/DLCn8n6K4GdmH50esv1yA+49BcwiyqEh8KpvbwMbB+ZL40kjSMM4fm6P5br3tNQW2F+wCy3ArKhyeOdSjJf6GEOMXeOp/AtOgWcbQuEuZfNVB69ceAxcrZNi3uZyTHFaJ1NW6ZdO7Yjk+DntTvKi7l+movrHXZZuK0UuEUUwD7+Fpflt+OZcC3R8Ii9xyqrsXI+dSyr0bNhjzY7hHjvybufXA5U0DmGZtZj9jzwIhDHQtQ5+qTPLu8XEdkmboUs0zBalwCa8BI67q+GdByzLaYThophSlaGT2JztrWj2VyZcEfHFvL8n3txU2ICHtKaWNwOppS8QfPQRpkdVwCCiAn4HahFV8AyrKH52I3b3lAcYM9cnlftCcyzHr7mdeiZvu2ZNz2Vbj6x22ZJTt62w/vmZWuBR20/PCqXUpu+Kn4oDj95pMV6VeHfwFCtnWqY+4brYWaTh0q1qesIob92FG9dPcg+L1fSIzBjvGpoyyu5ve9Xm/nXlEFOvuf2m2rJ5ys5guvr/QfwqY+N1H3ya355yazo+lZtSB6dvb3fI+6bIb09D+HRNe/601+vl/096n3FQ+oR5PaUvOVV5KuOG8v3ATjn+A6aFIBJ4nBMOzsgv906tDMgpLTaxMLHQy0zOZxgFIwbsU4XQzZzY5X+JKDYyMAEAgkYJ5DNNct8BAAAAAgAAAC8AAACDCQAAAAAAAAEAAAAAAAAAAAAAAA
+

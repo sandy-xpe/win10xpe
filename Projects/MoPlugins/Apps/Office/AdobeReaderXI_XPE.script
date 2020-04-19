@@ -1,0 +1,1108 @@
+[Main]
+Title=Adobe Reader XI
+Type=XPEPlugin
+Description=Adobe Reader XI incl. Internet Explorer Addin
+Author=2aCD
+Date=2019.09.29
+Credits=TheOven.org Forum
+Contact=
+Version=003
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Packed Plugin Created 2019.08.19
+History002=KYHI - Auto-Download Container File - Posted Fixed PESE Plugin - 2019.08.28
+History003=KYHI - Fixed Non-English Language Extract Error - 2019.09.29
+
+[Variables]
+%ProgramFolderR%=AdobeReaderXI
+%ProgramFolder%=%ProgramFolderR%\Reader
+%ProgramEXE%=AcroRd32.exe
+%ProgramTitle%=Adobe Reader XI
+%PackedFile_Version%=v11.0.6
+%PackedFile%=Reader.7z
+%PackedCommonFile%=CommonFiles.7z
+%PackedSystem%=Windows.7z
+%PackedSystem_x64%=Windows_x64.7z
+%SetupFile%=AdobeReaderXI_file.7z
+%SetupURL%=http://filehost.cwcodes.net/2aCD/WBScripts/Adobe/AdobeReaderXI_file.7z
+%FileContainer%=%scriptdir%\AdobeReaderXI_XPE_File.script
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=AcroRd324848.ico,1,5,145,35,48,48
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://theoven.org/index.php?board=39.0
+pScrollBox_Ln="English                                     |ENU|",1,4,4,144,133,21,"English                                     |ENU|","Deutsch                                     |DEU|de_DE","Français                                     |FRA|fr_FR","Español                                     |ESP|es_ES","Italiano                                     |ITA|it_IT"
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Run,%Scriptfile%,Update_Container
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+If,ExistDir,%GTemp%\%ProgramFolderR%,DirDeleteQ,%GTemp%\%ProgramFolderR%
+If,Not,ExistDir,%GTemp%\%ProgramFolderR%,DirMake,%GTemp%\%ProgramFolderR%
+Set,%Target_CommonFiles%,%GTarget%\Program Files\Common Files
+If,Not,ExistDir,%Target_CommonFiles%,DirMake,%Target_CommonFiles%
+//--
+Run,%ScriptFile%,CopyProgramFiles
+Run,%ScriptFile%,CopySystemFiles
+//
+If,%Architecture%,Equal,x86,ExtractSectionFiles,%ScriptFile%,AddFiles
+If,%Architecture%,Equal,x64,ExtractSectionFiles,%ScriptFile%,AddFiles6432
+//--
+If,%Architecture%,Equal,x86,Run,%ScriptFile%,WriteSettings
+If,%Architecture%,Equal,x64,Begin
+  Run,%ScriptFile%,WriteSettings,"\Wow6432Node"
+  Run,%ScriptFile%,WriteSettings_x64
+End
+//
+Run,%ScriptFile%,Add_Shortcuts
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[CopyProgramFiles]
+Echo,"Extracting Program Files..."
+If,Not,ExistDir,%Target_Prog%\%ProgramFolderR%,DirMake,%Target_Prog%\%ProgramFolderR%
+ExtractFile,%FileContainer%,Program,%PackedFile%,%GTemp%\%ProgramFolderR%
+ExtractFile,%FileContainer%,Program,%PackedCommonFile%,%GTemp%\%ProgramFolderR%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolderR%\%PackedFile%#$q -y -o#$q%Target_Prog%\%ProgramFolderR%#$q"
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolderR%\%PackedCommonFile%#$q -y -o#$q%Target_CommonFiles%#$q"
+// Language
+StrFormat,SPLIT,%pScrollBox_Ln%,"|",3,%LangDir%
+StrFormat,SPLIT,%pScrollBox_Ln%,"|",2,%Lang%
+StrFormat,SPLIT,%pScrollBox_Ln%,"|",1,%LangStr%
+Set,%LangFile%,Locale\%LangDir%\RdLang32.%Lang%
+If,%Lang%,EQUAL,ENU,set,%LangFile%,acrord32.dll
+//--
+If,%lang%,Equal,DEU,Set,%PackedLang%,DE
+If,%lang%,Equal,ESP,Set,%PackedLang%,ES
+If,%lang%,Equal,FRA,Set,%PackedLang%,FR
+If,%lang%,Equal,ITA,Set,%PackedLang%,IT
+//--
+If,Not,%Lang%,EQUAL,ENU,Begin
+  Echo,"Extracting Language Files: %LangStr%"
+  ExtractFile,%FileContainer%,Language,%PackedLang%.7z,%GTemp%\%ProgramFolderR%
+  ExtractFile,%FileContainer%,Language,%PackedLang%_Common.7z,%GTemp%\%ProgramFolderR%
+  ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolderR%\,%PackedLang%.7z#$q -y -o#$q%Target_Prog%\%ProgramFolderR%#$q"
+  ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolderR%\%PackedLang%_Common.7z#$q -y -o#$q%Target_CommonFiles%#$q"
+End
+
+[AddFiles]
+\Windows\System32\coloradapterclient.dll
+\Windows\System32\coml2.dll
+\Windows\System32\d3d8thk.dll
+\Windows\System32\dciman32.dll
+\Windows\System32\dsound.dll
+\Windows\System32\msftedit.dll
+\Windows\System32\msi.dll
+\Windows\System32\Windows.UI.dll
+\Windows\System32\wpnapps.dll
+\Windows\System32\??-??\dsound.dll.mui
+\Windows\System32\??-??\msftedit.dll.mui
+\Windows\System32\??-??\Windows.UI.dll.mui
+\Windows\System32\??-??\wpnapps.dll.mui
+
+[AddFiles6432]
+\Windows\SysWOW64\coloradapterclient.dll
+\Windows\SysWOW64\coml2.dll
+\Windows\SysWOW64\d3d8thk.dll
+\Windows\SysWOW64\dciman32.dll
+\Windows\SysWOW64\dsound.dll
+\Windows\SysWOW64\msftedit.dll
+\Windows\SysWOW64\msi.dll
+\Windows\SysWOW64\Windows.UI.dll
+\Windows\SysWOW64\wpnapps.dll
+\Windows\SysWOW64\??-??\msftedit.dll.mui
+
+[CopySystemFiles]
+Echo,"Extracting System Files..."
+If,%Architecture%,Equal,x64,Set,%PackedSystem%,%PackedSystem_x64%
+ExtractFile,%FileContainer%,System,%PackedSystem%,%GTemp%\%ProgramFolderR%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolderR%\%PackedSystem%#$q -y -o#$q%GTarget_Win%#$q"
+
+[WriteSettings]
+Echo,"Registering components..."
+//User Settings
+RegHiveLoad,Tmp_Default,%RegDefault%
+RegWrite,"HKLM",0x4,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\Privileged","bProtectedMode",0x0
+RegWrite,"HKLM",0x1,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\Language",,
+RegWrite,"HKLM",0x1,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\Language\current","","%LangFile%"
+RegWrite,"HKLM",0x1,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\Language\next","","%LangFile%"
+RegWrite,"HKLM",0x4,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\Language\UseMUI","bUseMUI",0x0
+RegWrite,"HKLM",0x4,"Tmp_Default\Software\Adobe\Acrobat Reader\11.0\AVGeneral\cTaskPanes","irightPaneState",0x0
+//--
+RegWrite,"HKLM",0x3,"Tmp_Default\Software\Microsoft\Internet Explorer\Approved Extensions","{18DF081C-E8AD-4283-A596-FA578C2EBDC3}",51,66,7a,6c,4c,1d,38,12,72,0b,cc,1c,9f,a6,ed,07,da,80,b9,17,89,70,f9,d7
+RegWrite,"HKLM",0x4,"Tmp_Default\Software\Microsoft\Windows\CurrentVersion\Ext\Stats\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\iexplore","Blocked",0x2
+RegWrite,"HKLM",0x4,"Tmp_Default\Software\Microsoft\Windows\CurrentVersion\Ext\Stats\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\iexplore","Count",0x2
+RegWrite,"HKLM",0x3,"Tmp_Default\Software\Microsoft\Windows\CurrentVersion\Ext\Stats\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\iexplore","Time",dd,07,07,00,02,00,10,00,0e,00,24,00,14,00,dc,02
+RegHiveUnLoad,Tmp_Default
+//--
+RegHiveLoad,Tmp_Software,%RegSoftware%
+Set,%LiveCommonFiles%,%PE_Programs%\Common Files
+//Register Software
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0",,
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\AdobeViewer","EULA",0x1
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","bUpdateModeSet",""
+If,Not,%Lang%,EQUAL,ENU,RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","%Lang%_GUID","{AC76BA86-7AD7-1033-7B44-AB0000000001}"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","ENU_GUID","{AC76BA86-7AD7-1033-7B44-AB0000000001}"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","InstallDate","10.01.2014"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","InstallTime","15:13:47"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","Path","%PE_Programs%\%ProgramFolderR%\"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","ReinstallMode","omus"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer","ServiceControl","601"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer\IOD","","#$q%PE_Programs%\%ProgramFolderR%\Esl\AiodLite.dll#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer\IOD","Library","%PE_Programs%\%ProgramFolderR%\Esl\AiodLite.dll"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer\Optimization","DefragStatus",0x1
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer\Optimization","Enabled","YES"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Installer\Updates","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\InstallPath","","%PE_Programs%\%ProgramFolder%"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Language","UI",%Lang%
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Language\current","","%LangFile%"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Acrobat Reader\11.0\Language\next","","%LangFile%"
+//RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Adobe ARM",,
+//RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Adobe ARM\1.0",,
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Adobe\Adobe ARM\1.0\ARM","iCheckReader",0x0
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Repair",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Repair\Acrobat Reader",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Repair\Acrobat Reader\11.0",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Repair\Acrobat Reader\11.0\IOD","","#$q%PE_Programs%\%ProgramFolderR%\Esl\aiodlite.dll#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Adobe\Repair\Acrobat Reader\11.0\IOD","Library","%PE_Programs%\%ProgramFolderR%\Esl\aiodlite.dll"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\ActiveX Compatibility","",""
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\ActiveX Compatibility\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}","Compatibility Flags",0x400
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{15B3FB63-66F4-4EFC-B717-BB283B85E79B}","AppName","AcroBroker.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{15B3FB63-66F4-4EFC-B717-BB283B85E79B}","AppPath","%PE_Programs%\%ProgramFolder%\"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{15B3FB63-66F4-4EFC-B717-BB283B85E79B}","Policy",0x3
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{358E6F10-DE8A-4602-8424-179CA217F8EE}","AppName","AcroRd32Info.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{358E6F10-DE8A-4602-8424-179CA217F8EE}","AppPath","%PE_Programs%\%ProgramFolder%"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{358E6F10-DE8A-4602-8424-179CA217F8EE}","Policy",0x3
+//RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{76E2369A-75BA-41F9-8B9E-16059E5CF9A6}","AppName","AdobeARM.exe"
+//RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{76E2369A-75BA-41F9-8B9E-16059E5CF9A6}","AppPath","%LiveCommonFiles%\Adobe\ARM\1.0\"
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{76E2369A-75BA-41F9-8B9E-16059E5CF9A6}","Policy",0x3
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{8E1F80F4-953F-41E7-8460-E64AE5BE4ED3}","AppName","AdobeCollabSync.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{8E1F80F4-953F-41E7-8460-E64AE5BE4ED3}","AppPath","%PE_Programs%\%ProgramFolder%"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{8E1F80F4-953F-41E7-8460-E64AE5BE4ED3}","Policy",0x3
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{9C6A861C-B233-4994-AFB1-C158EE4FC578}","AppName","AcroRd32.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{9C6A861C-B233-4994-AFB1-C158EE4FC578}","AppPath","%PE_Programs%\%ProgramFolder%"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{9C6A861C-B233-4994-AFB1-C158EE4FC578}","Policy",0x3
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A2397324-4D73-4870-A795-995C56F49FBD}","AppName","arh.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A2397324-4D73-4870-A795-995C56F49FBD}","AppPath","%PE_Programs%\%ProgramFolder%"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Internet Explorer\Low Rights\ElevationPolicy\{A2397324-4D73-4870-A795-995C56F49FBD}","Policy",0x1
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","ConsoleTracingMask",0xFFFF0000
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","EnableConsoleTracing",0x0
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","EnableFileTracing",0x0
+//RegWrite,"HKLM",0x2,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","FileDirectory","%windir%\tracing"
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","FileTracingMask",0xFFFF0000
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASAPI32","MaxFileSize",0x100000
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","ConsoleTracingMask",0xFFFF0000
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","EnableConsoleTracing",0x0
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","EnableFileTracing",0x0
+//RegWrite,"HKLM",0x2,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","FileDirectory","%windir%\tracing"
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","FileTracingMask",0xFFFF0000
+//RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Tracing\AcroRd32_RASMANCS","MaxFileSize",0x100000
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe","","%PE_Programs%\%ProgramFolder%\%ProgramEXE%"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe","Path","%PE_Programs%\%ProgramFolder%\"
+System,ERROROFF,2
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}","","AcroIEHelperStub"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\Explorer\Browser Helper Objects\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}","NoExplorer",0x1
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\PreviewHandlers","{DC6EFB56-9CFA-464D-8880-44885D7DC193}","Adobe PDF Preview Handler for Vista"
+//RegWrite,"HKLM",0x1,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\Run","Adobe ARM","#$q%LiveCommonFiles%\Adobe\ARM\1.0\AdobeARM.exe#$q"
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\ICU\icudt26l.dat",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Adobe\symbol.txt",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Adobe\zdingbat.txt",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\CENTEURO.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\CORPCHAR.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\CROATIAN.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\CYRILLIC.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\GREEK.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\ICELAND.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\ROMAN.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\ROMANIAN.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\SYMBOL.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\TURKISH.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\Mac\UKRAINE.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1250.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1251.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1252.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1253.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1254.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1257.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","%PE_Programs%\%ProgramFolderR%\Resource\TypeSupport\Unicode\Mappings\win\CP1258.TXT",0x1
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","X:\Windows\system32\msvcp100.dll",0x2
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SharedDLLs","X:\Windows\system32\msvcr100.dll",0x2
+RegWrite,"HKLM",0x3,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SideBySide\Winners\x86_microsoft.vc90.crt_1fc8b3b9a1e18e3b_none_ea33c8f0b247cd77\9.0","9.0.21022.8",01
+RegWrite,"HKLM",0x3,"Tmp_Software#1\Microsoft\Windows\CurrentVersion\SideBySide\Winners\x86_policy.9.0.microsoft.vc90.crt_1fc8b3b9a1e18e3b_none_02d0010672fd8219\9.0","9.0.21022.8",01
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader","Description","Handles PDFs in-place in Firefox"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader","Path","%PE_Programs%\%ProgramFolder%\AIR\nppdf32.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader","ProductName","Adobe Reader Plugin for Firefox"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader","Vendor","Adobe Systems Incorporated. Copyright 1994-2010 All Rights Reserved"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader","Version","11.0.05"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes\application/pdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes\application/vnd.adobe.xdp+xml","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes\application/vnd.adobe.xfd+xml","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes\application/vnd.adobe.xfdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\MozillaPlugins\Adobe Reader\MimeTypes\application/vnd.fdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader",,
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0",,
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown","bPurchaseAcro",0x0
+RegWrite,"HKLM",0x4,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown","bUpdater",0x0
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultExecMenuItems","tWhiteList","Close|GeneralInfo|Quit|FirstPage|PrevPage|NextPage|LastPage|ActualSize|FitPage|FitWidth|FitHeight|SinglePage|OneColumn|TwoPages|TwoColumns|ZoomViewIn|ZoomViewOut|ShowHideBookmarks|ShowHideThumbnails|Print|GoToPage|ZoomTo|GeneralPrefs|SaveAs|FullScreenMode|OpenOrganizer|Scan|Web2PDF:OpnURL|AcroSendMail:SendMail|Spelling:Check Spelling|PageSetup|Find|FindSearch|GoBack|GoForward|FitVisible|ShowHideArticles|ShowHideFileAttachment|ShowHideAnnotManager|ShowHideFields|ShowHideOptCont|ShowHideModelTree|ShowHideSignatures|InsertPages|ExtractPages|ReplacePages|DeletePages|CropPages|RotatePages|AddFileAttachment|FindCurrentBookmark|BookmarkShowLocation|GoBackDoc|GoForwardDoc|DocHelpUserGuide|HelpReader|rolReadPage|HandMenuItem|ZoomDragMenuItem|CollectionPreview|CollectionHome|CollectionDetails|CollectionShowRoot|&Pages|Co&ntent|&Forms|Action &Wizard|Recognize &Text|P&rotection|&Sign && Certify|Doc&ument Processing|Print Pro&duction|Ja&vaScript|&Accessibility|Analy&ze|&Annotations|D&rawing Markups|Revie&w"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchAttachmentPerms","tBuiltInPermList","version:1|.ade:3|.adp:3|.app:3|.arc:3|.arj:3|.asp:3|.bas:3|.bat:3|.bz:3|.bz2:3|.cab:3|.chm:3|.class:3|.cmd:3|.com:3|.command:3|.cpl:3|.crt:3|.csh:3|.desktop:3|.dll:3|.exe:3|.fxp:3|.gz:3|.hex:3|.hlp:3|.hqx:3|.hta:3|.inf:3|.ini:3|.ins:3|.isp:3|.its:3|.job:3|.js:3|.jse:3|.ksh:3|.lnk:3|.lzh:3|.mad:3|.maf:3|.mag:3|.mam:3|.maq:3|.mar:3|.mas:3|.mat:3|.mau:3|.mav:3|.maw:3|.mda:3|.mdb:3|.mde:3|.mdt:3|.mdw:3|.mdz:3|.msc:3|.msi:3|.msp:3|.mst:3|.ocx:3|.ops:3|.pcd:3|.pi:3|.pif:3|.prf:3|.prg:3|.pst:3|.rar:3|.reg:3|.scf:3|.scr:3|.sct:3|.sea:3|.shb:3|.shs:3|.sit:3|.tar:3|.taz:3|.tgz:3|.tmp:3|.url:3|.vb:3|.vbe:3|.vbs:3|.vsmacros:3|.vss:3|.vst:3|.vsw:3|.webloc:3|.ws:3|.wsc:3|.wsf:3|.wsh:3|.z:3|.zip:3|.zlo:3|.zoo:3|.pdf:2|.fdf:2|.jar:3|.pkg:3|.tool:3|.term:3"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tFlashContentSchemeWhiteList","http|https|ftp|rtmp|rtmpe|rtmpt|rtmpte|rtmps|mailto"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tSchemePerms","version:2|shell:3|hcp:3|ms-help:3|ms-its:3|ms-itss:3|its:3|mk:3|mhtml:3|help:3|disk:3|afp:3|disks:3|telnet:3|ssh:3|acrobat:2|mailto:2|file:1|rlogin:3|javascript:4|data:3"
+RegWrite,"HKLM",0x1,"Tmp_Software#1\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tSponsoredContentSchemeWhiteList","http|https"
+//Register Classes
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.acrobatsecuritysettings","","AcroExch.acrobatsecuritysettings"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.acrobatsecuritysettings","Content Type","application/vnd.adobe.acrobat-security-settings"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.acrobatsecuritysettings\OpenWithList",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.acrobatsecuritysettings\OpenWithList\Acrobat.exe","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.acrobatsecuritysettings\OpenWithList\AcroRd32.exe","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.api","","AcroExch.Plugin"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.api\AcroExch.Plugin",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.api\AcroExch.Plugin\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.fdf","","AcroExch.FDFDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.fdf","Content Type","application/vnd.fdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.fdf\AcroExch.FDFDoc",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.fdf\AcroExch.FDFDoc\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf","","AcroExch.Document.11"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf","Content Type","application/pdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf\OpenWithList","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf\OpenWithList\AcroRd32.exe","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf\PersistentHandler","","{F6594A6D-D57F-4EFD-B2C3-DCD9779E382E}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf\ShellEx",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdf\ShellEx\{8895b1c6-b41f-4c1c-a562-0d564250836f}","","{DC6EFB56-9CFA-464D-8880-44885D7DC193}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdfxml","","AcroExch.pdfxml"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdfxml","Content Type","application/vnd.adobe.pdfxml"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdfxml\OpenWithList",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdfxml\OpenWithList\Acrobat.exe","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdfxml\OpenWithList\AcroRd32.exe","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdx","","PDXFileType"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdx","Content Type","application/vnd.adobe.pdx"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdx\PDXFileType",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.pdx\PDXFileType\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.secstore","","AcroExch.SecStore"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.secstore\AcroExch.SecStore",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.secstore\AcroExch.SecStore\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xdp","","AcroExch.XDPDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xdp","Content Type","application/vnd.adobe.xdp+xml"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xdp\AcroExch.XDPDoc",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xdp\AcroExch.XDPDoc\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xfdf","","AcroExch.XFDFDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xfdf","Content Type","application/vnd.adobe.xfdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xfdf\AcroExch.XFDFDoc",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\.xfdf\AcroExch.XFDFDoc\ShellNew",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroAccess.AcrobatAccess","","AcrobatAccess Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroAccess.AcrobatAccess.1","","AcrobatAccess Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroAccess.AcrobatAccess.1\CLSID","","{C523F39F-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroAccess.AcrobatAccess\CLSID","","{C523F39F-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroAccess.AcrobatAccess\CurVer","","AcroAccess.AcrobatAccess.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat","","URL:Acrobat Protocol"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat","URL Protocol",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Acrobat.AcroAXDoc.1",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Acrobat.AcroAXDoc.1\Shellex",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Acrobat.AcroAXDoc.1\Shellex\{BB2E617C-0920-11d1-9A0B-00C04FC2D6C1}","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Acrobat.AcroAXDoc.1\Shellex\PropertySheetHandlers",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Acrobat.AcroAXDoc.1\Shellex\PropertySheetHandlers\InfoPage","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\DefaultIcon","","AcroRd32.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell\open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell\open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q /u #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell\open\ddeexec","","[HandleAcroURL(#$q#$p1#$q)]"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell\open\ddeexec\application","","AcroViewR10"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\acrobat\shell\open\ddeexec\topic","","Control"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroBroker.Broker","","Broker Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroBroker.Broker.1","","Broker Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroBroker.Broker.1\CLSID","","{BD57A9B2-4E7D-4892-9107-9F4106472DA4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroBroker.Broker\CLSID","","{BD57A9B2-4E7D-4892-9107-9F4106472DA4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroBroker.Broker\CurVer","","AcroBroker.Broker.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings","","Adobe Acrobat Security Settings Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1","","Adobe Acrobat Security Settings Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\PDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\Insertable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Print",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Print\command","","#$q#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q#$q /p /h #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Printto\command","","#$q#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q#$q  /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings.1\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.acrobatsecuritysettings\CurVer","","AcroExch.acrobatsecuritysettings.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document","","Adobe Acrobat Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.Document","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11","","Adobe Acrobat Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.Document.11","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\PDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\Insertable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing\RequestDataFormats","","NoteshNote"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing\server","","""Acrobat.exe"""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing\SetDataFormats","","NotesDocInfo"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing\verb",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\protocol\StdFileEditing\verb\0","","&Open"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Print",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Print\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q /p /h #$q#$p1#$q "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Printto\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\Shellex",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\Shellex\{BB2E617C-0920-11d1-9A0B-00C04FC2D6C1}","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\Shellex\PropertySheetHandlers","","InfoPage"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.11\Shellex\PropertySheetHandlers\InfoPage","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.7",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.7\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.7\shell\read",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document.7\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document\CurVer","","AcroExch.Document.11"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document\Shell",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document\Shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Document\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc","","Adobe Acrobat Forms Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.FDFDoc","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\AcrobatVersion","","11.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\FDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Print","","Print"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Print\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q /p /h #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Printto\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q  /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x7,"Tmp_Software\Classes\AcroExch.FDFDoc\shell\Read\command","command","34TL`i`Z5(=T?6!$,CC!ReaderProgramFiles>fWDK6Qbnd93&(S^FJi40 #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml","","Adobe Acrobat PDFXML Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.pdfxml","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1","","Adobe Acrobat PDFXML Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.pdfxml.1","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\PDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\Insertable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Open","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Print",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Print\command","","#$q#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q#$q /p /h #$q#$p1#$q "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Printto\command","","#$q#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q#$q  /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml.1\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.pdfxml\CurVer","","AcroExch.pdfxml.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Plugin",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.Plugin\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\APIFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.SecStore",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.SecStore\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\SecStoreFile.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc","","Adobe Acrobat XML Data Package File"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.XDPDoc","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\AcrobatVersion","","11.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\XDPFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Print",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Print\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%"" /p /h #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Printto\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q  /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x7,"Tmp_Software\Classes\AcroExch.XDPDoc\shell\Read\command","command","34TL`i`Z5(=T?6!$,CC!ReaderProgramFiles>fWDK6Qbnd93&(S^FJi40 #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc","","Adobe Acrobat Forms Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc","BrowseInPlace","1"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroExch.XFDFDoc","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\AcrobatVersion","","11.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\CLSID","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\XFDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Open",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Open\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Print","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Print\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q /p /h #$q#$p1#$q "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Printto",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Printto\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q  /t #$q#$p1#$q #$q#$p2#$q #$q#$p3#$q #$q#$p4#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x7,"Tmp_Software\Classes\AcroExch.XFDFDoc\shell\Read\command","command","34TL`i`Z5(=T?6!$,CC!ReaderProgramFiles>fWDK6Qbnd93&(S^FJi40 #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelper.AcroIEHlprObj","","Adobe PDF Reader Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelper.AcroIEHlprObj.1","","Adobe PDF Reader Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelper.AcroIEHlprObj.1\CLSID","","{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelper.AcroIEHlprObj\CLSID","","{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelper.AcroIEHlprObj\CurVer","","AcroIEHelper.AcroIEHlprObj.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelperShim.AcroIEHelperShimObj","","Adobe PDF Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelperShim.AcroIEHelperShimObj.1","","Adobe PDF Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelperShim.AcroIEHelperShimObj.1\CLSID","","{18DF081C-E8AD-4283-A596-FA578C2EBDC3}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelperShim.AcroIEHelperShimObj\CLSID","","{18DF081C-E8AD-4283-A596-FA578C2EBDC3}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroIEHelperShim.AcroIEHelperShimObj\CurVer","","AcroIEHelperShim.AcroIEHelperShimObj.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF","","CAcroFDFHandler Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF.1","","CAcroFDFHandler Class"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroPDF.FDF.1","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF.1\CLSID","","{5BB2200E-5672-4A32-902A-5A98DB1C58DC}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF.1\DocObject","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF\CLSID","","{5BB2200E-5672-4A32-902A-5A98DB1C58DC}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.FDF\CurVer","","AcroPDF.FDF.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF","","Adobe PDF Reader"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF.1","","Adobe PDF Reader"
+RegWrite,"HKLM",0x3,"Tmp_Software\Classes\AcroPDF.PDF.1","EditFlags",00,00,01,00
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF.1\CLSID","","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF.1\DocObject","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF\CLSID","","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AcroPDF.PDF\CurVer","","AcroPDF.PDF.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.AcrobatSearch","","Acrobat Search"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.AcrobatSearch.1","","Acrobat Search"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.AcrobatSearch.1\CLSID","","{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.AcrobatSearch\CLSID","","{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.AcrobatSearch\CurVer","","Adobe.AcrobatSearch.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.Reader.HTMLPreview.1","","Adobe Reader HTML Preview Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.Reader.HTMLPreview.1\CLSID","","{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Adobe.Reader.HTMLPreview.1\CurVer","","Adobe.Reader.HTMLPreview.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments","","Adobe Acrobat Sharepoint OpenDocuments Component"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments.2","","Adobe Acrobat Sharepoint OpenDocuments Component"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments.2\CurVer","","AdobeAcrobat.OpenDocuments.3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments.3","","Adobe Acrobat Sharepoint OpenDocuments Component"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments.3\CLSID","","{24DA047B-40C0-4018-841B-6B7409F730FC}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AdobeAcrobat.OpenDocuments\CurVer","","AdobeAcrobat.OpenDocuments.3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AFormAut.App","","AFormApp Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AFormAut.App.1","","AFormApp Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AFormAut.App.1\CLSID","","{7CD069A1-50AA-11D1-B8F0-00A0C9259304}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AFormAut.App\CLSID","","{7CD069A1-50AA-11D1-B8F0-00A0C9259304}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AFormAut.App\CurVer","","AFormAut.App.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}","DLLSurrogate",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{6236FF8C-E747-4173-86D3-99F511B61DF3}","","PDFPrevHndlr"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{77AB4812-5411-4EA9-8437-77AD0F230302}","","AcroIEHelperShim"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{A5090E95-F1E2-41C8-BDA1-5AEB6C321FDE}","","PDFShellInfo"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}","","AcroPDF"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}","DLLSurrogate",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\{F2383816-917A-46CC-AD2A-5013BED3800F}","","AcroBroker"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\AcroBroker.EXE","AppID","{F2383816-917A-46CC-AD2A-5013BED3800F}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\AcroIEHelperShim.DLL","AppID","{77AB4812-5411-4EA9-8437-77AD0F230302}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\AcroPDF.DLL","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\AcroPDF.DLL","AppID","{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\AppID\PDFPrevHndlr.DLL","AppID","{6236FF8C-E747-4173-86D3-99F511B61DF3}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Applications\AcroRD32.exe",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Applications\AcroRD32.exe\CurVer","","AcroExch.Document.11"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Applications\AcroRD32.exe\shell",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Applications\AcroRD32.exe\shell\Read",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Applications\AcroRD32.exe\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}","","Adobe PDF Reader Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroIEHelper.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\ProgID","","AcroIEHelper.AcroIEHlprObj.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\TypeLib","","{5F226421-415D-408D-9A09-0DCD94E25B48}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{06849E9F-C8D7-4D59-B87D-784B7D6BE0B3}\VersionIndependentProgID","","AcroIEHelper.AcroIEHlprObj"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}\InProcServer32","","%PE_Programs%\%ProgramFolder%\ViewerPS.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{17F2E344-8227-4AA7-A25A-E89424566BBA}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{17F2E344-8227-4AA7-A25A-E89424566BBA}\InProcServer32","","%PE_Programs%\%ProgramFolder%\pdfprevhndlr.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{17F2E344-8227-4AA7-A25A-E89424566BBA}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}","","Adobe PDF Link Helper"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}","AppID","{77AB4812-5411-4EA9-8437-77AD0F230302}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroIEHelperShim.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\ProgID","","AcroIEHelperShim.AcroIEHelperShimObj.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\TypeLib","","{2991F100-D9C3-4243-82A2-A718747FC0CF}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{18DF081C-E8AD-4283-A596-FA578C2EBDC3}\VersionIndependentProgID","","AcroIEHelperShim.AcroIEHelperShimObj"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}","","Adobe Acrobat Sharepoint OpenDocuments Component"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\Implemented Categories",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\Implemented Categories\{7DD95801-9882-11CF-9FA9-00AA006C42C4}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\Implemented Categories\{7DD95802-9882-11CF-9FA9-00AA006C42C4}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\ProgID","","AdobeAcrobat.OpenDocuments.3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{24DA047B-40C0-4018-841B-6B7409F730FC}\VersionIndependentProgID","","AdobeAcrobat.OpenDocuments"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}","","Acrobat Search"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\ProgID","","Adobe.AcrobatSearch.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\TypeLib","","{47A7A4B0-2723-41BA-865E-EBBB7081A602}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\VersionIndependentProgID","","Adobe.AcrobatSearch"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}","","Adobe Reader Bitmap Factory Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}","AppID","{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}\InprocServer32","","%PE_Programs%\%ProgramFolder%\adoberfp.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}\ProgID","","Adobe.Reader.BitmapFactory.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}\TypeLib","","{BE79C475-D632-4A57-91B3-DA044FA27CDA}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}\VersionIndependentProgID","","Adobe.Reader.BitmapFactory"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}","","CAcroFDFHandler Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}","AppID","{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\DocObject","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\ProgID","","AcroPDF.FDF.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5BB2200E-5672-4A32-902A-5A98DB1C58DC}\VersionIndependentProgID","","AcroPDF.FDF"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5E628A96-1BE5-42FE-9117-EDAD9A9C479C}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5E628A96-1BE5-42FE-9117-EDAD9A9C479C}\InProcServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\pdfshell.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{5E628A96-1BE5-42FE-9117-EDAD9A9C479C}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{671B6145-4169-4ADD-9AF3-E6990EB2B325}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{671B6145-4169-4ADD-9AF3-E6990EB2B325}\InProcServer32","","%PE_Programs%\%ProgramFolder%\adoberfp.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{671B6145-4169-4ADD-9AF3-E6990EB2B325}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{7CD069A1-50AA-11D1-B8F0-00A0C9259304}","","AFormApp Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{7CD069A1-50AA-11D1-B8F0-00A0C9259304}\ProgID","","AFormAut.App.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{7CD069A1-50AA-11D1-B8F0-00A0C9259304}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{7CD069A1-50AA-11D1-B8F0-00A0C9259304}\VersionIndependentProgID","","AFormAut.App"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{8215BA54-B69F-4275-AE11-31CB63593B09}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{8215BA54-B69F-4275-AE11-31CB63593B09}\InProcServer32","","%PE_Programs%\%ProgramFolder%\AcroRdIF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{8215BA54-B69F-4275-AE11-31CB63593B09}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}","","PDFShellInfo Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}","AppID","{A5090E95-F1E2-41C8-BDA1-5AEB6C321FDE}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}\LocalServer32","","""%PE_Programs%\%ProgramFolder%\AcroRd32Info.exe"" /PDFShell"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}\ProgID","","PDFShellServer.PDFShellInfo.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}\TypeLib","","{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}\VersionIndependentProgID","","PDFShellServer.PDFShellInfo"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}","","Adobe Acrobat Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\AuxUserType",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\AuxUserType\2","","Acrobat Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\AuxUserType\3","","Adobe Acrobat 8.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\0","","Embed Source,1,8,1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\1","","14,1,64,1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\2","","8,1,1,1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\3","","Link Source,1,4,1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\4","","NotesDocInfo, 1, 1, 2"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\5","","NoteshNote, 1, 1, 1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\6","","3, 1, 32, 1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\7","","2, 1, 16, 1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DataFormats\GetSet\8","","Rich Text Format, 1, 1, 1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DefaultExtension","",".pdf, PDF Files (*.pdf)"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\PDFFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\InprocHandler32","","ole32.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\Insertable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\LocalServer32","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\MiscStatus","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\PersistentHandler","","{F6594A6D-D57F-4EFD-B2C3-DCD9779E382E}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\Printable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\ProgID","","AcroExch.Document.11"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\TypeLib","","{E64169B3-3592-47d2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\Verb",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\Verb\0","","&Open,0,2"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{B801CA65-A1FC-11D0-85AD-444553540000}\VersionIndependentProgID","","AcroExch.Document"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}","","Broker Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}","AppID","{F2383816-917A-46CC-AD2A-5013BED3800F}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}\LocalServer32","","#$q%PE_Programs%\%ProgramFolder%\AcroBroker.exe#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}\ProgID","","AcroBroker.Broker.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}\TypeLib","","{41738EEA-442F-477F-92CF-2889BD6CD7E7}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BD57A9B2-4E7D-4892-9107-9F4106472DA4}\VersionIndependentProgID","","AcroBroker.Broker"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}","","Adobe Reader HTML Preview Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}","AppID","{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}\InprocServer32","","%PE_Programs%\%ProgramFolder%\adoberfp.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}\ProgID","","Adobe.Reader.HTMLPreview.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}\TypeLib","","{BE79C475-D632-4A57-91B3-DA044FA27CDA}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}\VersionIndependentProgID","","Adobe.Reader.HTMLPreview"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}","","AcrobatAccess Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}","AppID","{8A523F4F-AB44-4477-BAB0-151E5936D144}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\InprocServer32","","%PE_Programs%\%ProgramFolder%\plug_ins\Accessibility.api"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\ProgID","","AcroAccess.AcrobatAccess.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{C523F39F-9C83-11D3-9094-00104BD0D535}\VersionIndependentProgID","","AcroAccess.AcrobatAccess"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}","","Adobe PDF Reader"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}","AppID","{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Control","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\DocObject","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage\.fdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage\.pdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage\.xdp","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage\.xfd","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\EnableFullPage\.xfdf","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Implemented Categories",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Implemented Categories\{7DD95801-9882-11CF-9FA9-00AA006C42C4}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Implemented Categories\{7DD95802-9882-11CF-9FA9-00AA006C42C4}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\MiscStatus","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\MiscStatus\1","","131473"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\ProgID","","AcroPDF.PDF.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Programmable","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\ToolboxBitmap32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll, 102"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\Version","","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{CA8A9780-280D-11CF-A24D-444553540000}\VersionIndependentProgID","","AcroPDF.PDF"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}","","PDFShellInfo2 Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}","AppID","{A5090E95-F1E2-41C8-BDA1-5AEB6C321FDE}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}\LocalServer32","","""%PE_Programs%\%ProgramFolder%\AcroRd32Info.exe"" /PDFShell"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}\ProgID","","PDFShellServer.PDFShellInfo2.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}\TypeLib","","{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}\VersionIndependentProgID","","PDFShellServer.PDFShellInfo2"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}","","Adobe PDF Preview Handler for Vista"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}","AppID","{6d2b5079-2f0b-48dd-ab7f-97cec514d30b}"
+RegWrite,"HKLM",0x4,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}","DisableLowILProcessIsolation",0x0
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}","DisplayName","@%PE_Programs%\%ProgramFolder%\pdfprevhndlr.dll,-101"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}\InprocServer32","","%PE_Programs%\%ProgramFolder%\pdfprevhndlr.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}\ProgID","","PDFPrevHndlr.PDFPreviewHandler.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}\TypeLib","","{0F6D3808-7974-4B1A-94C2-3200767EACE8}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DC6EFB56-9CFA-464D-8880-44885D7DC193}\VersionIndependentProgID","","PDFPrevHndlr.PDFPreviewHandler"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DF9A1DA0-23C0-101B-B02E-FDFDFDFDFDFD}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DF9A1DA0-23C0-101B-B02E-FDFDFDFDFDFD}\AutoTreatAs","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{DF9A1DA0-23C0-101B-B02E-FDFDFDFDFDFD}\TreatAs","","{B801CA65-A1FC-11D0-85AD-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{E8978DA6-047F-4E3D-9C78-CDBE46041603}","","PDF Filter"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{E8978DA6-047F-4E3D-9C78-CDBE46041603}\InprocServer32","","%PE_Programs%\%ProgramFolder%\AcroRdIF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{E8978DA6-047F-4E3D-9C78-CDBE46041603}\InprocServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\InProcServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\InProcServer32","ThreadingModel","Both"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F6594A6D-D57F-4EFD-B2C3-DCD9779E382E}","","PDF Persistent Handler"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F6594A6D-D57F-4EFD-B2C3-DCD9779E382E}\PersistentAddinsRegistered",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F6594A6D-D57F-4EFD-B2C3-DCD9779E382E}\PersistentAddinsRegistered\{89BCB740-6119-101A-BCB7-00DD010655AF}","","{E8978DA6-047F-4E3D-9C78-CDBE46041603}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F9DB5320-233E-11D1-9F84-707F02C10627}","","PDF Shell Extension"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F9DB5320-233E-11D1-9F84-707F02C10627}\InprocServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\PDFShell.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F9DB5320-233E-11D1-9F84-707F02C10627}\InprocServer32","ThreadingModel","Apartment"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{F9DB5320-233E-11D1-9F84-707F02C10627}\VersionIndependentProgID","","PDFShell.PDFShell "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}","","PSFactoryBuffer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\InProcServer32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroIEHelperShim.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\CLSID\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\InProcServer32","ThreadingModel","Both"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Folder\ShellEx\ColumnHandlers",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\Folder\ShellEx\ColumnHandlers\{F9DB5320-233E-11D1-9F84-707F02C10627}","","PDF Column Info"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}","","IPDDomDocument"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\{B4848E37-7C66-40A6-9F66-D3A9BC8F4636}","","ISelectText"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\{B4848E37-7C66-40A6-9F66-D3A9BC8F4636}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\{B4848E37-7C66-40A6-9F66-D3A9BC8F4636}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\{B4848E37-7C66-40A6-9F66-D3A9BC8F4636}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\{B4848E37-7C66-40A6-9F66-D3A9BC8F4636}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{00FFD6C4-1A94-44BC-AD3E-8AC18552E3E6}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{03C2AEA5-BEFA-4C84-A187-C9245AC784F6}","","IPDomWord"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{03C2AEA5-BEFA-4C84-A187-C9245AC784F6}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{03C2AEA5-BEFA-4C84-A187-C9245AC784F6}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{03C2AEA5-BEFA-4C84-A187-C9245AC784F6}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{03C2AEA5-BEFA-4C84-A187-C9245AC784F6}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{08A9E040-9A9C-4F42-B5F5-2029B8F17E1D}","","IAcroAXDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{08A9E040-9A9C-4F42-B5F5-2029B8F17E1D}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{08A9E040-9A9C-4F42-B5F5-2029B8F17E1D}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{08A9E040-9A9C-4F42-B5F5-2029B8F17E1D}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{08A9E040-9A9C-4F42-B5F5-2029B8F17E1D}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{0C52A2CC-66F1-4B2B-A9E4-9723791F0BBD}","","IAdobeInitializeWithStream"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{0C52A2CC-66F1-4B2B-A9E4-9723791F0BBD}\NumMethods","","4"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{0C52A2CC-66F1-4B2B-A9E4-9723791F0BBD}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}","","IPDFShellInfo2"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}\NumMethods","","6"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{12BA069D-0FC6-4577-97C6-5DF634CE6E84}\ProxyStubClsid32","","{12BA069D-0FC6-4577-97C6-5DF634CE6E84}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{17F2E344-8227-4AA7-A25A-E89424566BBA}","","IPDFPreviewHandler"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{17F2E344-8227-4AA7-A25A-E89424566BBA}\NumMethods","","3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{17F2E344-8227-4AA7-A25A-E89424566BBA}\ProxyStubClsid32","","{17F2E344-8227-4AA7-A25A-E89424566BBA}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{198F17AE-B921-4308-9543-288D426A5C2B}","","IPDomElement"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{198F17AE-B921-4308-9543-288D426A5C2B}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{198F17AE-B921-4308-9543-288D426A5C2B}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{198F17AE-B921-4308-9543-288D426A5C2B}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{198F17AE-B921-4308-9543-288D426A5C2B}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}","","ISearch"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\TypeLib","","{47A7A4B0-2723-41BA-865E-EBBB7081A602}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2CE4D4CF-B278-4126-AD1E-B622DA2E8339}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2DEA7885-1846-411F-A41E-017A8FD778FF}","","_AcroAXDocEventSink"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2DEA7885-1846-411F-A41E-017A8FD778FF}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2DEA7885-1846-411F-A41E-017A8FD778FF}\ProxyStubClsid32","","{00020420-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2DEA7885-1846-411F-A41E-017A8FD778FF}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{2DEA7885-1846-411F-A41E-017A8FD778FF}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{36DE898D-AD48-40A5-B4B2-123F916BFBAB}","","IProtDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{36DE898D-AD48-40A5-B4B2-123F916BFBAB}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{36DE898D-AD48-40A5-B4B2-123F916BFBAB}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{36DE898D-AD48-40A5-B4B2-123F916BFBAB}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{36DE898D-AD48-40A5-B4B2-123F916BFBAB}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}","","IAcroAXDocShim"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}\NumMethods","","7"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}\ProxyStubClsid32","","{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3B813CE7-7C10-4F84-AD06-9DF76D97A9AA}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3F77C747-A942-45B2-A812-097A1F5CFE6F}","","IBitmapProvider"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3F77C747-A942-45B2-A812-097A1F5CFE6F}\NumMethods","","6"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{3F77C747-A942-45B2-A812-097A1F5CFE6F}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{46B89F5A-769D-4792-AD9A-E3755915CBC3}","","IStatusEvents"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{46B89F5A-769D-4792-AD9A-E3755915CBC3}\ProxyStubClsid","","{00020420-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{46B89F5A-769D-4792-AD9A-E3755915CBC3}\ProxyStubClsid32","","{00020420-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{46B89F5A-769D-4792-AD9A-E3755915CBC3}\TypeLib","","{47A7A4B0-2723-41BA-865E-EBBB7081A602}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{46B89F5A-769D-4792-AD9A-E3755915CBC3}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{4A894040-247E-4AFF-BB08-3489E9905235}","","IPDDomNodeExt"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{4A894040-247E-4AFF-BB08-3489E9905235}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{4A894040-247E-4AFF-BB08-3489E9905235}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{4A894040-247E-4AFF-BB08-3489E9905235}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{4A894040-247E-4AFF-BB08-3489E9905235}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{5007373A-20D7-458F-9FFB-ABC900E3A831}","","IPDomNode"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{5007373A-20D7-458F-9FFB-ABC900E3A831}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{5007373A-20D7-458F-9FFB-ABC900E3A831}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{5007373A-20D7-458F-9FFB-ABC900E3A831}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{5007373A-20D7-458F-9FFB-ABC900E3A831}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{566A7BC7-B295-41B7-A818-12F9E5CA46CA}","","IAdobePreviewHandler"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{566A7BC7-B295-41B7-A818-12F9E5CA46CA}\NumMethods","","10"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{566A7BC7-B295-41B7-A818-12F9E5CA46CA}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{618736E0-3C3D-11CF-810C-00AA00389B71}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{618736E0-3C3D-11CF-810C-00AA00389B71}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{618736E0-3C3D-11CF-810C-00AA00389B71}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{62776AC3-A015-4BA5-A1C7-DCD765881249}","","IAdobeInitializeWithFile"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{62776AC3-A015-4BA5-A1C7-DCD765881249}\NumMethods","","4"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{62776AC3-A015-4BA5-A1C7-DCD765881249}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{671B6145-4169-4ADD-9AF3-E6990EB2B325}","","IBitmapConsumer"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{671B6145-4169-4ADD-9AF3-E6990EB2B325}\NumMethods","","5"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{671B6145-4169-4ADD-9AF3-E6990EB2B325}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8452-7646-11D1-B90B-00A0C9259304}","","IFields"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8452-7646-11D1-B90B-00A0C9259304}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8452-7646-11D1-B90B-00A0C9259304}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8452-7646-11D1-B90B-00A0C9259304}\TypeLib","","{7CD06992-50AA-11D1-B8F0-00A0C9259304}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8452-7646-11D1-B90B-00A0C9259304}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8454-7646-11D1-B90B-00A0C9259304}","","IField"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8454-7646-11D1-B90B-00A0C9259304}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8454-7646-11D1-B90B-00A0C9259304}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8454-7646-11D1-B90B-00A0C9259304}\TypeLib","","{7CD06992-50AA-11D1-B8F0-00A0C9259304}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{673E8454-7646-11D1-B90B-00A0C9259304}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{6E67BCC1-D776-44BB-9DC8-C09F542C3CB6}","","IAcroIEHlprObj"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{6E67BCC1-D776-44BB-9DC8-C09F542C3CB6}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{6E67BCC1-D776-44BB-9DC8-C09F542C3CB6}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{6E67BCC1-D776-44BB-9DC8-C09F542C3CB6}\TypeLib","","{5F226421-415D-408D-9A09-0DCD94E25B48}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{6E67BCC1-D776-44BB-9DC8-C09F542C3CB6}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7CD069A0-50AA-11D1-B8F0-00A0C9259304}","","IAFormApp"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7CD069A0-50AA-11D1-B8F0-00A0C9259304}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7CD069A0-50AA-11D1-B8F0-00A0C9259304}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7CD069A0-50AA-11D1-B8F0-00A0C9259304}\TypeLib","","{7CD06992-50AA-11D1-B8F0-00A0C9259304}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7CD069A0-50AA-11D1-B8F0-00A0C9259304}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}","","ISPOpenDocuments"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}\NumMethods","","21"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}\ProxyStubClsid32","","{7EA23D88-569E-4EFD-9851-A1528A7745F9}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{7EA23D88-569E-4EFD-9851-A1528A7745F9}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{81F9B44F-BA3A-4F5D-9B51-090C74A9B3A4}","","IAccID"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{81F9B44F-BA3A-4F5D-9B51-090C74A9B3A4}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{81F9B44F-BA3A-4F5D-9B51-090C74A9B3A4}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{81F9B44F-BA3A-4F5D-9B51-090C74A9B3A4}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{81F9B44F-BA3A-4F5D-9B51-090C74A9B3A4}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}","","IPDFShellInfo"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}\NumMethods","","7"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}\TypeLib","","{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{8D46C1B6-BBAB-450D-A61F-4DDC898B21D4}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E6-4981-101B-9CA8-9240CE2738AE}","","CAcroApp"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E6-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E6-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E6-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E6-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E7-4981-101B-9CA8-9240CE2738AE}","","CAcroPDDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E7-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E7-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E7-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E7-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E8-4981-101B-9CA8-9240CE2738AE}","","CAcroAVDoc"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E8-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E8-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E8-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E8-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E9-4981-101B-9CA8-9240CE2738AE}","","CAcroAVPageView"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E9-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E9-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E9-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3E9-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EA-4981-101B-9CA8-9240CE2738AE}","","CAcroPDPage"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EA-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EA-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EA-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EA-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EB-4981-101B-9CA8-9240CE2738AE}","","CAcroPDAnnot"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EB-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EB-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EB-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EB-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EC-4981-101B-9CA8-9240CE2738AE}","","CAcroPoint"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EC-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EC-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EC-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EC-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3ED-4981-101B-9CA8-9240CE2738AE}","","CAcroRect"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3ED-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3ED-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3ED-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3ED-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EE-4981-101B-9CA8-9240CE2738AE}","","CAcroTime"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EE-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EE-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EE-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EE-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EF-4981-101B-9CA8-9240CE2738AE}","","CAcroPDTextSelect"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EF-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EF-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EF-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3EF-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F0-4981-101B-9CA8-9240CE2738AE}","","CAcroHiliteList"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F0-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F0-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F0-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F0-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F1-4981-101B-9CA8-9240CE2738AE}","","CAcroPDBookmark"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F1-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F1-4981-101B-9CA8-9240CE2738AE}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F1-4981-101B-9CA8-9240CE2738AE}\TypeLib","","{E64169B3-3592-47D2-816E-602C5C13F328}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{9B4CD3F1-4981-101B-9CA8-9240CE2738AE}\TypeLib","Version","1.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{D3F22039-E3CF-4FC4-9A30-426A46056B8C}","","IBroker"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{D3F22039-E3CF-4FC4-9A30-426A46056B8C}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{D3F22039-E3CF-4FC4-9A30-426A46056B8C}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{D3F22039-E3CF-4FC4-9A30-426A46056B8C}\TypeLib","","{41738EEA-442F-477F-92CF-2889BD6CD7E7}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{D3F22039-E3CF-4FC4-9A30-426A46056B8C}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{E790E1D1-9DE8-4853-8AC6-933D4FD9C927}","","_IAcroAXDocShimEvents"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{E790E1D1-9DE8-4853-8AC6-933D4FD9C927}\ProxyStubClsid","","{00020420-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{E790E1D1-9DE8-4853-8AC6-933D4FD9C927}\ProxyStubClsid32","","{00020420-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{E790E1D1-9DE8-4853-8AC6-933D4FD9C927}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{E790E1D1-9DE8-4853-8AC6-933D4FD9C927}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}","","IAcroFDFHandler"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\NumMethods","","7"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\ProxyStubClsid32","","{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\TypeLib","","{05BFD3F1-6319-4F30-B752-C7A22889BCC4}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{EE5A151A-AD2A-4CEE-AD65-228B59F5B4AD}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F1E6C7A4-6B15-4C06-B1EF-88A4F2A886CB}","","IBitmapFactory"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F1E6C7A4-6B15-4C06-B1EF-88A4F2A886CB}\NumMethods","","4"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F1E6C7A4-6B15-4C06-B1EF-88A4F2A886CB}\ProxyStubClsid32","","{671B6145-4169-4ADD-9AF3-E6990EB2B325}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F9F2FE81-F764-4BD0-AFA5-5DE841DDB625}","","IGetPDDomNode"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F9F2FE81-F764-4BD0-AFA5-5DE841DDB625}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F9F2FE81-F764-4BD0-AFA5-5DE841DDB625}\ProxyStubClsid32","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F9F2FE81-F764-4BD0-AFA5-5DE841DDB625}\TypeLib","","{C523F390-9C83-11D3-9094-00104BD0D535}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{F9F2FE81-F764-4BD0-AFA5-5DE841DDB625}\TypeLib","Version","3.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}","","IAcroIEHelperShimObj"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\NumMethods","","7"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\ProxyStubClsid","","{00020424-0000-0000-C000-000000000046}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\ProxyStubClsid32","","{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\TypeLib","","{2991F100-D9C3-4243-82A2-A718747FC0CF}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\TypeLib","Version","1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\Interface\{FDA6EEC2-325B-4E8A-A8C7-1C75DFBE72D5}\TypeLib","Version","1.0"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/pdf","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/pdf","Extension",".pdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.acrobat-security-settings","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.acrobat-security-settings","Extension",".acrobatsecuritysettings"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.pdfxml","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.pdfxml","Extension",".pdfxml"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.pdx","Extension",".pdx"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xdp+xml","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xdp+xml","Extension",".xdp"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xfd+xml","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xfd+xml","Extension",".xfd"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xfdf","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.adobe.xfdf","Extension",".xfdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.fdf","CLSID","{CA8A9780-280D-11CF-A24D-444553540000}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\MIME\Database\Content Type\application/vnd.fdf","Extension",".fdf"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PdfFile.OpenDocuments","","Adobe Acrobat Sharepoint OpenDocuments Component"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PdfFile.OpenDocuments\CurVer","","AdobeAcrobat.OpenDocuments.3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFPrevHndlr.PDFPreviewHandler","","Adobe PDF Preview Handler for Vista"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFPrevHndlr.PDFPreviewHandler.1","","Adobe PDF Preview Handler for Vista"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFPrevHndlr.PDFPreviewHandler.1\CLSID","","{DC6EFB56-9CFA-464D-8880-44885D7DC193}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFPrevHndlr.PDFPreviewHandler\CLSID","","{DC6EFB56-9CFA-464D-8880-44885D7DC193}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFPrevHndlr.PDFPreviewHandler\CurVer","","PDFPrevHndlr.PDFPreviewHandler.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShell.PDFShell","","Adobe PDF Shell Extension"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShell.PDFShell.1","","Adobe PDF Shell Extension "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShell.PDFShell.1\CLSID","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShell.PDFShell\CLSID","","{F9DB5320-233E-11D1-9F84-707F02C10627}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShell.PDFShell\CurVer","","PDFShell.PDFShell.1 "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo","","PDFShellInfo Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo.1","","PDFShellInfo Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo.1\CLSID","","{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo\CLSID","","{98D9A6F1-4696-4B5E-A2E8-36B3F9C1E12C}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo\CurVer","","PDFShellServer.PDFShellInfo.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo2","","PDFShellInfo2 Class"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo2.1","","PDFShellServer.PDFShellInfo2.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo2.1\CLSID","","{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo2\CLSID","","{D38406DA-E8AA-484b-B80D-3D3DBDCC2FB2}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDFShellServer.PDFShellInfo2\Cur Ver","","PDFShellServer.PDFShellInfo2.1"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDXFileType","","Acrobat Catalog Index"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDXFileType\DefaultIcon","","X:\Windows\Installer\{AC76BA86-7AD7-1033-7B44-AB0000000001}\PDXFile_8.ico,0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDXFileType\shell","","Read"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDXFileType\shell\Read","","Open with Adobe Reader XI"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\PDXFileType\shell\Read\command","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q #$q#$p1#$q"
+RegWrite,"HKLM",0x7,"Tmp_Software\Classes\PDXFileType\shell\Read\command","command","34TL`i`Z5(=T?6!$,CC!ReaderProgramFiles>fWDK6Qbnd93&(S^FJi40 #$q#$p1#$q"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\SOFTWARE\Adobe",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\SOFTWARE\Adobe\Acrobat",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\SOFTWARE\Adobe\Acrobat\Exe","","#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q"
+//--
+run,%ScriptFile%,WriteSettings_TypeLib,#1
+RegHiveUnLoad,Tmp_Software
+
+[WriteSettings_x64]
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,"HKLM",0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe","","%PE_Programs%\%ProgramFolder%\%ProgramEXE%"
+RegWrite,"HKLM",0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\App Paths\AcroRd32.exe","Path","%PE_Programs%\%ProgramFolder%\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\PreviewHandlers","{DC6EFB56-9CFA-464D-8880-44885D7DC193}","Adobe PDF Preview Handler for Vista"
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0",,
+RegWrite,"HKLM",0x4,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown","bPurchaseAcro",0x0
+RegWrite,"HKLM",0x4,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown","bUpdater",0x0
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultExecMenuItems","tWhiteList","Close|GeneralInfo|Quit|FirstPage|PrevPage|NextPage|LastPage|ActualSize|FitPage|FitWidth|FitHeight|SinglePage|OneColumn|TwoPages|TwoColumns|ZoomViewIn|ZoomViewOut|ShowHideBookmarks|ShowHideThumbnails|Print|GoToPage|ZoomTo|GeneralPrefs|SaveAs|FullScreenMode|OpenOrganizer|Scan|Web2PDF:OpnURL|AcroSendMail:SendMail|Spelling:Check Spelling|PageSetup|Find|FindSearch|GoBack|GoForward|FitVisible|ShowHideArticles|ShowHideFileAttachment|ShowHideAnnotManager|ShowHideFields|ShowHideOptCont|ShowHideModelTree|ShowHideSignatures|InsertPages|ExtractPages|ReplacePages|DeletePages|CropPages|RotatePages|AddFileAttachment|FindCurrentBookmark|BookmarkShowLocation|GoBackDoc|GoForwardDoc|DocHelpUserGuide|HelpReader|rolReadPage|HandMenuItem|ZoomDragMenuItem|CollectionPreview|CollectionHome|CollectionDetails|CollectionShowRoot|&Pages|Co&ntent|&Forms|Action &Wizard|Recognize &Text|P&rotection|&Sign && Certify|Doc&ument Processing|Print Pro&duction|Ja&vaScript|&Accessibility|Analy&ze|&Annotations|D&rawing Markups|Revie&w"
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchAttachmentPerms","tBuiltInPermList","version:1|.ade:3|.adp:3|.app:3|.arc:3|.arj:3|.asp:3|.bas:3|.bat:3|.bz:3|.bz2:3|.cab:3|.chm:3|.class:3|.cmd:3|.com:3|.command:3|.cpl:3|.crt:3|.csh:3|.desktop:3|.dll:3|.exe:3|.fxp:3|.gz:3|.hex:3|.hlp:3|.hqx:3|.hta:3|.inf:3|.ini:3|.ins:3|.isp:3|.its:3|.job:3|.js:3|.jse:3|.ksh:3|.lnk:3|.lzh:3|.mad:3|.maf:3|.mag:3|.mam:3|.maq:3|.mar:3|.mas:3|.mat:3|.mau:3|.mav:3|.maw:3|.mda:3|.mdb:3|.mde:3|.mdt:3|.mdw:3|.mdz:3|.msc:3|.msi:3|.msp:3|.mst:3|.ocx:3|.ops:3|.pcd:3|.pi:3|.pif:3|.prf:3|.prg:3|.pst:3|.rar:3|.reg:3|.scf:3|.scr:3|.sct:3|.sea:3|.shb:3|.shs:3|.sit:3|.tar:3|.taz:3|.tgz:3|.tmp:3|.url:3|.vb:3|.vbe:3|.vbs:3|.vsmacros:3|.vss:3|.vst:3|.vsw:3|.webloc:3|.ws:3|.wsc:3|.wsf:3|.wsh:3|.z:3|.zip:3|.zlo:3|.zoo:3|.pdf:2|.fdf:2|.jar:3|.pkg:3|.tool:3|.term:3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tFlashContentSchemeWhiteList","http|https|ftp|rtmp|rtmpe|rtmpt|rtmpte|rtmps|mailto"
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tSchemePerms","version:2|shell:3|hcp:3|ms-help:3|ms-its:3|ms-itss:3|its:3|mk:3|mhtml:3|help:3|disk:3|afp:3|disks:3|telnet:3|ssh:3|acrobat:2|mailto:2|file:1|rlogin:3|javascript:4|data:3"
+RegWrite,"HKLM",0x1,"Tmp_Software\Policies\Adobe\Acrobat Reader\11.0\FeatureLockDown\cDefaultLaunchURLPerms","tSponsoredContentSchemeWhiteList","http|https"
+//--
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{5AAABB05-F91B-4bce-AB18-D8319DEDABA8}","DLLSurrogate",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{6236FF8C-E747-4173-86D3-99F511B61DF3}","","PDFPrevHndlr"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{77AB4812-5411-4EA9-8437-77AD0F230302}","","AcroIEHelperShim"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{A5090E95-F1E2-41C8-BDA1-5AEB6C321FDE}","","PDFShellInfo"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}","","AcroPDF"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{BDE0D630-7801-47cd-984E-1F0AFBC5ACBF}","DLLSurrogate",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\{F2383816-917A-46CC-AD2A-5013BED3800F}","","AcroBroker"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\AcroBroker.EXE","AppID","{F2383816-917A-46CC-AD2A-5013BED3800F}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\AcroIEHelperShim.DLL","AppID","{77AB4812-5411-4EA9-8437-77AD0F230302}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\AcroPDF.DLL","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\AcroPDF.DLL","AppID","{BBAA0E44-3862-490C-8E63-AC2D2D6EF733}"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes\AppID\PDFPrevHndlr.DLL","AppID","{6236FF8C-E747-4173-86D3-99F511B61DF3}"
+//--
+run,%ScriptFile%,WriteSettings_TypeLib
+RegHiveUnLoad,Tmp_Software
+
+[WriteSettings_TypeLib]
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}\1.0","","Adobe Acrobat 7.0 Browser Control Type Library 1.0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}\1.0\0\win32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroPDF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{05BFD3F1-6319-4F30-B752-C7A22889BCC4}\1.0\HELPDIR","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}\1.0","","PDFPrevHndlr 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\pdfprevhndlr.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{0F6D3808-7974-4B1A-94C2-3200767EACE8}\1.0\HELPDIR","","%PE_Programs%\%ProgramFolder%\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}\1.0","","AcroIEHelperShim 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}\1.0\0\win32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroIEHelperShim.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{2991F100-D9C3-4243-82A2-A718747FC0CF}\1.0\HELPDIR","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}\1.0","","AcroBrokerLib"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\AcroBroker.exe"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41738EEA-442F-477F-92CF-2889BD6CD7E7}\1.0\HELPDIR","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}\1.0","","PDFShellServer 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\AcroRd32.dll\2"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{41C5FFFE-36DD-415D-9ED0-2976A342A1C8}\1.0\HELPDIR","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}\1.0","","AcroIEHelper 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}\1.0\0\win32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\AcroIEHelper.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{5F226421-415D-408D-9A09-0DCD94E25B48}\1.0\HELPDIR","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}\1.0","","PDFShell 1.0 Type Library "
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}\1.0\0\win32","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\pdfshell.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{67E94227-7662-4050-9C72-746983CF37A2}\1.0\HELPDIR","","%LiveCommonFiles%\Adobe\Acrobat\ActiveX\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}\1.0","","PDFFilter 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}\1.0\0","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\AcroRdIF.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{789AD2D7-E1C2-4EC7-A049-2DB5BB4CB57A}\1.0\HELPDIR","","%PE_Programs%\%ProgramFolder%\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}\1.0","","AFormAut 1.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\plug_ins\AcroForm.api"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{7CD06992-50AA-11D1-B8F0-00A0C9259304}\1.0\HELPDIR","",""
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}\1.0","","Adobe Reader File Preview Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}\1.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}\1.0\0\win32","","%PE_Programs%\%ProgramFolder%\adoberfp.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}\1.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{BE79C475-D632-4A57-91B3-DA044FA27CDA}\1.0\HELPDIR","","%PE_Programs%\%ProgramFolder%\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}\3.0","","Acrobat Access 3.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}\3.0\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}\3.0\0\win32","","%PE_Programs%\%ProgramFolder%\plug_ins\Accessibility.api"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}\3.0\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{C523F390-9C83-11D3-9094-00104BD0D535}\3.0\HELPDIR","","%PE_Programs%\%ProgramFolder%\plug_ins\"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}\1.1","","Adobe Acrobat 8.0 Type Library"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}\1.1\0",,
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}\1.1\0\win32","","%PE_Programs%\%ProgramFolder%\AcroRd32.dll"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}\1.1\FLAGS","","0"
+RegWrite,"HKLM",0x1,"Tmp_Software\Classes#1\TypeLib\{E64169B3-3592-47d2-816E-602C5C13F328}\1.1\HELPDIR","","%PE_Programs%\%ProgramFolder%\"
+
+[Update_Container]
+Echo,"The Container Files Is Being Downloaded... Please Wait.."
+Set,%ProvideFiles%,%ProgCache%\%ProgramFolder%
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%SetupFile%,%SetupURL%,NoExitOnError
+If,Not,ExistFile,%ProvideFiles%\%SetupFile%,EchoExtended,"Error: %FileContainer% has not been downloaded.",Warn,,Message,5,Exit
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ProvideFiles%\%SetupFile%#$q -y -o#$q%ScriptDir%#$q"
+FileRename,%ScriptDir%\AdobeReaderXI_file.script,%FileContainer%
+DirDeleteQ,%ProvideFiles%
+
+[AuthorEncoded]
+AcroRd324848.ico=1801,2402
+Logo=AcroRd324848.ico
+
+[EncodedFile-AuthorEncoded-AcroRd324848.ico]
+lines=0
+0=eJztml1MFFcYhsfIP4nBhGKCaJogURI13qhRYtALLzTxAo0mJMYatfHCeGGiF21pg9baWmtbCi0V+2NBBRFUYK2CghYroghrFRD8QURcVlcRBBGq+PXszJk9Z8535oe0SWnSIQ9ZZmd332ffb4bZzCrKGPIza5ZCfr+tFCQoSoyiKNMIZJWyVtHW+5f0BEW2jCGMJQQTQglhhPBRShjNGEwzj6G3IwjjCRMIsYS4UUoszTieZtazv0WIJ8wkzCbMG6XMphnjaWb9fff/nURYRkglvDNKSaUZk2hmfWZm0vXvErYS0kYpW2nGZTSzPu+zg4I+A2s+5djF8YmEnQHGjv2YskNgOyWd4yPKh5Q0jg8o7xPeAzpL+r46LyhoD5jzOcduDqeecj9rt3SJG/Oi+0Mcy/8lyNnL8QWHnauVp5WflRvzwvkzAPO1wFccTl3t/GRu9l5i/uDgLGBkCnxjQO7K+zpxlPlZuRm9cP7vwJxvObJMwK4j93PuhfPvA8z3Atkcdq5mfpkmflZu2Avn/wGM7BfIgSlT8uHAgVY4dqwN1q8/B+Hh+y18zTyt/Jx74fw/A+MngR9VTp7sgLlzS2Dz5hro738FFy96ITb2oMQ5h2LW50jc5F5i/pCQXAgJ+QURHHwgQG3tY7JOc0xKckFf35/Q2NgNMTGHkKuGWacyPys30StTkv8gYPIM7NnTCHv3NoLmmgvLl1eBf6mq8pBZyjW4GvvkO3XiZu+F8+cD47DAIZXw8MNw5Eg7HD/eAZMmFavrdu9uVB3S068JvrkCYp9O3eReOH8hef4jJhQECA0tgE2b6qCz8wVs29ZAZqcYWlufw9DQMMyY4TL4MsQ+sZu9l9EJ5y8CzFFTJk4shczMW9De3g/l5V10jrwGV4bYq+a1YEE5ZGe3ws2bPdDVNUC6vUeOB4WOvHD+42DkmIRixIQJpZCWdgMePRpUHTIybsG0aac410IwdltA7ndBRUUX1NT41C4XLjwDu3Zpc3j06H1JZ3gOxfyhoaVkNkpMOGGK7rtoUbX6+i9fvoaiok6S7Qns3NkMycnnYdy4E4FO16y5TN7vXli6tBq5eTwDUF/fzXVm7It55UnyuwBTZkMpRwmUlWlztHp1HURFlcGKFbWQlXUXqqt9Ki5XF/h8g7B4cbXam9ZhEcTFlcGWLW7o7h6CJUtEL3EONSec/xQY+dUBJzlcMGeO1kFDQw9yXLu2AdzuHti40U2OWa2Ql9cBJSUetat9+9pgw4Z6iI7WnYpN9kHmhPOXg3NOCzDnigqf6pCcfCngmJJSB1euPCPHqtMm/eE5Ne6D2AnnPwvOOcNRwVFOsjao+bOzO1S36dMvQFNTH5mRSov+xFnlveROYv6wsHNgT5WB0NBKDs0tMrISvN4hcjwaIrfPknOOHjLTVwN+uEPZvOpOLlMnnP83GBnnOYyeGRkdagf5+V4oKPAa/HCHVl4yJ80H5/8dnHNBoJqiuc2fr83Q4OAwOee+JHEU+xO97J1wfv/rOKFG4CIHc/R4htT80dE1yM/YoZmXtRPOfwXsuSxQy8EcExMb4M0btQJYtapF6mfsztoJ93QG5Q8PrwcZYWFXTajjMHru2NFJzoV64fXrN5CT40V+rEczLysnrSOc3w3OaRAwOrvdL8j/qzby2WYAmpsHJI58f3ZOsp7OS/JfB3v+ELiGiIm5AcPDQM4jr5Pjz1O1g6go5oj7E73MnIw+OH8jjJwbiOTkO9DSMqj6bt+unQ8lJDRxjnyH4pyKTvw+ZvTB+W+Cc5oFmgKsXNlBPp/1qn7r1nWq+RMTW6mf2KO5k7En3A/O738NGbdM1uu0GEhJeQCFhb2qZ2pqJzmG+ufH6Ii70534WZT5MBcxf0TEbYiIuDNCbiPi4++Rz5avYOrUNnKO2Us+jzwXHPkOzZzMOmI+OH8bYO6ZINtW5y45l/fBw4evoLJyACZPbjP4sT5FJyc+zAXnvw//DO0Umetdyh0bJ9EHu+D8D0Cj82+gP0cHReYmc2I+9v1oLjj/Q9DwULpGiIdDfy4zN9GHd7Lz0Txwfj2Hl/IoQGTkY0v4bdnjZX4yJ5mPmQvz4PKr1+9wTh/lyQjwcYh+opfo48SFdaKw63fq9VOc9ymlm/LMAfq2+mNFNysfOxdjJwq7fqpev2aZZXl7CL0czyXw9/dYeFn5mPWCO1HY9Wv1+wMsu5hZz9dH6bdB3050451EF5mHrBPmobDvD6jfgWDZZbn9uV5wDFBeCujr+W11JysXYyfWHtpccdn/69+f+X/5F5e/AIb+BR54nBNwTC7KD0oxNjKxMLHQy0zOZxgFIwnsU4XQO9mwy8fplaQwMAEAtdIH+sd8AdEBAAAAAgAAACwAAAC5BgAAAAAAAAEAAAAAAAAAAAAAAA
+
+[InterfaceEncoded]
+AcroRd324848.ico=1801,2402
+
+[EncodedFile-InterfaceEncoded-AcroRd324848.ico]
+lines=0
+0=eJztml1MFFcYhsfIP4nBhGKCaJogURI13qhRYtALLzTxAo0mJMYatfHCeGGiF21pg9baWmtbCi0V+2NBBRFUYK2CghYroghrFRD8QURcVlcRBBGq+PXszJk9Z8535oe0SWnSIQ9ZZmd332ffb4bZzCrKGPIza5ZCfr+tFCQoSoyiKNMIZJWyVtHW+5f0BEW2jCGMJQQTQglhhPBRShjNGEwzj6G3IwjjCRMIsYS4UUoszTieZtazv0WIJ8wkzCbMG6XMphnjaWb9fff/nURYRkglvDNKSaUZk2hmfWZm0vXvErYS0kYpW2nGZTSzPu+zg4I+A2s+5djF8YmEnQHGjv2YskNgOyWd4yPKh5Q0jg8o7xPeAzpL+r46LyhoD5jzOcduDqeecj9rt3SJG/Oi+0Mcy/8lyNnL8QWHnauVp5WflRvzwvkzAPO1wFccTl3t/GRu9l5i/uDgLGBkCnxjQO7K+zpxlPlZuRm9cP7vwJxvObJMwK4j93PuhfPvA8z3Atkcdq5mfpkmflZu2Avn/wGM7BfIgSlT8uHAgVY4dqwN1q8/B+Hh+y18zTyt/Jx74fw/A+MngR9VTp7sgLlzS2Dz5hro738FFy96ITb2oMQ5h2LW50jc5F5i/pCQXAgJ+QURHHwgQG3tY7JOc0xKckFf35/Q2NgNMTGHkKuGWacyPys30StTkv8gYPIM7NnTCHv3NoLmmgvLl1eBf6mq8pBZyjW4GvvkO3XiZu+F8+cD47DAIZXw8MNw5Eg7HD/eAZMmFavrdu9uVB3S068JvrkCYp9O3eReOH8hef4jJhQECA0tgE2b6qCz8wVs29ZAZqcYWlufw9DQMMyY4TL4MsQ+sZu9l9EJ5y8CzFFTJk4shczMW9De3g/l5V10jrwGV4bYq+a1YEE5ZGe3ws2bPdDVNUC6vUeOB4WOvHD+42DkmIRixIQJpZCWdgMePRpUHTIybsG0aac410IwdltA7ndBRUUX1NT41C4XLjwDu3Zpc3j06H1JZ3gOxfyhoaVkNkpMOGGK7rtoUbX6+i9fvoaiok6S7Qns3NkMycnnYdy4E4FO16y5TN7vXli6tBq5eTwDUF/fzXVm7It55UnyuwBTZkMpRwmUlWlztHp1HURFlcGKFbWQlXUXqqt9Ki5XF/h8g7B4cbXam9ZhEcTFlcGWLW7o7h6CJUtEL3EONSec/xQY+dUBJzlcMGeO1kFDQw9yXLu2AdzuHti40U2OWa2Ql9cBJSUetat9+9pgw4Z6iI7WnYpN9kHmhPOXg3NOCzDnigqf6pCcfCngmJJSB1euPCPHqtMm/eE5Ne6D2AnnPwvOOcNRwVFOsjao+bOzO1S36dMvQFNTH5mRSov+xFnlveROYv6wsHNgT5WB0NBKDs0tMrISvN4hcjwaIrfPknOOHjLTVwN+uEPZvOpOLlMnnP83GBnnOYyeGRkdagf5+V4oKPAa/HCHVl4yJ80H5/8dnHNBoJqiuc2fr83Q4OAwOee+JHEU+xO97J1wfv/rOKFG4CIHc/R4htT80dE1yM/YoZmXtRPOfwXsuSxQy8EcExMb4M0btQJYtapF6mfsztoJ93QG5Q8PrwcZYWFXTajjMHru2NFJzoV64fXrN5CT40V+rEczLysnrSOc3w3OaRAwOrvdL8j/qzby2WYAmpsHJI58f3ZOsp7OS/JfB3v+ELiGiIm5AcPDQM4jr5Pjz1O1g6go5oj7E73MnIw+OH8jjJwbiOTkO9DSMqj6bt+unQ8lJDRxjnyH4pyKTvw+ZvTB+W+Cc5oFmgKsXNlBPp/1qn7r1nWq+RMTW6mf2KO5k7En3A/O738NGbdM1uu0GEhJeQCFhb2qZ2pqJzmG+ufH6Ii70534WZT5MBcxf0TEbYiIuDNCbiPi4++Rz5avYOrUNnKO2Us+jzwXHPkOzZzMOmI+OH8bYO6ZINtW5y45l/fBw4evoLJyACZPbjP4sT5FJyc+zAXnvw//DO0Umetdyh0bJ9EHu+D8D0Cj82+gP0cHReYmc2I+9v1oLjj/Q9DwULpGiIdDfy4zN9GHd7Lz0Txwfj2Hl/IoQGTkY0v4bdnjZX4yJ5mPmQvz4PKr1+9wTh/lyQjwcYh+opfo48SFdaKw63fq9VOc9ymlm/LMAfq2+mNFNysfOxdjJwq7fqpev2aZZXl7CL0czyXw9/dYeFn5mPWCO1HY9Wv1+wMsu5hZz9dH6bdB3050451EF5mHrBPmobDvD6jfgWDZZbn9uV5wDFBeCujr+W11JysXYyfWHtpccdn/69+f+X/5F5e/AIb+BR54nBNwTC7KD0oxNjKxMLHQy0zOZxgFIwnsU4XQO9mwy8fplaQwMAEAtdIH+sd8AdEBAAAAAgAAACwAAAC5BgAAAAAAAAEAAAAAAAAAAAAAAA
+

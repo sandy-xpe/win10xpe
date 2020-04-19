@@ -1,0 +1,689 @@
+[Main]
+Title=PPPoE Network (ADSL, Phone)
+Type=XPEPlugin
+Description=Point-to-Point Protocol over Ethernet (PPPoE). It is mainly used with DSL services where individual users connect to the DSL modem over Ethernet.
+Author=KYHI
+Date=2019.10.05
+Credits=TheOven.org Forum
+Contact=
+Version=002
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+Interface=InterfaceMain
+History001=KYHI Initial XPE Packed Plugin Created 2019.09.24
+History002=KYHI - Tested & Confirmed with Win10/18990 - 2019.10.05
+
+[InterfaceMain]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,7,133,86
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,64,122,21,"PPPoE Network","__Start Menu Folder Name"
+Image_Software=Image.jpg,1,5,145,7,300,114
+HomePage_WebLabel="Home Page",1,10,450,8,54,18,http://theoven.org/index.php?board=39.0
+Option_Button="Advanced User Options",1,8,7,100,126,20,AdvancedInterface,0,True,_AdvancedInterface_,True,"__Display Advanced User Options Interface"
+CodeBevel=CodeBevel,1,12,4,127,442,89
+pTextLabel1="This PPPoE Network Connection will use the Win10XPE Default Network Profile = ADSL",1,1,10,130,425,18,8,Normal
+pTextLabel2="Type In Your > User Name & Password < To Create PPPoE Connection Shortcuts",1,1,10,145,425,18,8,Normal
+PPPoEUserName_TextBox="User Name: ",1,0,10,185,200,21,
+PPPoEPassword_TextBox="User Password: ",1,0,230,185,200,21,
+
+[Variables]
+%Advanced%=False
+%CustomBook%=False
+%PPPoEServiceName%=ADSL
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistDir,%GTarget%\ProgramData\Microsoft\Network\Connections\Pbk,DirMake,%GTarget%\ProgramData\Microsoft\Network\Connections\Pbk
+If,ExistFile,%GCustom%\PPPoE_PBK\rasphone.pbk,Set,%CustomBook%,True
+If,%Advanced%%CustomBook%,Equal,TrueTrue,FileCopy,%GCustom%\PPPoE_PBK\rasphone.pbk,%GTarget%\ProgramData\Microsoft\Network\Connections\Pbk
+Else,ExtractFile,%ScriptFile%,Folder,rasphone.pbk,%GTarget%\ProgramData\Microsoft\Network\Connections\Pbk
+//--
+Run,%ScriptFile%,PPPoE_Services
+//--
+Run,%ScriptFile%,Add_ShortCuts
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\Windows\TAPI\*
+\Windows\inf\TAPISRV\*
+\Windows\inf\modemcsa.inf
+\Windows\inf\msports.inf
+\Windows\System32\ras\*
+\Windows\System32\NetworkList\*
+\Windows\System32\Drivers\modem.sys
+\Windows\System32\Drivers\parport.sys
+\Windows\System32\Drivers\raspppoe.sys
+\Windows\System32\Drivers\serenum.sys
+\Windows\System32\Drivers\serial.sys
+\Windows\System32\Drivers\tunnel.sys
+\Windows\System32\apds.dll
+\Windows\System32\authfwcfg.dll
+\Windows\System32\AuthFWGP.dll
+\Windows\System32\bthserv.dll
+\Windows\System32\capisp.dll
+\Windows\System32\cmcfg32.dll
+\Windows\System32\cmdial32.dll
+\Windows\System32\cmifw.dll
+\Windows\System32\cmlua.dll
+\Windows\System32\cmpbk32.dll
+\Windows\System32\cmstplua.dll
+\Windows\System32\cmutil.dll
+\Windows\System32\CompMgmtLauncher.exe
+\Windows\System32\connect.dll
+\Windows\System32\ctfmon.exe
+\Windows\System32\dfshim.dll
+\Windows\System32\dialer.exe
+\Windows\System32\difxapi.dll
+\Windows\System32\dskquota.dll
+\Windows\System32\dtsh.dll
+\Windows\System32\efscore.dll
+\Windows\System32\efslsaext.dll
+\Windows\System32\f3ahvoas.dll
+\Windows\System32\fdWCN.dll
+\Windows\System32\framedyn.dll
+\Windows\System32\fwcfg.dll
+\Windows\System32\FwRemoteSvr.dll
+\Windows\System32\hidphone.tsp
+\Windows\System32\ifmon.dll
+\Windows\System32\inetmib1.dll
+\Windows\System32\iyuv_32.dll
+\Windows\System32\kmddsp.tsp
+\Windows\System32\lltdapi.dll
+\Windows\System32\lltdsvc.dll
+\Windows\System32\loadperf.dll
+\Windows\System32\luainstall.dll
+\Windows\System32\mapi32.dll
+\Windows\System32\mapistub.dll
+\Windows\System32\mdminst.dll
+\Windows\System32\modemui.dll
+\Windows\System32\mprmsg.dll
+\Windows\System32\mscat32.dll
+\Windows\System32\MsCtfMonitor.dll
+\Windows\System32\msctfp.dll
+\Windows\System32\msctfui.dll
+\Windows\System32\msdelta.dll
+\Windows\System32\msdt.exe
+\Windows\System32\msdtc.exe
+\Windows\System32\msdtckrm.dll
+\Windows\System32\msdtclog.dll
+\Windows\System32\msdtcprx.dll
+\Windows\System32\msdtctm.dll
+\Windows\System32\msdtcuiu.dll
+\Windows\System32\msdtcVSp1res.dll
+\Windows\System32\mspatcha.dll
+\Windows\System32\msrle32.dll
+\Windows\System32\mssip32.dll
+\Windows\System32\msutb.dll
+\Windows\System32\muifontsetup.dll
+\Windows\System32\Nlsdl.dll
+\Windows\System32\ntprint.dll
+\Windows\System32\odbcad32.exe
+\Windows\System32\pnidui.dll
+\Windows\System32\prnfldr.dll
+\Windows\System32\rasadhlp.dll
+\Windows\System32\rasapi32.dll
+\Windows\System32\rasauto.dll
+\Windows\System32\rasautou.exe
+\Windows\System32\raschap.dll
+\Windows\System32\rasctrnm.h
+\Windows\System32\rasctrs.dll
+\Windows\System32\rascustom.dll
+\Windows\System32\rasdiag.dll
+\Windows\System32\rasdial.exe
+\Windows\System32\rasdlg.dll
+\Windows\System32\raserver.exe
+\Windows\System32\rasgcw.dll
+\Windows\System32\rasman.dll
+\Windows\System32\rasmans.dll
+\Windows\System32\rasmbmgr.dll
+\Windows\System32\RASMM.dll
+\Windows\System32\rasmontr.dll
+\Windows\System32\rasphone.exe
+\Windows\System32\rasplap.dll
+\Windows\System32\rasppp.dll
+\Windows\System32\rastapi.dll
+\Windows\System32\rastls.dll
+\Windows\System32\Sens.dll
+\Windows\System32\serialui.dll
+\Windows\System32\shsvcs.dll
+\Windows\System32\sppinst.dll
+\Windows\System32\srclient.dll
+\Windows\System32\ssdpapi.dll
+\Windows\System32\sud.dll
+\Windows\System32\systeminfo.exe
+\Windows\System32\tapi3.dll
+\Windows\System32\tapi32.dll
+\Windows\System32\tapilua.dll
+\Windows\System32\TapiMigPlugin.dll
+\Windows\System32\tapiperf.dll
+\Windows\System32\tapisrv.dll
+\Windows\System32\TapiSysprep.dll
+\Windows\System32\tapiui.dll
+\Windows\System32\TapiUnattend.exe
+\Windows\System32\telephon.cpl
+\Windows\System32\TSWorkspace.dll
+\Windows\System32\umdmxfrm.dll
+\Windows\System32\unimdm.tsp
+\Windows\System32\unimdmat.dll
+\Windows\System32\uniplat.dll
+\Windows\System32\vpnike.dll
+\Windows\System32\wcnwiz.dll
+\Windows\System32\wlandlg.dll
+\Windows\System32\WlanMM.dll
+\Windows\System32\wlanpref.dll
+\Windows\System32\wwanconn.dll
+\Windows\System32\wwanmm.dll
+\Windows\System32\xwizard.dtd
+\Windows\System32\xwizard.exe
+\Windows\System32\xwizards.dll
+\Windows\System32\xwreg.dll
+\Windows\System32\xwtpdui.dll
+\Windows\System32\xwtpw32.dll
+\Windows\System32\??-??\apds.dll.mui
+\Windows\System32\??-??\authfwcfg.dll.mui
+\Windows\System32\??-??\authfwgp.dll.mui
+\Windows\System32\??-??\bthserv.dll.mui
+\Windows\System32\??-??\capisp.dll.mui
+\Windows\System32\??-??\cmcfg32.dll.mui
+\Windows\System32\??-??\cmdial32.dll.mui
+\Windows\System32\??-??\cmlua.dll.mui
+\Windows\System32\??-??\cmstplua.dll.mui
+\Windows\System32\??-??\cmutil.dll.mui
+\Windows\System32\??-??\CompMgmtLauncher.exe.mui
+\Windows\System32\??-??\connect.dll.mui
+\Windows\System32\??-??\ctfmon.exe.mui
+\Windows\System32\??-??\dfshim.dll.mui
+\Windows\System32\??-??\dialer.exe.mui
+\Windows\System32\??-??\dskquota.dll.mui
+\Windows\System32\??-??\dtsh.dll.mui
+\Windows\System32\??-??\efscore.dll.mui
+\Windows\System32\??-??\fwcfg.dll.mui
+\Windows\System32\??-??\hidphone.tsp.mui
+\Windows\System32\??-??\ifmon.dll.mui
+\Windows\System32\??-??\iyuv_32.dll.mui
+\Windows\System32\??-??\kmddsp.tsp.mui
+\Windows\System32\??-??\loadperf.dll.mui
+\Windows\System32\??-??\mapi32.dll.mui
+\Windows\System32\??-??\mapistub.dll.mui
+\Windows\System32\??-??\mdminst.dll.mui
+\Windows\System32\??-??\modemui.dll.mui
+\Windows\System32\??-??\mprmsg.dll.mui
+\Windows\System32\??-??\MsCtfMonitor.dll.mui
+\Windows\System32\??-??\msctfui.dll.mui
+\Windows\System32\??-??\msdt.exe.mui
+\Windows\System32\??-??\msdtc.exe.mui
+\Windows\System32\??-??\msdtcVSp1res.dll.mui
+\Windows\System32\??-??\msutb.dll.mui
+\Windows\System32\??-??\ntprint.dll.mui
+\Windows\System32\??-??\odbcad32.exe.mui
+\Windows\System32\??-??\pnidui.dll.mui
+\Windows\System32\??-??\prnfldr.dll.mui
+\Windows\System32\??-??\rasapi32.dll.mui
+\Windows\System32\??-??\rasauto.dll.mui
+\Windows\System32\??-??\rasautou.exe.mui
+\Windows\System32\??-??\raschap.dll.mui
+\Windows\System32\??-??\rasctrs.dll.mui
+\Windows\System32\??-??\rascustom.dll.mui
+\Windows\System32\??-??\rasdiag.dll.mui
+\Windows\System32\??-??\rasdial.exe.mui
+\Windows\System32\??-??\rasdlg.dll.mui
+\Windows\System32\??-??\raserver.exe.mui
+\Windows\System32\??-??\rasgcw.dll.mui
+\Windows\System32\??-??\rasmans.dll.mui
+\Windows\System32\??-??\rasmbmgr.dll.mui
+\Windows\System32\??-??\rasmm.dll.mui
+\Windows\System32\??-??\rasmontr.dll.mui
+\Windows\System32\??-??\rasphone.exe.mui
+\Windows\System32\??-??\rasplap.dll.mui
+\Windows\System32\??-??\rastls.dll.mui
+\Windows\System32\??-??\sens.dll.mui
+\Windows\System32\??-??\serialui.dll.mui
+\Windows\System32\??-??\shsvcs.dll.mui
+\Windows\System32\??-??\sud.dll.mui
+\Windows\System32\??-??\systeminfo.exe.mui
+\Windows\System32\??-??\tapi3.dll.mui
+\Windows\System32\??-??\tapi32.dll.mui
+\Windows\System32\??-??\tapisrv.dll.mui
+\Windows\System32\??-??\tapiui.dll.mui
+\Windows\System32\??-??\telephon.cpl.mui
+\Windows\System32\??-??\TSWorkspace.dll.mui
+\Windows\System32\??-??\unimdm.tsp.mui
+\Windows\System32\??-??\unimdmat.dll.mui
+\Windows\System32\??-??\wcnwiz.dll.mui
+\Windows\System32\??-??\wlandlg.dll.mui
+\Windows\System32\??-??\wlanmm.dll.mui
+\Windows\System32\??-??\wlanpref.dll.mui
+\Windows\System32\??-??\wwanconn.dll.mui
+\Windows\System32\??-??\WWanMM.dll.mui
+\Windows\System32\??-??\xwizard.exe.mui
+\Windows\System32\??-??\xwizards.dll.mui
+\Windows\System32\??-??\xwtpdui.dll.mui
+\Windows\System32\??-??\xwtpw32.dll.mui
+\Windows\SystemResources\AuthFWGP.dll.mun
+\Windows\SystemResources\connect.dll.mun
+\Windows\SystemResources\mdminst.dll.mun
+\Windows\SystemResources\msdt.exe.mun
+\Windows\SystemResources\msutb.dll.mun
+\Windows\SystemResources\prnfldr.dll.mun
+\Windows\SystemResources\rasdlg.dll.mun
+\Windows\SystemResources\rasgcw.dll.mun
+\Windows\SystemResources\rasplap.dll.mun
+\Windows\SystemResources\rastls.dll.mun
+\Windows\SystemResources\shsvcs.dll.mun
+\Windows\SystemResources\sud.dll.mun
+\Windows\SystemResources\tapiui.dll.mun
+\Windows\SystemResources\wcnwiz.dll.mun
+\Windows\SystemResources\WlanMM.dll.mun
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_System,%RegSystem%
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\ShellHWDetection,DisplayName,"@#$pSystemRoot#$p\System32\shsvcs.dll,-12288"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\ShellHWDetection,Group,ShellSvcGroup
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\ShellHWDetection,Description,"@#$pSystemRoot#$p\System32\shsvcs.dll,-12289"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\ShellHWDetection,ObjectName,LocalSystem
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\ShellHWDetection,ErrorControl,0
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\ShellHWDetection,Start,2
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\ShellHWDetection,Type,32
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\services\ShellHWDetection,DependOnService,RpcSs
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\ShellHWDetection,ServiceSidType,1
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\ShellHWDetection,ImagePath,"#$pSystemRoot#$p\System32\svchost.exe -k netsvcs"
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Services\ShellHWDetection,RequiredPrivileges,SeImpersonatePrivilege,SeSystemEnvironmentPrivilege
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\services\ShellHWDetection,FailureActions,80,51,01,00,00,00,00,00,00,00,00,00,03,00,00,00,14,00,00,00,01,00,00,00,60,ea,00,00,01,00,00,00,60,ea,00,00,00,00,00,00,00,00,00,00
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\ShellHWDetection\Parameters,ServiceDll,#$pSystemRoot#$p\System32\shsvcs.dll
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\ShellHWDetection\Parameters,ServiceMain,HardwareDetectionServiceMain
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\ShellHWDetection\Parameters,ServiceDllUnloadOnStop,1
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Winlogon\Notifications\Components\Sens,Events,"Shutdown,Logoff,Reconnect,Disconnect,Unlock,Lock,Logon,StartSSAsUser,StopSSAsUser,StartSSAsNoone,StopSSAsNoone,StartShell"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Winlogon\Notifications\Components\Sens,ServiceName,SENS
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Winlogon\Notifications\Components\Sens,"Friendly Name","System Event Notification"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\SENS,DisplayName,"@#$pSystemRoot#$p\system32\Sens.dll,-200"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\SENS,ErrorControl,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\SENS,Group,ProfSvc_Group
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\SENS,ImagePath,"#$pSystemRoot#$p\system32\svchost.exe -k netsvcs"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\SENS,Start,2
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\SENS,Type,32
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\SENS,Description,"@#$pSystemRoot#$p\system32\Sens.dll,-201"
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\services\SENS,DependOnService,EventSystem
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\SENS,ObjectName,LocalSystem
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\SENS,ServiceSidType,1
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\services\SENS,RequiredPrivileges,SeAuditPrivilege,SeChangeNotifyPrivilege,SeCreateGlobalPrivilege,SeImpersonatePrivilege,SeTcbPrivilege
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\services\SENS,FailureActions,80,51,01,00,00,00,00,00,00,00,00,00,03,00,00,00,14,00,00,00,01,00,00,00,c0,d4,01,00,01,00,00,00,e0,93,04,00,00,00,00,00,00,00,00,00
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\SENS\Parameters,ServiceDllUnloadOnStop,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\SENS\Parameters,ServiceMain,ServiceMain
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\SENS\Parameters,ServiceDll,#$pSystemRoot#$p\System32\sens.dll
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\Services\SENS\Security,Security,01,00,14,80,a8,00,00,00,b4,00,00,00,14,00,00,00,30,00,00,00,02,00,1c,00,01,00,00,00,02,80,14,00,ff,01,0f,00,01,01,00,00,00,00,00,01,00,00,00,00,02,00,78,00,05,00,00,00,00,00,14,00,8d,01,02,00,01,01,00,00,00,00,00,05,0b,00,00,00,00,00,18,00,ff,01,0f,00,01,02,00,00,00,00,00,05,20,00,00,00,20,02,00,00,00,00,18,00,fd,01,00,00,01,02,00,00,00,00,00,05,20,00,00,00,25,02,00,00,00,00,14,00,fd,01,02,00,01,01,00,00,00,00,00,05,12,00,00,00,00,00,18,00,84,00,02,00,01,02,00,00,00,00,00,0f,02,00,00,00,01,00,00,00,01,01,00,00,00,00,00,05,12,00,00,00,01,01,00,00,00,00,00,05,12,00,00,00
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv,DisplayName,"@#$pSystemRoot#$p\system32\tapisrv.dll,-10100"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv,ErrorControl,1
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\TapiSrv,ImagePath,"#$pSystemRoot#$p\System32\svchost.exe -k NetworkService"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv,Start,3
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv,Type,32
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv,Description,"@#$pSystemRoot#$p\system32\tapisrv.dll,-10101"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv,ObjectName,"NT AUTHORITY\NetworkService"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv,ServiceSidType,1
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\services\TapiSrv,RequiredPrivileges,SeAuditPrivilege,SeChangeNotifyPrivilege,SeCreateGlobalPrivilege,SeImpersonatePrivilege,SeIncreaseQuotaPrivilege,SeAssignPrimaryTokenPrivilege
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\services\TapiSrv,FailureActions,80,51,01,00,00,00,00,00,00,00,00,00,03,00,00,00,14,00,00,00,01,00,00,00,c0,d4,01,00,01,00,00,00,e0,93,04,00,00,00,00,00,00,00,00,00
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\TapiSrv\Parameters,ServiceDll,#$pSystemRoot#$p\System32\tapisrv.dll
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv\Parameters,ServiceDllUnloadOnStop,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,Close,CloseTapiPerformanceData
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,Collect,CollectTapiPerformanceData
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,Library,tapiperf.dll
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,ObjectList,1150
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,Open,OpenTapiPerformanceData
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\TapiSrv\Performance,InstallType,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\TapiSrv\Performance,PerfIniFile,tapiperf.ini
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Services\TapiSrv,DependOnService,RpcSs
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\TapiSrv\Performance,"First Counter",1912
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\TapiSrv\Performance,"Last Counter",1930
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\TapiSrv\Performance,"First Help",1913
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\TapiSrv\Performance,"Last Help",1931
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\services\TapiSrv\Security,Security,01,00,14,80,8c,00,00,00,98,00,00,00,14,00,00,00,30,00,00,00,02,00,1c,00,01,00,00,00,02,80,14,00,ff,01,0f,00,01,01,00,00,00,00,00,01,00,00,00,00,02,00,5c,00,04,00,00,00,00,00,14,00,fd,01,02,00,01,01,00,00,00,00,00,05,12,00,00,00,00,00,18,00,ff,01,0f,00,01,02,00,00,00,00,00,05,20,00,00,00,20,02,00,00,00,00,14,00,9d,01,02,00,01,01,00,00,00,00,00,05,04,00,00,00,00,00,14,00,9d,01,02,00,01,01,00,00,00,00,00,05,06,00,00,00,01,01,00,00,00,00,00,05,12,00,00,00,01,01,00,00,00,00,00,05,12,00,00,00
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\Modem,Group,"Extended base"
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\services\Modem,ImagePath,system32\drivers\modem.sys
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\Modem,ErrorControl,0
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\Modem,Start,3
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\Modem,Tag,4
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\Modem,Type,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\services\Modem,DisplayName,
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},Class,Modem
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},,Modems
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},ClassDesc,"@#$pSystemRoot#$p\System32\mdminst.dll,-14100"
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},IconPath,#$psystemroot#$p\system32\mdminst.dll#$c-5100
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},Installer32,"mdminst.dll,ClassInstall32"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318},"Default Service",Modem
+RegWrite,HKLM,0x0,Tmp_System\ControlSet001\Control\Class\{4d36e96d-e325-11ce-bfc1-08002be10318}\Properties\{6a3433f4-5626-40e8-a9b9-dbd9ecd2884b}\0006
+//--
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\Services\AsyncMac,ImagePath,\SystemRoot\System32\drivers\asyncmac.sys
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\AsyncMac,DisplayName,"@#$psystemroot#$p\system32\mprmsg.dll,-32000"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\AsyncMac,Description,"@#$psystemroot#$p\system32\mprmsg.dll,-32000"
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Services\AsyncMac,Owners,netrasa.inf
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\AsyncMac,Group,
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\AsyncMac,Type,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\AsyncMac,Start,3
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\services\AsyncMac,ErrorControl,1
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,ClassGUID,{4d36e97d-e325-11ce-bfc1-08002be10318}
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,HardwareID,ROOT\SWENUM
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,ConfigFlags,32
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,Capabilities,0
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,Driver,{4d36e97d-e325-11ce-bfc1-08002be10318}\0003
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,Mfg,"@swenum.inf,#$pgendev_mfg#$p;(Standard system devices)"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,Service,swenum
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,DeviceDesc,"@swenum.inf,#$pswenum.devicedesc#$p;Plug and Play Software Device Enumerator"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\ROOT\SYSTEM\0000,ContainerID,{00000000-0000-0000-FFFF-FFFFFFFFFFFF}
+RegHiveUnLoad,Tmp_System
+//--
+RegHiveLoad,Tmp_Software,%RegSoftware%
+If,Not,%FullSoftware%,Equal,True,Begin
+RegWrite,HKLM,0x1,Tmp_Software\Classes\AppID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd},,"CTapiLuaLib Class"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\AppID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd},DllSurrogate,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd},,"CTapiLuaLib Class"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd},AppID,{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd},LocalizedString,"@#$psystemroot#$p\system32\tapiui.dll,-1"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}\Elevation,,
+RegWrite,HKLM,0x4,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}\Elevation,Enabled,1
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}\Elevation,IconReference,"@#$psystemroot#$p\system32\tapiui.dll,-201"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}\InprocServer32,,#$psystemroot#$p\system32\tapilua.dll
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}\InprocServer32,ThreadingModel,Apartment
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},,"Phone and Modem Control Panel"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},System.Software.TasksFileUrl,Internal
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},InfoTip,"@#$pSystemRoot#$p\System32\telephon.cpl,-2"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},LocalizedString,"@#$pSystemRoot#$p\System32\telephon.cpl,-1"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},System.ApplicationName,Microsoft.PhoneAndModem
+RegWrite,HKLM,0x4,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D},System.ControlPanel.Category,0
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D}\DefaultIcon,,"#$pSystemRoot#$p\System32\telephon.cpl,-100"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{40419485-C444-4567-851A-2DD7BFA1684D}\Shell\Open\Command,,"#$pSystemRoot#$p\System32\rundll32.exe #$pSystemRoot#$p\System32\shell32.dll,Control_RunDLL #$pSystemRoot#$p\System32\telephon.cpl"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{b020b123-89b9-46c6-8509-a8bf70447fea},,PSFactoryBuffer
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{b020b123-89b9-46c6-8509-a8bf70447fea}\InProcServer32,,#$psystemroot#$p\system32\tapilua.dll
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{b020b123-89b9-46c6-8509-a8bf70447fea}\InProcServer32,ThreadingModel,Apartment
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E},,"SENS Network Events"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,,#$psystemroot#$p\system32\ES.DLL
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,ThreadingModel,Both
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E},,"SENS Logon Events"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,,#$psystemroot#$p\system32\ES.DLL
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,ThreadingModel,Both
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E},,"SENS OnNow Events"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,,#$psystemroot#$p\system32\ES.DLL
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,ThreadingModel,Both
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E},,"SENS Logon2 Events"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\CLSID\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,,#$psystemroot#$p\system32\ES.DLL
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}\InprocServer32,ThreadingModel,Both
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CTapiLuaLib,,"CTapiLuaLib Class"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CTapiLuaLib\CurVer,,CTapiLuaLib.1
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CTapiLuaLib.1,,"CTapiLuaLib Class"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CTapiLuaLib.1\CLSID,,{03e15b2e-cca6-451c-8fb0-1e2ee37a27dd}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{b020b123-89b9-46c6-8509-a8bf70447fea},,ITapiLua
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{b020b123-89b9-46c6-8509-a8bf70447fea}\NumMethods,,3
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{b020b123-89b9-46c6-8509-a8bf70447fea}\ProxyStubClsid32,,{b020b123-89b9-46c6-8509-a8bf70447fea}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E},,ISensNetwork
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid32,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,,{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,Version,2.0
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E},,ISensOnNow
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid32,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,,{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,Version,2.0
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E},,ISensLogon
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid32,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,,{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,Version,2.0
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E},,ISensLogon2
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E}\ProxyStubClsid32,,{00020424-0000-0000-C000-000000000046}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,,{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Interface\{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E}\TypeLib,Version,2.0
+RegWrite,HKLM,0x1,Tmp_Software\Classes\TypeLib\{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}\2.0,,"SENS Events Type Library"
+RegWrite,HKLM,0x2,Tmp_Software\Classes\TypeLib\{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}\2.0\0\win32,,#$pSystemRoot#$p\System32\sens.dll
+RegWrite,HKLM,0x1,Tmp_Software\Classes\TypeLib\{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}\2.0\FLAGS,,0
+RegWrite,HKLM,0x1,Tmp_Software\Classes\TypeLib\{D597DEED-5B9F-11D1-8DD2-00AA004ABD5E}\2.0\HELPDIR,,#$pSystemRoot#$p\System32
+//--
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassPartitionID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassID,{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassName,"SENS Network Events"
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FireInParallel,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},AllowInprocActivation,-1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},Active,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},OwnerSID,S-1-5-18
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassApplicationID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978620-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FiringInterfaceIID,{D597BAB1-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},SerialFiringTimeout,180000
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassPartitionID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassID,{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassName,"SENS Logon Events"
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FireInParallel,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},AllowInprocActivation,-1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},Active,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},OwnerSID,S-1-5-18
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassApplicationID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978630-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FiringInterfaceIID,{D597BAB3-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassPartitionID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassID,{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassName,"SENS OnNow Events"
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FireInParallel,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},AllowInprocActivation,-1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},Active,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},OwnerSID,S-1-5-18
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassApplicationID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978640-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FiringInterfaceIID,{D597BAB2-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},SerialFiringTimeout,180000
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassPartitionID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassID,{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassName,"SENS Logon2 Events"
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FireInParallel,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},AllowInprocActivation,-1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},Active,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},OwnerSID,S-1-5-18
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},EventClassApplicationID,{00000000-0000-0000-0000-000000000000}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\EventSystem\{26c409cc-ae86-11d1-b616-00805fc79216}\EventClasses\{D5978650-5B9F-11D1-8DD2-00AA004ABD5E}-{00000000-0000-0000-0000-000000000000}-{00000000-0000-0000-0000-000000000000},FiringInterfaceIID,{D597BAB4-5B9F-11D1-8DD2-00AA004ABD5E}
+//--
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Mobile\SENS,Configured,32
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Control Panel\don't load",telephon.cpl,
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony,KmddspDebugLevel,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony,ndptspDebugLevel,0
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony,DomainName,
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,DisableCallWaiting0,"*70,"
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,DisableCallWaiting1,"70#,"
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,DisableCallWaiting2,"1170,"
+RegWrite,HKLM,0x3,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,KeyRenameHistory,
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,LocationListVersion,2
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderID0,1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderID1,2
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderID2,3
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderID3,4
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,NextProviderID,5
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderFileName0,unimdm.tsp
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderFileName1,kmddsp.tsp
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderFileName2,ndptsp.tsp
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,ProviderFileName3,hidphone.tsp
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Providers,NumProviders,4
+RegWrite,HKLM,0x0,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\TAPI3
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}",Name,"Streaming Terminals"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",Name,"MediaStreaming Terminal"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",Company,Microsoft
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",Version,1.1
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",CLSID,{AED6483F-3304-11D2-86F1-006008B0E5D2}
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",Directions,3
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{214F4ACC-AE0B-4464-8405-07029003F8E2}\{E2F7AEF7-4971-11D1-A671-006097C9A2E8}",MediaTypes,8
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}",Name,"Video Terminals"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",Name,"VideoWindow Terminal"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",Company,Microsoft
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",Version,1.1
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",CLSID,{AED6483E-3304-11D2-86F1-006008B0E5D2}
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",Directions,2
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{714C6F8C-6244-4685-87B3-B91F3F9EADA7}\{F7438990-D6EB-11D0-82A6-00AA00B5CA1B}",MediaTypes,32768
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}",Name,"File Terminals"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",Name,"File Playback Terminal"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",Company,Microsoft
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",Version,1.1
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",CLSID,{4C8D0AF0-7BF0-4F33-9117-981A33DBD4E6}
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",Directions,1
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{0CB9914C-79CD-47DC-ADB0-327F47CEFB20}",MediaTypes,65544
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",Name,"File Record Terminal"
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",Company,Microsoft
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",Version,1.1
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",CLSID,{B138E92F-F502-4ADC-89D9-134C8E580409}
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",Directions,2
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Terminal Manager\{B4790031-56DB-4D3E-88C8-6FFAAFA08A91}\{521F3D06-C3D0-4511-8617-86B9A783DA77}",MediaTypes,65544
+//--
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,OwningPublisher,{be69781c-b63b-41a1-8e24-a4fc7b3fc498}
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,Enabled,0
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,Isolation,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,ChannelAccess,O:BAG:SYD:(A;;0xf0007;;;SY)(A;;0x7;;;BA)(A;;0x3;;;BO)(A;;0x5;;;SO)(A;;0x1;;;IU)(A;;0x3;;;SU)(A;;0x1;;;S-1-5-3)(A;;0x2;;;S-1-5-33)(A;;0x1;;;S-1-5-32-573)
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,Type,3
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,Level,15
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,KeywordsLower,-1
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,KeywordsUpper,0
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Channels\Microsoft-Windows-Sens/Debug,ControlGuid,{a0ca1d82-539d-4fb0-944b-1620c6e86231}
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498},,Microsoft-Windows-Sens
+RegWrite,HKLM,0x2,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498},ResourceFileName,#$pSystemRoot#$p\System32\sens.dll
+RegWrite,HKLM,0x2,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498},MessageFileName,#$pSystemRoot#$p\System32\sens.dll
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498}\ChannelReferences,Count,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498}\ChannelReferences\0,,Microsoft-Windows-Sens/Debug
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498}\ChannelReferences\0,Id,16
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\WINEVT\Publishers\{be69781c-b63b-41a1-8e24-a4fc7b3fc498}\ChannelReferences\0,Flags,0
+End
+//--
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony,Perf1,1346720332
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony,Perf2,1346720326
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,NextID,2
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations,CurrentID,1
+//-- change country code
+If,%Advanced%,Equal,False,Set,%CountryCode_TextBox%,000
+If,%Advanced%,Equal,False,Set,%AreaCode_TextBox%,000
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,Country,%CountryCode_TextBox%
+RegWrite,HKLM,0x4,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,Flags,1
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,Name,"My Location"
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,AreaCode,%AreaCode_TextBox%
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,DisableCallWaiting,
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,LongDistanceCarrierCode,
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,InternationalCarrierCode,
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,LongDistanceAccess,
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Telephony\Locations\Location1,OutsideAccess,
+//--
+Echo,"Take Ownership of PE Telephony Software Hive, Be Patient..."
+ShellExecute,Hide,%Gtools%\SetACL.exe,"-on #$qHKLM\Tmp_software\Microsoft\Windows\CurrentVersion\Telephony#$q -ot reg -rec yes -actn setowner -ownr #$qn:S-1-1-1-0;s:y#$q"
+Echo,"Grant Full Access to PE Telephony Software Hive, Be Patient..."
+ShellExecute,Hide,%Gtools%\SetACL.exe,"-on #$qHKLM\Tmp_software\Microsoft\Windows\CurrentVersion\Telephony#$q -ot reg -rec yes -actn ace -ace #$qn:S-1-1-0;p:full;s:y#$q"
+RegHiveUnLoad,Tmp_Software
+//--
+RegHiveLoad,Tmp_Default,%RegDefault%
+RegWrite,HKLM,0x0,Tmp_Default\Software\Microsoft\Windows\CurrentVersion\Telephony\HandoffPriorities\MediaModes
+RegWrite,HKLM,0x1,Tmp_Default\Software\Microsoft\Windows\CurrentVersion\Telephony\HandoffPriorities,RequestMakeCall,DIALER.EXE
+RegHiveUnLoad,Tmp_Default
+
+[PPPoE_Services]
+Set,%w%,%GTarget_Sys%\PPPoE_Start_Services.cmd
+If,ExistFile,%w%,FileDeleteQ,%w%
+FileCreateBlank,%w%
+TxtAddline,%w%,"@Echo off",Append
+TxtAddline,%w%,"cmd.exe /c #$qnetcfg.exe -e -c p -i MS_NDISWANLEGACY && #$qnetcfg.exe -e -c p -i MS_NDISWAN && netcfg.exe -e -c s -i MS_RASMAN && netcfg.exe -e -c p -i MS_PPPOE#$q",Append
+TxtAddline,%w%,"Exit",Append
+//-
+Set,%ar%,%GTarget_Sys%\autorun.cmd
+If,Not,ExistFile,%ar%,FileCreateBlank,%ar%
+TXTReplace,%ar%,Exit,":: Start PPPoE Network Services"
+TXTAddline,%ar%,"#$pSystemRoot#$p\System32\PPPoE_Start_Services.cmd,,4",Append
+TXTAddline,%ar%,"Exit",Append
+
+[Add_ShortCuts]
+If,Not,%PPPoEUserName_TextBox%-,Equal,-,Set,%Name%,True
+If,Not,%PPPoEPassword_TextBox%-,Equal,-,Set,%Password%,True
+If,%Advanced%,Equal,True,Set,%PPPoEServiceName%,%PPPoEServiceName_TextBox%
+//
+If,%Name%%Password%,Equal,TrueTrue,AddShortcut,Desktop,,#$pSystemRoot#$p\System32\rasdial.exe,PPPoE Connect,"#$q%PPPoEServiceName%#$q #$q%PPPoEUserName_TextBox%#$q #$q%PPPoEPassword_TextBox%#$q",#$pSystemRoot#$p\System32\imageres.dll|-179
+If,%Desktop_CheckBox%,Equal,True,Begin
+AddShortcut,Desktop,,#$pSystemRoot#$p\system32\dialer.exe,Phone Dialer
+AddShortcut,Desktop,,#$pSystemDrive#$p\ProgramData\Microsoft\Network\Connections\Pbk\rasphone.pbk,Network Connections
+If,%Advanced%,Equal,True,AddShortcut,Desktop,,#$pSystemDrive#$p\ProgramData\Microsoft\Network\Connections\Pbk\rasphone.pbk,PPPoE Dialup,"-d #$q%PPPoEServiceName%#$q"
+If,%Name%%Password%,Equal,TrueTrue,AddShortcut,Desktop,,#$pSystemRoot#$p\System32\rasdial.exe,PPPoE Disconnect,"#$q%PPPoEServiceName%#$q /disconnect",#$pSystemRoot#$p\System32\imageres.dll|-179
+End
+//--
+If,%StartMenu_CheckBox%,Equal,True,Begin
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%,#$pSystemRoot#$p\system32\dialer.exe,Phone Dialer
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%,#$pSystemDrive#$p\ProgramData\Microsoft\Network\Connections\Pbk\rasphone.pbk,Network Connections
+If,%Advanced%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%,#$pSystemDrive#$p\ProgramData\Microsoft\Network\Connections\Pbk\rasphone.pbk,PPPoE Dialup,"-d #$q%PPPoEServiceName%#$q"
+If,%Name%%Password%,Equal,TrueTrue,AddShortcut,StartMenu,%StartMenuFolder_TextBox%,#$pSystemRoot#$p\System32\rasdial.exe,PPPoE Connect,"#$q%PPPoEServiceName%#$q #$q%PPPoEUserName_TextBox%#$q #$q%PPPoEPassword_TextBox%#$q",#$pSystemRoot#$p\System32\imageres.dll|-179
+If,%Name%%Password%,Equal,TrueTrue,AddShortcut,StartMenu,%StartMenuFolder_TextBox%,#$pSystemRoot#$p\System32\rasdial.exe,PPPoE Disconnect,"#$q%PPPoEServiceName%#$q /disconnect",#$pSystemRoot#$p\System32\imageres.dll|-179
+End
+
+[Profiles_OpenDir]
+If,Not,ExistDir,%GCustom%\PPPoE_PBK,DirMake,%GCustom%\PPPoE_PBK
+OpenDir,%GCustom%\PPPoE_PBK
+
+[InterfaceAdvanced]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,7,133,86
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,64,122,21,"PPPoE Network","__Start Menu Folder Name"
+Image_Software=Image.jpg,1,5,145,7,300,114
+HomePage_WebLabel="Home Page",1,10,450,8,54,18,http://theoven.org/index.php?board=39.0
+Back_Button="Default User Options",1,8,7,100,126,20,MainInterface,0,True,"__Display Default User Options Interface"
+CodeBevel=CodeBevel,1,12,4,127,442,117
+CountryCode_TextLabel="Country Region Code:",1,1,10,135,110,18,8,Normal
+CountryCode_TextBox=,1,0,130,133,32,21,001
+AreaCode_TextLabel="Telephone Area Code:",1,1,230,135,110,18,8,Normal
+AreaCode_TextBox=,1,0,350,133,32,21,001
+Profiles_Opendir_Button="Copy Custom Rasphone Profile Here",1,8,230,215,200,22,Profiles_OpenDir,opendir.bmp,False,_Profiles_OpenDir_,False,"__Click Here To Open The PPPoE Custom Profile Folder:"
+PPPoEUserName_TextBox="User Name: ",1,0,10,175,200,21,
+PPPoEPassword_TextBox="User Password: ",1,0,230,175,200,21,
+PPPoEServiceName_TextBox="Connection Name: ",1,0,10,215,200,21,ADSL
+pTextLabel1="The Connection Name -  MUST MATCH - A Valid Rasphone.pbk Network Profile",1,1,10,245,425,18,8,Normal
+pTextLabel2="The Win10XPE Default Network Profile = ADSL",1,1,10,260,425,18,8,Normal
+
+[AdvancedInterface]
+IniWrite,%ScriptFile%,Main,Interface,InterfaceAdvanced
+IniWrite,%ScriptFile%,Variables,#$pAdvanced#$p,True
+System,RefreshInterface
+
+[MainInterface]
+IniWrite,%ScriptFile%,Main,Interface,InterfaceMain
+IniWrite,%ScriptFile%,Variables,#$pAdvanced#$p,False
+System,RefreshInterface
+
+[AuthorEncoded]
+Telephony.jpg=2778,3704
+Logo=Telephony.jpg
+
+[EncodedFile-AuthorEncoded-Telephony.jpg]
+lines=0
+0=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
+
+[InterfaceEncoded]
+opendir.bmp=571,762
+Image.jpg=12595,16794
+
+[EncodedFile-InterfaceEncoded-opendir.bmp]
+lines=0
+0=eJyVkt1LU3EYx382esMuBFEKE8GLLL0IbyYhpEUI4aKytilTFN1xOrvxohpI9/0FlYESXUR2EXmxi4S9hYF4IZhOSdZMzJdtx+HwvO1sh2/P8cyxYFh9+TzPxXm+v+9z+J1z847ZxA5lprpMVZarEnbeGNC8vNSoI+E/5Z6YZs++Mk+QPTnkaaiAo4ee0LVPEcN/4tViTRjuNB7Jeh/cAxfPcEnNtY8hAW4ZwwqGVbCxL3k/D5zxC71x9AjoTsGRgG0jbY2K1siBfV2ybyjd2xkHr7HHIcO/CZh8ApdEfwIDKXASnAr6BDh4dG5mbVHJui727ar0VuQ/924tCtyNoTwgGFQGdZyxrHMfLgUuFYMShg4wIOrhVTNb3zVYdtCbQD+vQ4sqQwKhH/cLFQGx1C+W+EQWlC/Nyw0LqRUVt7fQtZPDvgtrDB2JHD1JnJrl8/dpjqjLipb3P9zG/Ti+qQirWJY1Yi0L06pW6F+QtJZf+grCEkOYrus5q/iJ06tgiwoLZ+0v3vyRnwEdoailtG6ufllVN1FXO36x6Pcd8wYogXJOrqDsB66+rTdPtV7/aGmcar0weeX4f6N2srrpQ/ON6Xvt3i7q9e+bz74uvqVQt7wPOn0c9b86DbV9tjlnR6n/o39kzmNQdPoblHVTL3ic484vSM1LySzSS8otYBgFIw6YMUPoD4zY5WddWriPgQkAk7cIYWOapDwBAAAAAgAAACcAAADwAQAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Image.jpg]
+lines=4
+0=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
+1=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
+2=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
+3=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
+4=M7XFXv69jvvXGVL10DdIKY6KvPCvF50ssJefDDlXlxc3Aheioptv58HS0nJbZbJIW7bo3rXey3DzKKlgQUHXWQZdVqY0ZhM6wM4NSuzYIJSgbEL8ELHNBboqOBT0DhccQhKRJfX89QkAir9Lekl7mdxKYzGgqSAaGkF2rKpIKkcc1enDc26SZeAPb8+DFF7EIqIghC9UULRXu8D0yCRNB0RPvWeiCUFAV176jJi6j5rRo8pDQYc9BWvrunZoS8Qp4H8B/I8H8BjLQ70i6UZKgx/npmLaaapx00ieZdH8fr4JmL1t++waTr5zLaqrxeBDRJIgP33k/wA/CHPTeJzj9MxNTE/VyypIZxgFIxBstIbQrwywyx/uX27IwAQAdVQHjgfVAJ0BAAAAAgAAACUAAADqMAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+rasphone.pbk=1175,1567
+
+[EncodedFile-Folder-rasphone.pbk]
+lines=0
+0=eJx9VUuP4jgQviPxH+a4e5hVaJpHj5QDhDATTQMRMD2H1WplkiJYOHbWdnjsr9+qOGECQtuopdTncj2/Kv85mW3e/+p2QpmolMvM73U78fQDtOFK+v1uZ3stwB90O5PSqneVIeh1Oz8MrJkJNKQgLWfCEPiuzjNmYctz8D/3xi8vb29ef/za7Xzj2eF20vdGw9H4ZdztzPBizDTLzY9o5g/6I2/goZmvJU/92dAbjcNxbzjqDcaj18E4GA37r15/MJj0J28hxvVRyI3VaDW7kvPwkogyhTTWyqpE1RElRXixICkXQ5lhFAwz1dfCUnoYxOYcqLzQYKp88c4SMoUpWViUwnLB5XEizuxa2dsceTFT5U4AxU7/KiOcvhYqBfpenUBrnkKsYe/3sHBrSPF4Yi3khTVUUodsIFEyNf4QL0UpmTQISEhsc+I1qiv5jnHMGRelBsojYELsWHJsnAalsSqvghLCb8vzUiY3AHv2S2eudALoCk1SCZi2OTbTpWMY5hh9D5csh/BYBgdIjnSCJDhQxxOszwY0plqV5cA0LMycC8yaOxtTLtOFWYINBK/NVmppfFASlmW+Q4oR+lWoHYYEJ07RWIscrHCsn4Z/Sm64hVBaffXvsXh3dMge641mlbZ+HMcq7HmfvdaBs+z/nCw/LbjkBep9+g0VV+HvLa1p0Th18rfzXKjzHdQw6w58IM8N3xTAjq46N2yR5g82ThzOOEo6Pldj54CZyhmXLY1WxVwZcc6wi1goNJeRd7pN8EJJbpWOkD6R3DJznDJd0aXqPjXvO1ybPq7BWM0TW83GYPCCLCywfUpzy/+FNeTKVlyLikha0HuWwALoBhmIim/AUtAP+UfFJE2riLw/qh9BM2meoy9P4J/8qTbBz9Qn6DqTLkwia1tGD3PBHJvwdLq9SduEDKbqvMFM633mDvukikPRuohmNuV+zy8+Sadh2wVKdUxfvjiZus0v7yAze3D3CXtW1dPwaV1Pw8c8TsNWBRs/7fLd+/a9h78HZ1H6RKMe+UAwY6bM0NjsGS7AtSottHbCQu1wJ9qr25T2rPRxVVqWud1ecVadONGhejccid3gE/VocyUHaD8cmCJy2zE0VoInznaZ496pW7PAO1zCWikbgLb1uds/ppaqQBthqQu7LoWT6eHa8ixDsrKCcqiVJkURpc2NKnGe/MLqfOsy3Dhwc7HVGDGkdQ0alPSA6eTQ1o7VGeM8gBCYNy5O2iR7LppyXa43slVSswRxt/M9h/SuqnhAs0t0omrSNxV6tY1JDWMIt8FqEa+W4XK7QYXc/J2b5LaCUTS3td3tLMJZNPE1M5YVnAK936H/uzrxOPyIgtBdwMutLYWBYaYBPU7YcVXS+g6ap8qJ+OK75tar7NYu3CjVO4QPlMawU3GleUDxHcPcgMD3sX5E6sLQRE0EkluymgFbfV3Cxd7AlaSnk5jW7fwH4Z/uWXic4ylKLC7IyM9L1StIymYYBSMNfOCA0N4s2OU/K2zMZ2ACAILACFS3EDXsAQAAAAIAAAAoAAAASwQAAAAAAAABAAAAAAAAAAAAAAA
+

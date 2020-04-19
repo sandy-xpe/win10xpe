@@ -1,0 +1,140 @@
+[Main]
+Title=Greenshot
+Type=XPEPlugin
+Description=(v1.2.10.6) Greenshot is a light-weight screenshot software tool for Windows
+Author=KYHI
+Date=2020.03.25
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Plugin Created 2020.03.25
+History002=
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=greenshot4848.ico,1,5,145,35,48,48
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+Startup_CheckBox="Run At System Startup",1,3,6,183,137,18,False,"__Enable To Launch Program At System Startup"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://getgreenshot.org/
+Update_Container_Button=U,0,8,540,4,14,14,Update_Container,0,False,"__Update-Encode Container File"
+
+[Variables]
+%ProgramTitle%=Greenshot
+%ProgramEXE%=greenshot.exe
+%ProgramFolder%=Greenshot
+%SetupFile%=Greenshot-RELEASE.exe
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
+%SetupURL%=https://github.com/greenshot/greenshot/releases/download/Greenshot-RELEASE-1.2.10.6/Greenshot-INSTALLER-1.2.10.6-RELEASE.exe
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,%Architecture%%WoW64Support%,Equal,x64False,EchoExtended,"You Need To Enable WoW64 Basic To Run %ProgramTitle% In A 64-Bit Build",,,Message,2,Exit
+Iniread,%ProjectDir%\Script.Project,Features,DotNET,%DotNET%
+If,%DotNET%,Equal,False,Exec,%ProjectDir%\Features\DotNET.script,Process
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+DirMake,%Target_Prog%\%ProgramFolder%
+DirCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%,%Target_Prog%
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//If,%Architecture%,Equal,x64,ExtractSectionFiles,%ScriptFile%,AddFiles6432
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\windows\system32\mscms.dll
+
+[AddFiles6432]
+\Windows\SysWOW64\xxx.dll
+\Windows\SysWOW64\??-??\xxx.dll.mui
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,Tmp_Software\Classes\.greenshot,,Greenshot
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Greenshot,,"Greenshot File"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Greenshot\DefaultIcon,,"%PE_Programs%\%ProgramFolder%\Greenshot.EXE,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Greenshot\shell\open\command,,"#$q%PE_Programs%\%ProgramFolder%\Greenshot.EXE#$q --openfile #$q#$p1#$q"
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\.NETFramework\v2.0.50727\NGenService\Roots\%PE_Programs%/%ProgramFolder%/Greenshot.exe",Status,5
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\.NETFramework\v2.0.50727\NGenService\Roots\%PE_Programs%/%ProgramFolder%/Greenshot.exe\0",Status,5
+RegWrite,HKLM,0x4,"Tmp_Software\Microsoft\.NETFramework\v2.0.50727\NGenService\Roots\%PE_Programs%/%ProgramFolder%/Greenshot.exe\0",Scenario,0
+RegWrite,HKLM,0x1,"Tmp_Software\Microsoft\.NETFramework\v2.0.50727\NGenService\Roots\%PE_Programs%/%ProgramFolder%/Greenshot.exe\0",RuntimeVersion,v4.0.30319
+RegWrite,HKLM,0x3,"Tmp_Software\Microsoft\.NETFramework\v2.0.50727\NGenService\Roots\%PE_Programs%/%ProgramFolder%/Greenshot.exe\0",ImageList,11,00,00,00,00,04,00,00,00,52,00,00,00,58,00,3a,00,5c,00,50,00,72,00,6f,00,67,00,72,00,61,00,6d,00,20,00,46,00,69,00,6c,00,65,00,73,00,5c,00,47,00,72,00,65,00,65,00,6e,00,73,00,68,00,6f,00,74,00,5c,00,47,00,72,00,65,00,65,00,6e,00,73,00,68,00,6f,00,74,00,2e,00,65,00,78,00,65,00,00,00,01,84,00,00,00,47,00,72,00,65,00,65,00,6e,00,73,00,68,00,6f,00,74,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,31,00,2e,00,32,00,2e,00,31,00,30,00,2e,00,36,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,6e,00,75,00,6c,00,6c,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,05,00,00,00,02,00,00,00,03,00,00,00,0e,00,00,00,0f,00,00,00,10,00,00,00,00,04,00,00,00,98,00,00,00,6d,00,73,00,63,00,6f,00,72,00,6c,00,69,00,62,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,00,00,00,00,00,00,00,00,00,04,00,00,00,b0,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,57,00,69,00,6e,00,64,00,6f,00,77,00,73,00,2e,00,46,00,6f,00,72,00,6d,00,73,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,03,00,00,00,01,00,00,00,03,00,00,00,04,00,00,00,07,00,00,00,08,00,00,00,06,00,00,00,09,00,00,00,05,00,00,00,0b,00,00,00,0c,00,00,00,0d,00,00,00,00,04,00,00,00,a4,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,44,00,72,00,61,00,77,00,69,00,6e,00,67,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,01,00,00,00,05,00,00,00,00,04,00,00,00,94,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,01,00,00,00,01,00,00,00,02,00,00,00,05,00,00,00,06,00,00,00,00,04,00,00,00,b0,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,43,00,6f,00,6e,00,66,00,69,00,67,00,75,00,72,00,61,00,74,00,69,00,6f,00,6e,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,03,00,00,00,01,00,00,00,04,00,00,00,09,00,00,00,02,00,00,00,06,00,00,00,08,00,00,00,00,04,00,00,00,9c,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,58,00,6d,00,6c,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,02,00,00,00,07,00,00,00,05,00,00,00,00,04,00,00,00,ac,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,44,00,61,00,74,00,61,00,2e,00,53,00,71,00,6c,00,58,00,6d,00,6c,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,03,00,00,00,01,00,00,00,04,00,00,00,06,00,00,00,00,00,00,00,00,04,00,00,00,a6,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,53,00,65,00,63,00,75,00,72,00,69,00,74,00,79,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,01,00,00,00,06,00,00,00,00,04,00,00,00,9e,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,43,00,6f,00,72,00,65,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,03,00,00,00,06,00,00,00,0a,00,00,00,08,00,00,00,00,04,00,00,00,a6,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,4e,00,75,00,6d,00,65,00,72,00,69,00,63,00,73,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,37,00,37,00,61,00,35,00,63,00,35,00,36,00,31,00,39,00,33,00,34,00,65,00,30,00,38,00,39,00,00,00,00,01,00,00,00,01,00,00,00,00,00,00,00,00,04,00,00,00,a2,00,00,00,41,00,63,00,63,00,65,00,73,00,73,00,69,00,62,00,69,00,6c,00,69,00,74,00,79,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,01,00,00,00,01,00,00,00,00,00,00,00,00,04,00,00,00,aa,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,44,00,65,00,70,00,6c,00,6f,00,79,00,6d,00,65,00,6e,00,74,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,03,00,00,00,01,00,00,00,04,00,00,00,09,00,00,00,05,00,00,00,08,00,00,00,06,00,00,00,02,00,00,00,03,00,00,00,05,00,00,00,00,04,00,00,00,e0,00,00,00,53,00,79,00,73,00,74,00,65,00,6d,00,2e,00,52,00,75,00,6e,00,74,00,69,00,6d,00,65,00,2e,00,53,00,65,00,72,00,69,00,61,00,6c,00,69,00,7a,00,61,00,74,00,69,00,6f,00,6e,00,2e,00,46,00,6f,00,72,00,6d,00,61,00,74,00,74,00,65,00,72,00,73,00,2e,00,53,00,6f,00,61,00,70,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,34,00,2e,00,30,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,62,00,30,00,33,00,66,00,35,00,66,00,37,00,66,00,31,00,31,00,64,00,35,00,30,00,61,00,33,00,61,00,00,00,00,01,00,00,00,01,00,00,00,01,00,00,00,06,00,00,00,00,04,00,00,00,80,00,00,00,6c,00,6f,00,67,00,34,00,6e,00,65,00,74,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,31,00,2e,00,32,00,2e,00,31,00,31,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,6e,00,75,00,6c,00,6c,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,02,00,00,00,06,00,00,00,05,00,00,00,00,04,00,00,00,90,00,00,00,47,00,72,00,65,00,65,00,6e,00,73,00,68,00,6f,00,74,00,50,00,6c,00,75,00,67,00,69,00,6e,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,31,00,2e,00,32,00,2e,00,31,00,30,00,2e,00,36,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,6e,00,75,00,6c,00,6c,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,06,00,00,00,0e,00,00,00,03,00,00,00,02,00,00,00,0b,00,00,00,10,00,00,00,06,00,00,00,00,04,00,00,00,9c,00,00,00,4c,00,69,00,6e,00,71,00,42,00,72,00,69,00,64,00,67,00,65,00,2c,00,20,00,56,00,65,00,72,00,73,00,69,00,6f,00,6e,00,3d,00,31,00,2e,00,33,00,2e,00,30,00,2e,00,30,00,2c,00,20,00,43,00,75,00,6c,00,74,00,75,00,72,00,65,00,3d,00,6e,00,65,00,75,00,74,00,72,00,61,00,6c,00,2c,00,20,00,50,00,75,00,62,00,6c,00,69,00,63,00,4b,00,65,00,79,00,54,00,6f,00,6b,00,65,00,6e,00,3d,00,63,00,32,00,62,00,31,00,34,00,65,00,62,00,37,00,34,00,37,00,36,00,32,00,38,00,30,00,37,00,36,00,00,00,00,02,00,00,00,01,00,00,00,04,00,00,00,00,00,00,00
+RegHiveUnLoad,Tmp_Software
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+If,%Startup_CheckBox%,Equal,True,Begin
+Set,%W%,%GTarget_Sys%\AutoRun.cmd
+TXTReplace,%W%,Exit,":: Start GreenShot"
+TXTAddLine,%W%,"#$q%PE_Programs%\%ProgramFolder%\%ProgramEXE%#$q",Append
+TXTAddLine,%W%,"Exit",Append
+End
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%ScriptFile%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//
+ExtractFile,%ScriptFile%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/c %GTools%\innounp.exe -x -b -a -d#$q%GTemp%\%ProgramFolder%#$q #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q",%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/C ren #$q%GTemp%\%ProgramFolder%\{app}#$q #$q%ProgramFolder%#$q"
+
+[Launch_Program]
+Run,%ScriptFile%,Extract
+OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+//Start,,%ProgramEXE%,,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[Update_Container]
+Echo,"Your Files Are Being Downloaded... Please Wait.."
+If,ExistFile,%ProvideFiles%\%SetupFile%,FileDeleteQ,%ProvideFiles%\%SetupFile%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%SetupFile%,%SetupURL%,NoExitOnError
+If,Not,ExistFile,%ProvideFiles%\%SetupFile%,EchoExtended,"Error: %SetupFile% has not been downloaded.",Warn,,Message,5,Exit
+Encode,%ScriptFile%,Folder,%ProvideFiles%\%SetupFile%
+DirDeleteQ,%ProvideFiles%
+
+[AuthorEncoded]
+greenshot4848.ico=1222,1630
+Logo=greenshot4848.ico
+
+[EncodedFile-AuthorEncoded-greenshot4848.ico]
+lines=0
+0=eJztmktIVUEYx49JGVhUWFZWZJhlZGUImUgl2UMyK+ihYQ/DskwsQTCjB/YQjGgTLVoEbSIkaFHQIohoF7SKFtGmTUTQJiJo08LT+U13LnNm5nrP9Rw7V/HKX8+de87Mf7753lfHyfF+Kioc73exM1TqOIWO45R58IacVuffOK/+Usd41dTUuBLVdZvdpfdb3bkvu8Rf3lc1bHWd4Vt+/Bl0C16fF5/lf7qYHM/7etWtbN7pqnMyj/ps3pcrxnMS+R/7fM9mipnve/3zeWuwB/jqaxUNtSf3XN61V4BrXR62Z4vvHXNLbrcY4yWDhzPmLNdkfUPOHlb17ncXPTppyF+Xsw3cY5tz4ZPT4nP4IjNQeqNpVDLP/XFdcF95+aB1LTkv8kJnFjw9E4i7xNTv14w5WUu9Z0Njnbv4YZtb8OqcWEc/x5HAfNO+9Ys5pvwaMOTMeBidXNPRKOxCzif1TmLjti3CJtR1kVMm/AE8V3fvE3vhPXJDd8JwV3W04vgusca6tgaxp+raTclztZ170DPm3tyfN31nhn+IgrcK5lT9A3Jaf6Te8E8Sa9t3B+PvnSkyiJqvDsMHeJj1rkeciz7O2Qe1AZ6PkifrouPoPP5X2ipcdZ7YG3q0fKBZ+BHGpn++JHQs6HriTL0zYL0o9H3+sw7DBzCvMZ6IL8l9e/sYjd7qa4U5D2Rv+DAPxPPKph0+X5rze0D4i7Dy0tfCnkY7F/LDF9j4y8+xteK7R93KA9sj0Vcjhoe0ZeKbnjNEIecg/DnfsPEKHSKWYk/YVlQxJBWWPDjhzn7bk3FekG1ATsRtMNYyixq23G20+WAc0PN+3TdnM7A3Wy2E/cXNLQiW3WkRNqzzJ1+Jm1sQENdlzkLsBPiiTGqIOEEs9OmTl4fgf6hRydPj5pcOqpzhTixQ9YhYFDfHkUD9Jq+Re5haKA7AD5mTN6SqhcYyf1H1YEX/IaG3meTAkuOcN91C3w3+Xi6WKi+Pysar6mv9PjyDmlDlyntfnZeYJxOeQe7lHvU+ZG6tzQLMpeaecgx9R2fQKdk3SMczKG9qASkbrhmz1WbC7gLUCPJeZKCOw1vt28g4EUZPiDE6x6LHp0T9a6vhg8w570WnNd+05RQ2nbTtiTFbvy4pDwXU6/htem9yjBouqM/gjAqfnxV82QvvrT3n4eB9MV0f4MO8Mz5cMOYkd5TP0Q+il6n69HRg/3relqqOlTmRKnNky/lhI8l+u6XnTI5V1qfFl0RvIoxO2uRMPaD39Wy1pc1Xpeo5y75neececd6cURT5iW0t4ohYyztLOGLbegygx2SLFfC32Q5zheVqg97fRm90rtRi6Bn30ruXfRDb3tEH9iBrIp4Zy/4kfpLeHrxZU+/d2XIi/Haq7zukr5ExKu48XPVrqp74YlFiTO/tZwN8HC2xHT+Nfch+d9zy1mHL6bCBkXjK7yayBcgYG8GvyO9V4+YUBXy1W+I622Q/HvRjouxvostV3WO6v5OYxHiA+R9Bk6//+foLVzCnbnicE0wvSk3NK87ILzGxMLHQy0zOZxgFIwjsU4XQpSzY5X+cdZjIwAQANtAKFsWQvYUBAAAAAgAAAC0AAAB1BAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[InterfaceEncoded]
+greenshot4848.ico=1222,1630
+Launch.bmp=913,1218
+
+[EncodedFile-InterfaceEncoded-greenshot4848.ico]
+lines=0
+0=eJztmktIVUEYx49JGVhUWFZWZJhlZGUImUgl2UMyK+ihYQ/DskwsQTCjB/YQjGgTLVoEbSIkaFHQIohoF7SKFtGmTUTQJiJo08LT+U13LnNm5nrP9Rw7V/HKX8+de87Mf7753lfHyfF+Kioc73exM1TqOIWO45R58IacVuffOK/+Usd41dTUuBLVdZvdpfdb3bkvu8Rf3lc1bHWd4Vt+/Bl0C16fF5/lf7qYHM/7etWtbN7pqnMyj/ps3pcrxnMS+R/7fM9mipnve/3zeWuwB/jqaxUNtSf3XN61V4BrXR62Z4vvHXNLbrcY4yWDhzPmLNdkfUPOHlb17ncXPTppyF+Xsw3cY5tz4ZPT4nP4IjNQeqNpVDLP/XFdcF95+aB1LTkv8kJnFjw9E4i7xNTv14w5WUu9Z0Njnbv4YZtb8OqcWEc/x5HAfNO+9Ys5pvwaMOTMeBidXNPRKOxCzif1TmLjti3CJtR1kVMm/AE8V3fvE3vhPXJDd8JwV3W04vgusca6tgaxp+raTclztZ170DPm3tyfN31nhn+IgrcK5lT9A3Jaf6Te8E8Sa9t3B+PvnSkyiJqvDsMHeJj1rkeciz7O2Qe1AZ6PkifrouPoPP5X2ipcdZ7YG3q0fKBZ+BHGpn++JHQs6HriTL0zYL0o9H3+sw7DBzCvMZ6IL8l9e/sYjd7qa4U5D2Rv+DAPxPPKph0+X5rze0D4i7Dy0tfCnkY7F/LDF9j4y8+xteK7R93KA9sj0Vcjhoe0ZeKbnjNEIecg/DnfsPEKHSKWYk/YVlQxJBWWPDjhzn7bk3FekG1ATsRtMNYyixq23G20+WAc0PN+3TdnM7A3Wy2E/cXNLQiW3WkRNqzzJ1+Jm1sQENdlzkLsBPiiTGqIOEEs9OmTl4fgf6hRydPj5pcOqpzhTixQ9YhYFDfHkUD9Jq+Re5haKA7AD5mTN6SqhcYyf1H1YEX/IaG3meTAkuOcN91C3w3+Xi6WKi+Pysar6mv9PjyDmlDlyntfnZeYJxOeQe7lHvU+ZG6tzQLMpeaecgx9R2fQKdk3SMczKG9qASkbrhmz1WbC7gLUCPJeZKCOw1vt28g4EUZPiDE6x6LHp0T9a6vhg8w570WnNd+05RQ2nbTtiTFbvy4pDwXU6/htem9yjBouqM/gjAqfnxV82QvvrT3n4eB9MV0f4MO8Mz5cMOYkd5TP0Q+il6n69HRg/3relqqOlTmRKnNky/lhI8l+u6XnTI5V1qfFl0RvIoxO2uRMPaD39Wy1pc1Xpeo5y75neececd6cURT5iW0t4ohYyztLOGLbegygx2SLFfC32Q5zheVqg97fRm90rtRi6Bn30ruXfRDb3tEH9iBrIp4Zy/4kfpLeHrxZU+/d2XIi/Haq7zukr5ExKu48XPVrqp74YlFiTO/tZwN8HC2xHT+Nfch+d9zy1mHL6bCBkXjK7yayBcgYG8GvyO9V4+YUBXy1W+I622Q/HvRjouxvostV3WO6v5OYxHiA+R9Bk6//+foLVzCnbnicE0wvSk3NK87ILzGxMLHQy0zOZxgFIwjsU4XQpSzY5X+cdZjIwAQANtAKFsWQvYUBAAAAAgAAAC0AAAB1BAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

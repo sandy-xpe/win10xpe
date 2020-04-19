@@ -1,0 +1,36 @@
+[Main]
+Title=x64dbg - File Container
+Type=XPEPlugin
+Description=x64dbg - File Container
+Author=MaloK
+Date=2019.12.19
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=0
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=MaloK - 2019.12.19 Initial XPE Plugin Created
+History002=
+
+[Interface]
+Hide_TextBox="To Hide Plugin From Tree - Edit Container File Plugin [Main] Level=5 to Level=0",1,1,10,60,531,18,8,Bold
+
+[Process]
+Echo,"File Container Plugin - There Is Nothing to Process..."
+
+[AuthorEncoded]
+x96dbg4848.ico=1543,2058
+Logo=x96dbg4848.ico
+
+[EncodedFile-AuthorEncoded-x96dbg4848.ico]
+lines=0
+0=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
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

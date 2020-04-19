@@ -1,0 +1,125 @@
+[Main]
+Title=Linux Reader for Windows
+Type=XPEPlugin
+Description=DiskInternals Linux Reader for Windows plays the role of a bridge between your Windows and Ext2/Ext3/Ext4, HFS and ReiserFS file systems.
+Author=KYHI
+Date=2019.10.22
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Packed Plugin Created 2019.10.22
+History002=
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=LinuxReader4848.ico,1,5,145,35,48,48
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://www.diskinternals.com/linux-reader/
+Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update-Encode Container File"
+
+[Variables]
+%ProgramTitle%=Linux_Reader
+%ProgramExe%=LinuxReader.exe
+%ProgramExex64%=LinuxReader64.exe
+%ProgramFolder%=Linux_Reader
+%SetupFile%=Linux_Reader.exe
+%SetupURL%=https://eu.diskinternals.com/download/Linux_Reader.exe
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
+%FileContainer%=%ScriptDir%\DiskInternals_Linux_Reader_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+If,Not,ExistDir,%Target_Prog%,DirMake,%Target_Prog%
+DirCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%,%Target_Prog%
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+//ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+//Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\Windows\System32\xxx.dll
+\Windows\System32\??-??\xxx.dll.mui
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//--
+Echo,"Extracting %ScriptTitle% Setup File..."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+
+[PluginSetx64]
+Set,%ProgramExe%,%ProgramExex64%
+
+[Launch_Program]
+If,%HostOSArch%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+Run,%ScriptFile%,Extract
+//OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[Update_Container]
+Echo,"The Container Files Is Being Updated... Please Wait.."
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%SetupFile%,%SetupURL%,NoExitOnError
+If,Not,ExistFile,%ProvideFiles%\%SetupFile%,EchoExtended,"Error: %SetupFile% has not been downloaded.",Warn,,Message,5,Exit
+Encode,%Filecontainer%,Folder,%ProvideFiles%\%SetupFile%
+DirDeleteQ,%ProvideFiles%
+
+[AuthorEncoded]
+LinuxReader4848.ico=2118,2824
+Logo=LinuxReader4848.ico
+
+[EncodedFile-AuthorEncoded-LinuxReader4848.ico]
+lines=0
+0=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
+
+[InterfaceEncoded]
+LinuxReader4848.ico=2118,2824
+Launch.bmp=913,1218
+
+[EncodedFile-InterfaceEncoded-LinuxReader4848.ico]
+lines=0
+0=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
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

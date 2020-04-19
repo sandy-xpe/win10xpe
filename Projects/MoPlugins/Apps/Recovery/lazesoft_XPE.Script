@@ -1,0 +1,121 @@
+[Main]
+Title=Lazesoft Recovery Suite Home
+Type=XPEPlugin
+Description=Lazesoft Recovery Suite Home Edition, just three steps to Recover Your Data, Repair Windows System or Reset Windows Password.
+Author=KYHI
+Date=2019.03.31
+Credits=
+Contact=
+Version=002
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Plugin Created 2018.06.04
+History002=KYHI - M&M Check - 2019.03.31
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,False,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=,1,5,145,45,300,225
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,_Launch_Program_,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://theoven.org/index.php?topic=2421.0
+
+[Variables]
+%ProgramTitle%=Lazesoft Recovery Suite Home
+%ProgramEXE%=ifsui.exe
+%ProgramFolder%=Lazesoft Recovery Suite
+%SetupFile%=lazesoft.7z
+%SetupFilex64%=lazesoft64.7z
+%FileContainer%=%ScriptDir%\lazesoft_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+If,Not,ExistDir,%Target_Prog%,DirMake,%Target_Prog%
+DirCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%,%Target_Prog%
+//--
+If,%Desktop_CheckBox%,Equal,True,Begin
+Set,%ProgramTitle%,"Windows Recovery"
+Set,%ProgramEXE%,windowsrecoveryapp.exe
+AddShortcut,Desktop
+//
+Set,%ProgramTitle%,"Disk Image & Clone"
+Set,%ProgramEXE%,diskimagecloneapp.exe
+AddShortcut,Desktop
+//
+Set,%ProgramTitle%,"Data Recovery"
+Set,%ProgramEXE%,datarecoveryapp.exe
+AddShortcut,Desktop
+//
+Set,%ProgramTitle%,"Password Recovery"
+Set,%ProgramEXE%,passwordrecoveryapp.exe
+AddShortcut,Desktop
+End
+//--
+If,%StartMenu_CheckBox%,Equal,True,Begin
+Set,%ProgramTitle%,"Windows Recovery"
+Set,%ProgramEXE%,windowsrecoveryapp.exe
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+//
+Set,%ProgramTitle%,"Disk Image & Clone"
+Set,%ProgramEXE%,diskimagecloneapp.exe
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+//
+Set,%ProgramTitle%,"Data Recovery"
+Set,%ProgramEXE%,datarecoveryapp.exe
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+//
+Set,%ProgramTitle%,"Password Recovery"
+Set,%ProgramEXE%,passwordrecoveryapp.exe
+AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+End
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Extract]
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+If,Not,ExistDir,%GTemp%\%ProgramFolder%,DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+//ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -aou -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+
+[Launch_Program]
+If,%HostOSArch%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+Run,%ScriptFile%,Extract
+//OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Start,,ifsui.exe,,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[AuthorEncoded]
+Logo=windowsrecoveryapp4848.ico
+windowsrecoveryapp4848.ico=5373,7164
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+
+[EncodedFolders]
+Folder
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-windowsrecoveryapp4848.ico]
+lines=1
+0=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
+1=KdahV75AxqRc94du5wjulXj8oajLhX8b79efOnzxmFw04MOa5Jh9O9q7waSmH5vICOnUOFoRC/4YTVl0+B54ISOM5LYZLxBozVEICivz6931E1lOyHcHJyomfm/Px8avb/rv8FxOWmul5Kazph6B0rG5e6YLF0TR//4Sas/LUDO0l9VE54C2myT4znjsfkhVngFnmAjftqIGfQ+tnYtx/+GUNIvTeCgvIPuF/9CdnFI2XktiyCXuqXLGsKoFN+FUol0diR6411aeZ07Mzx2o/plhL46dRajFXjw1L9Tbh99zYSEhKgq6sLEtN0L0Adk75yx/f4U2Lvn3bLP+bW87VBQeNXH6svWy7fhNXqHdhk2oPD0UM4Ev8GbKtTMZ4rFTMECsAv8QTblF/iqHkXzAL74Z02hOjcYaQVvsPVkvcf5fQzeGaZS+8/WhIHhaIISOf6QJTk7YoYXXAHHMYMB2lMNhGlY2eM6iKMk5+PiIw4etaneheqdg6RHp70w/3e3t5c/4r/USM/m+RbDz6K7jLklbDrcuGTaYKQTieEtLtwgPT4qilvwS93ByxzYjF5URbmCRdDcEcVdhxvhIpZJ05798Eu8jU8kt7AJ30I+q6dxydqiXCLJjJ7t91yp3N2VZw+FgQpY6brXkw7J058v4b4fhnGHOYGQ5YTmp7GIFzp2KfeHzU1NVGzf76cnNx36y8lBzRcNl0tKP+ooOuuuz+qbt2yfS3vhXW6IKjVCQmbPqgkvsU2GzI/zQzG2PlJmL70FrhE7kNI+hm2HnmJg/ptOGbZBU3HHui49ELFpDmOIa03Yb6HYv6a5LPgj9YCL+E+y1UGrFaSmGi0no77MUcXguXQXDD2cEBYUxJWVlb0bE/5nop9EkuG/4o7Jat/MZziEJD22Mojulia6T19s2nntVXHOrH2TDcEiR0HLg5CIaIHP/FcJDaEYdz8ZExbchNzhYuwTLwcInueQ1yxHr+oNkL6RBOkVOsbFUyKFnCcPRZE7TXzfOUwy2Uv+D3kIRNqgEMhpyBgtwfTtIUwRpEHLHtnYprMPGga6qGkpITOXWLHB21t7R/qn+k1UHM5k55f+uH42ZCdR7JatwgodH0QOdMD4VNd2EjyQDH6DeaKxYHB4UPbMHZeIp3PHAL5mL+mGIvESoktT8AvWUHy4/EniX1xXTNFvd7NdN4Ddusd4LU9CamL8Th3vR7Xq+qRWV2IgLwEGMd5QMpJDXO0NkHb4Sxd8589e0bFzi3GH5jjBQVV2UJT7nQw/dML1zKZkyXP94evPt6DDRa9EDbows/2fVillAMG63kw2L2IDZfofBjHlYJJC6+RmLoJ9uW54ODPAxvR84UysUA8D6x6CligGQsRk2ZI+g5ie8gQJN36SN6/RNH9SnrfvHz5MvSNTiMnN4fuw6h+ktSwfT/K/avIqFqdvHrn8QcFnfNWh/OqOcWM+h+v0e3DRqteiBh2wty7DIwpJmBMswGDzZWshR8YnMSOWZG0LWPnJdDrQmm21dcgeqYNW+zasd3vNaRDh7A9aAibnQaJP3qw9EATFm+5B3W9OFics/9EveOi4oaqY2QGyf2RvP1nWbJEesJZ55i0tJyHI0f0ffcfCXq4ZpN+R8s6owGoeL5ERWU1Nm4PwRg2OzCm22AMuwNY2F3BwuGFCXMCMHl+MH6aEwy+9VHYbPIUe8PfYG/UEHaHE+5+b7DJZgBrdMhsL9cE7i3l4ORLx2zB5PZd2hGyl1OutLW2tsHHx6eb2LL2j3L/KsJiJ+Y5+GWUZ+WXDegyXY5Zehpu2KDf0xUYmUfX8+KSx/C/dBsqmlchsfsGtAweIj6pFhHRdTCzeYjQmCd4/Kwdh+MGsC9mCDuD3kDS+TVETXohSGo638FG8EhWYiZ/Fpnd01vXWb4UlddwN/MMjP2gdcbeg8iWP8v9q8zkVZ3jEpxRlF3w6OPJMw4ZJ4wcHaxtbD5HR0fj5s2bKC4uRllZGVnrcjx5UkN61Wa0tbWju7ub7sMLSpsg7dELCTsSe0avIKzRAQHlFizdVw8ekuOzVt4iNhQUSQXFLJfTdVfOzHv48bRLYuoSsuf+u9y/irisAdsBFcPzRuec+8vKKz5RcwHVmzg6OtLvlqlehbKloKCAnheod+JULj5+/BheEcUQ1u2g68cqtfYv3GVegFusDNybivpWqla6ijPzOE85xhmk5z0esg9IvbNhr9nsv4r7N8ISFBJ5nprrqT6a8js1o1EzMlUnqVktMDAQUVFRdK+SlJREQ9P2BoQI95WqbeDb1wBeiWos3Fo5JHLqZfDWSx2rt5n6zjB0jI6+frf8o7nL5Twhab2ZfwN3Wshe9gvJpx5qRqPebVF2VFZW0nMOVS+pfkVDQ4PW+vr60NfTw88KSe9WyLd3Cx1vrdxlWRYj5d90fE9eHudGudOTtJkRJy4m5rdm5Ja+PWro57xRzn3S38X9q/j6+q5yd3dPJ33hMGUHVWOGh4fpeKeOqb6dWgeq76Xe8ys7eSnKullwbzx9iUMrwJRdUs54mbppoKZH+LWHGXll7z3Dr5fuOMKUYIzOO/8JYTKZ40gvvpnoWC8vr0FqVqK+56JsoXpdyh5q/6ZiTUFF88l+JZ1ifTP3Up+wtIb0nAfD1+9VkLy4UXvSNEhbTMZ42n+K9+/YwkHq+xF7e/sE4vO6oKCgd8nJycjKykJycsrbTdtkc3Yf/DVf8YTF9RNnnMOPnAowlVJ2EmOIM8f9X/L+DWEh/FkJ+MnetJPUfAUyr1LfD3/9zv4/Fh//lf/K/xcBrBlMEG1NDpgMxkfqJCuDMTKqP1NanHxOFMvodWMpnU8+HtVjR89Tn9PXf73PVy3+5X5jiO4fPaY0C+/o8Te6YfS5v69Z/klP/M3r+n9Lf/OckW+1+D94fuVN24HftnsCpRtG7Sc35KU0uRHtR5DLaZ3P+0VT8vv6fwCUoBKxeJyTKs/MS8kvLy5KTc4vSy2qTCwoMLEwsdDLTM5nGAXDH+xThdCLRbDL11/bI8DABAByRg3UBGfQIgEAAAACAAAANgAAAKMUAAAAAAAAAQAAAAAAAAAAAAAA
+

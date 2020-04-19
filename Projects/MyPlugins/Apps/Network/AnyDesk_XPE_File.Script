@@ -1,0 +1,36 @@
+[Main]
+Title=AnyDesk - File Container
+Type=XPEPlugin
+Description= AnyDesk Version 5.4.2.0 File Container
+Author=ChrisR
+Date=2019.09.15
+Credits=
+Contact=
+Version=004
+Level=0
+Download_Level=2
+Selected=None
+Mandatory=False
+NoWarning=False
+History001=ChrisR Initial XPE Plugin Created 2018.05.30
+History003=KYHI - 2019.03.29
+History004=ChrisR Updated v5.3.2 - 2019.09.15
+
+[Interface]
+Hide_TextBox="To Hide Plugin From Tree - Edit Container File Plugin [Main] Level=5 to Level=0",1,1,11,60,531,18,8,Bold
+
+[Process]
+Echo,"There Is Nothing To Process..."
+
+[AuthorEncoded]
+AnyDesk4848.ico=584,779
+Logo=AnyDesk4848.ico
+
+[EncodedFile-AuthorEncoded-AnyDesk4848.ico]
+lines=0
+0=eJztmstOwkAUhoeXcO2GxCWJQEwULWiCsnBhvERlQSL4HKzdGDeujBpjjAmPoPHyEIrGmMhaX4Be5jjTWihSmrYDnZlkDvkbLoV+XzvttHQQSpFHJoPIdBrdphGaQgjNkJC3UA0579NqptGoSuUX9UKuqLeymvGTKxo4VzRBrBjYYdNblNXWsgtSWa27Qz7v8GcM7dKhzJTdXu+a8cWfKWIIs9tmuLPEDmU3vvlzxA1lF3FfDc0vMbuKioqKk6zWD8s8PDK7ZEL10ISjEwsKq/58dJ7KlgnHpxasbTqveXO7XPt1E9rvGAwD4OLagvnyoAN9XiHMD88YMAa4e8RQ3uDv4LK/Ena3dH3YIV8y4fLG6s0jgoMfu9fh3ONAU22Y8PKGhXAIYh/lQL+zVx92uH9K1iEM+6i2ZDsc8HOIwh7ksMvBIQ57pO0Ak3NgYfc6DO0PCWwHm73Bxu5W989hIawDYz9Nf3+75vRN4yqd9HFnVxbMrfSXQfeHj8/BZdBj6/I627kGb/4SI38i7cenT+j1a2M6z5vY/hvELtAxyPf4mSA7i4Mo7HEcRGOP4sC7vbM4iH7+HOQgy/XLfwcZrx+9DrJev3vXsaz/n6ioqKjEi8z3wCi77PdP5b5/Lfv4AdnHb8g+fqaJ+iNpVCVXTToh6/0XB57HHnic43fMq3RJLc42sTCx0MtMzmcYBSMK7FOF0D8ZscszndGcy8AEAN1TCHMzPBvtAQAAAAIAAAArAAAA+QEAAAAAAAABAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]

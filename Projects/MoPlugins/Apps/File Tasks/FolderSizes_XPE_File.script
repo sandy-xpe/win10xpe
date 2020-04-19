@@ -1,0 +1,38 @@
+[Main]
+Title=Folder Sizes - Container File
+Type=XPEPlugin
+Description=FolderSizes - Container File
+Author=Texervn
+Date=2020.01.18
+Credits=TheOven.org Forum
+Contact=
+Version=005
+Level=0
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=Texervn Initial XPE Packed Plugin Created 2019.07.06
+History005=KYHI - URL Updated - 2020.01.18
+
+[Interface]
+Hide_TextBox="To Hide Plugin From Tree - Edit Container File Plugin [Main] Level=5 to Level=0",1,1,10,60,531,18,8,Bold
+
+[Variables]
+
+[Process]
+Echo,"File Container Plugin - There Is Nothing To Process"
+
+[AuthorEncoded]
+Logo=FolderSizes-Icon.ico
+FolderSizes-Icon.ico=636,848
+
+[EncodedFile-AuthorEncoded-FolderSizes-Icon.ico]
+lines=0
+0=eJztmLFLw0AUxl9xcOzmaIu0qKjYTbcuncVRcFHB2T+hi6BLwU1BNxUtgqBQ1EUUFEFFUZwqiAVRN11djHlpD9OQ894lfc1R+8rHg+YCv3z38nEEIGb/MpkkYG2nAbrs3mcrY2vKVgyq1yAF7TK0uuf3jZQOf+7wEWZfvo2RLv/w6lnkzG5N3H+Sn0Hs1/TTFxtP4eEKVm6PScK1OnuA63qWTmHs/JWNn8oupMvfu3YHo1s3bPwbH/Xy8nqv4z3oJ+UZcM1AsQKpwpFR/uM8U/mHdt8dfnxvOP1Xcbv9p86Q4E8vX0LuoGyM/7r8/etlthxV+e83/yhKjgp+fAeSCyWWHA3qP2UPBD+KK0dV+SObf11+zNGRzWuj/FflqJufK0eDzj9KlaNufq4cDeO/aoa8/Bw5GjT/g/Bz5GhY///KUS8/R44GOf9Q98DLz5GjYf3X5W90joadf9T4xZvvM/jx4wylF0tG+Y/zjEwU/kbnaJj8V82QjB9zNOpvEJTvEjL+RmlnbhAsy6pTZW/GV+I63kOtZvDLeGUyjZ/qe9v/YMK8lb1vFP+jnH/BLiuT/VexC35V/kQx/xR2wc/tP+c3bu755y5u/7mLO/+5q5X85zj/cFcr+d+e/+ZXO/+jLe7zD3e1gv/l4iSZHdeaxI+FPDr6D2U59dtPnD89PS/pWUVPSHpc0TslvUPRZfx1PX5S7Ylaz9Z63um2Cdz9Oeby+wfi/+njeJwTccvPSUktCs6sSi3W9UzOz9PLTM5nGAUjBexThdAaTNjlzXdcKGZgAgA/8ArfeYeS4AEAAAACAAAAMAAAACgCAAAAAAAAAQAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

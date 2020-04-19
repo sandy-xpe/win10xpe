@@ -1,0 +1,37 @@
+[Main]
+Title=Hasleo Data Recovery - File Container
+Type=XPEPlugin
+Description=Hasleo Data Recovery v1.0.0.0 File Container
+Author=KYHI
+Date=2019.02.04
+Credits=http://TheOven.org
+Contact=
+Version=001
+Level=0
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Container Plugin Created 2019.02.04
+History002=
+
+[Interface]
+pTextBox1="To Hide Container File Plugin From Tree - Set Container File [Main] Level=0",1,1,10,60,531,18,8,Bold
+
+[Variables]
+
+[Process]
+Echo,"File Container Plugin - There Is Nothing To Process"
+
+[AuthorEncoded]
+MainUI4848.ico=1628,2171
+Logo=MainUI4848.ico
+
+[EncodedFile-AuthorEncoded-MainUI4848.ico]
+lines=0
+0=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
+
+[EncodedFolders]
+Folder
+
+[Folder]

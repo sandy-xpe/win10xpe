@@ -1,0 +1,268 @@
+[Main]
+Title=MiniTool Power Data Recovery v8.7
+Type=XPEPlugin
+Description=Plugin Adds MiniTool Power Data Recovery Version 8.7.0.0
+Author=KYHI
+Date=2020.01.17
+Credits=http://TheOven.org
+Contact=
+Version=004
+Level=5
+Download_Level=2
+Selected=True
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Plugin Created 2019.01.08
+History004=KYHI - Support Update - 2020.01.17
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=Image01.jpg,1,5,145,35,250,170
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://www.PowerDataRecovery.com/
+Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update MiniTool Power Data Recovery Free Container Plugin"
+
+[Variables]
+%ProgramTitle%=Power Data Recovery
+%ProgramEXE%=powerdatarecovery.exe
+%ProgramFolder%=MiniToolPowerDataRecovery
+%SetupFile%=pdr-free.exe
+%FileContainer%=%ScriptDir%\PowerDataRecovery8_XPE_File.Script
+%SetupURL%=https://cdn2.minitool.com/download-center/release/products/pdr/current-release/pdr-free.exe
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+DirMake,%Target_Prog%\%ProgramFolder%
+//--
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Set,%Tapp%,%Target_Prog%\%ProgramFolder%
+//--
+If,%Architecture%,Equal,x86,Run,%ScriptFile%,Filesx86
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,Filesx64
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\windows\system32\OnDemandConnRouteHelper.dll
+\windows\system32\credssp.dll
+\windows\system32\propsys.dll
+\Windows\system32\??-??\propsys.dll.mui
+\windows\system32\OEMDefaultAssociations.dll
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,"Tmp_Software\MiniTool Software Limited\MiniTool Power Data Recovery",ShowScanAdBar,false
+RegWrite,HKLM,0x4,"Tmp_Software\MiniTool Software Limited\MiniTool Power Data Recovery",00cfb691-7786-46e4-a4af-7e2cb0eb10c5,2
+RegHiveUnLoad,Tmp_Software
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Filesx86]
+Echo,"Copying %ScriptTitle% Program Files..."
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7z,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7z,1.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7-zip,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,dbghelp,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,efs,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,experience,1.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,fvformatsupport,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,ikernel,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,libcurl,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,libeay32,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,msvcp120,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,msvcr120,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,paraconf,1.ini
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pas,1.cnf
+If,ExistFile,%Sapp%\Pas2#$c1.dll,Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Pas2,1.dll
+If,ExistFile,%Sapp%\PASServer#$c1.dll,Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PASServer,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_de.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_en.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_fr.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_it.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_ja.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_ko.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery,1.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery.exe,1.mfh
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery.exe.ini
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecoveryCore,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Core,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Gui,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Network,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Widgets,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,RawObject,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,ssleay32,1.dll
+ExtractAllFiles,%ScriptFile%,Folder,%Tapp%
+Run,%ScriptFile%,CopyR,%Sapp%\platforms,%Tapp%\platforms,qwindows,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qdds,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qgif,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qicns,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qico,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qjpeg,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qsvg,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qtga,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qtiff,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qwbmp,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qwebp,1.dll
+
+[Filesx64]
+Echo,"Copying %ScriptTitle% Program Files..."
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7z,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7z,2.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,7-zip,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,dbghelp,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,efs,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,experience,2.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,fvformatsupport,1.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,ikernel,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,libcurl,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,libeay32,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,msvcp120,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,msvcr120,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,paraconf,2.ini
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pas,2.cnf
+If,ExistFile,%Sapp%\Pas2#$c2.dll,Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Pas2,2.dll
+If,ExistFile,%Sapp%\PASServer#$c2.dll,Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PASServer,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_de.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_en.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_fr.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_it.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_ja.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,pdr_ko.qm
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery,2.exe
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery.exe,2.mfh
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecovery.exe.ini
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,PowerDataRecoveryCore,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Core,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Gui,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Network,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,Qt5Widgets,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,RawObject,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%,%Tapp%,ssleay32,2.dll
+ExtractAllFiles,%ScriptFile%,Folder,%Tapp%
+Run,%ScriptFile%,CopyR,%Sapp%\platforms,%Tapp%\platforms,qwindows,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qdds,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qgif,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qicns,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qico,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qjpeg,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qsvg,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qtga,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qtiff,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qwbmp,2.dll
+Run,%ScriptFile%,CopyR,%Sapp%\imageformats,%Tapp%\imageformats,qwebp,2.dll
+
+[CopyR]
+//1) Source 2) Target 3-4) SourceFileName with comma (if no comma (no4) direct copy) 5) TargetFilename
+StrFormat,EXT,#4,#9
+If,Not,#4-,Equal,-,Begin
+StrFormat,REPLACE,#4,#9,"",#8
+StrFormat,LTrim,#9,1,#9
+If,#5-,Equal,-,Set,#5,#3.#9
+CopyOrExpand,"#1\#3#$c#8.#9","#2\#5"
+End
+Else,Begin
+If,#5-,Equal,-,Set,#5,#3
+CopyOrExpand,"#1\#3","#2\#5"
+End
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//--
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+Echo,"Extracting %ScriptTitle% Setup File..."
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/c %GTools%\innounp.exe -x -b -a -d#$q%GTemp%\%ProgramFolder%#$q #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q",%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/C ren #$q%GTemp%\%ProgramFolder%\{app}#$q #$q%ProgramFolder%#$q"
+
+[Launch_Program]
+Run,%ScriptFile%,Extract
+//--
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+//--
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x86
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx86
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x64
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx64
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\%HostOSArch%
+OpenDir,%Tapp%
+//Start,,%ProgramEXE%,,%Tapp%
+
+[Update_Container]
+Echo,"Updating %ScriptTitle% Container File..."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+Download,%GTemp%\%ProgramFolder%\%SetupFile%,%SetupURL%
+Encode,%FileContainer%,Folder,%GTemp%\%ProgramFolder%\%SetupFile%
+
+[AuthorEncoded]
+powerdatarecovery4848.ico=5569,7426
+Logo=powerdatarecovery4848.ico
+
+[EncodedFile-AuthorEncoded-powerdatarecovery4848.ico]
+lines=1
+0=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
+1=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
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+Image01.jpg=11300,15067
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+PowerDataRecovery.exe.pek=215,287
+PowerDataRecovery.exe.ini=268,358
+PowerDataRecovery.exe.key=794,1059
+
+[EncodedFile-InterfaceEncoded-Image01.jpg]
+lines=3
+0=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
+1=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
+2=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
+3=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
+
+[EncodedFile-Folder-PowerDataRecovery.exe.ini]
+lines=0
+0=eJwdjMGKwjAUAO+BfMT2pIdC8lJtwiL48pIKgiDsUT1ku8+1UKvUIOvfr3oYhrnMbsUDj6k/SBH4lrcpn76687XnzeWHF0qKvmt5uDG9chYoEJQRMVAs60BzDyV6AmikyMc+/S6KpX9kxnFMj0lY7/+O30/az4/tUzwtpEht7u4pd5fhvaxcTbUxjVdqXjk/8xBqo3VlwQI6BWgRKDoN0SChjaVtTNCNt84ZZQxqKf4BAyo3jHickwzIL08tckksSQxKTc4vSy2q1EutSNXLzMtkGAUjAByG0ltxyE9Y9ruDgQkA0rEOARNvwVkBAAAAAgAAADMAAAC1AAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-Folder-PowerDataRecovery.exe.key]
+lines=0
+0=eJwNksGyojAQRX+JEJkqt2iCojSPkHQgOyDWoAk+RlGRrx/23fdW3XP0Ny2M992ZjJDRv5HEzzs/cI+63pTcdueQHwVHXQ68r2/xDEr4WoFoMa1ahN9c2uniou5MR1E64WXCv82e0UbGWJA+hpug5UH8GOyvWTDzXGdh4Y+kJf2c0XGROO6bg3tYN+3BiWOp/T/D6q/0psr3LGyd3wmN3TmYl1yvfyrK2sVXtSqiy0DqbHCPkuBk2PgqgykqXDoaPTr0HS2GKGiCVMjQhlllQO6haG/pGxOYIUl9FvCXStJK63R3UQDVbjsY1/enYHxJbgxQbMxNLPrgezn0tLmLV675rPV8rZ3fQOJCE27XJpiEjK91ZVkzTObC+m+WGN+Rz/vi5ukUbiOB5tQyfrMkbWwYfTQf5zIEUWAdKTqemoFnlyqW+h7zkvZns/R1gX2Sq3TNTGme+BmDZ3gi8M0C9mgCH3WumK2admXFKdJ4ZZD+6yTWhQy2x+vn2qIYS9438maklvhbLCI2hB9qwh2EbJHOXIGCzpN+Eok4ZwPoxolHO3weMJjn6fskSnEvl57iPt4UiP261awGtjEszWzovopNB1ydsSytigDelrCHqvyfJsCgdOO6P3jJtkzeYGXIjyA9oo6w1HPa3iFfWa95AnBYOSfbpvMY1RVffQTXKBykCpZiAZfJ/gxrT0t4eOEoG4avGtfM0KNZxNS5cZYKJN5tbDyAVeuRB1M4E4Oak8wFRHp/tU4c9F5Fgs3KVFC12j1EOamCcm0XRc3ioktll85tTXPvgtXPxTBPQZGTCqKxdN0DEvtu2AidNlBWalOrvkB6jICk0ir7kco+gfw+2gOOGRFTq4PlkqR/ShnXufpElz0+tcKftrL3TFtUkh8txSFTk9QodsLHyt79M2fjTh8wMmR8drTb/pSp/Q9zUD4ueJyTDMgvTy1ySSxJDEpNzi9LLarUS61I1ctOrWQYBSMAbGCG0AeZsMsn/exOY2ACAOLFDZvkovJkAQAAAAIAAAA1AAAAwQIAAAAAAAABAAAAAAAAAAAAAAA
+
+[EncodedFile-Folder-PowerDataRecovery.exe.pek]
+lines=0
+0=McLMAgBYcEekBASABZHMICY+55LnjOAz8pkJ5UFPRQQWAvmLNURDREMyLUVBQURDRS03REM2QjItQUJDMjJGyB5yjZ1ML2NvBn+JzBSGLAMAAABOUX+nzS+2dCTtGFwKUJCKMez5gFWPjGCy00FnqfBIQJ2zvEhczwVf5n/Xw+aOd9h4nJMMyC9PLXJJLEkMSk3OL0stqtRLrUjVK0jNZhgFIwA0E5Bfpyt1n5EBAK/YDCZGe45zAQAAAAIAAAAwAAAAgwAAAAAAAAABAAAAAAAAAAAAAAA
+

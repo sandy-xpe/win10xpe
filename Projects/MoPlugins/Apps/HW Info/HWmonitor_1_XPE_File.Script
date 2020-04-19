@@ -1,0 +1,36 @@
+[Main]
+Title=HW Monitor - File Container
+Type=XPEPlugin
+Description=HardWare Monitor File Container
+Author=KYHI
+Date=2019.03.31
+Credits=
+Contact=
+Version=002
+Level=0
+Download_Level=2
+Selected=None
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE AutoUpdate Plugin Created 2019.01.14
+History002=KYHI - M&M Check - 2019.03.31
+
+[Interface]
+Hide_TextBox="To Hide Plugin From Tree - Edit Container File Plugin [Main] Level=5 to Level=0",1,1,10,60,540,18,8,Bold
+
+[Process]
+Echo,"There Is Nothing To Process..."
+
+[AuthorEncoded]
+HWMonitor_x324848.ico=1317,1756
+Logo=HWMonitor_x324848.ico
+
+[EncodedFolders]
+Folder
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-HWMonitor_x324848.ico]
+lines=0
+0=eJztmFtPXFUUx/feZ59p8Em5jEJfUNPERBL5BPgF9KV90T4ZPgJPPPqiKVAKFCgwV2C4SimXAWqrVhNeqkljEx1LQqXpi4ZGykUjZbgs115nzjCn00TOsIamCYv8OMw+O/v/32uvvc8ZhJD4U1sr8He1GDsnRFAI8R6CTeIz4bSb+PycyA95CV5pRNMpLxNZBFSRxn0hl/kQl8HSraDtFt5xTwLViv4vwTvvRuDixVn8+0tQ+krxdUUrDxK9imaoOtsHD5bW4K3Kbvzckmln0igm5LMF3ijtBhOdnffw8xdYT21F1m1jQap2Gq8i2AtbWzuwv38AtbUDtCbKamfTyaedBak60OsV9N8HT58+ozWYm/ud1kRZHWw6+XTwoK6i1zb0H4LNzR1w4/yFWWcNdCefloerLEiF/kQ7BINhj/9Uag1KSsw904dHy4PoZEHKLrx2oP9I1n86vU/XxsZFqiOtu9n0uDn0H836N3vYxPr6M6iujtH6KNXFrNvNglLXaLxgMJb1f4D29/acOcTjKdofWvewaRqEvMaD6kF/Xbh/4x7/ude6uklaI4VzYNMVPTzIXrx2o//+PP/uGiwu/kF9nL5cuiEWpArjeL1YP4N5/nPnUF9/h+pM2xE27UIw+rnYgSj6CkFl1RBsbuX7P8h8ePz4b3zHiGPfPpwzQ95kpADCTh14cPZveXnshfk3sbvrNDQ1/0x7xbZjBeofIvygIpTjsvIEhEIPIBJZgnCGSHQJ+rAtMbScPfefD3c+29t7UFMz4ayBFfXnIY+oL6QVI93hkYeeuj5quP2nph7RfqHxfHrw0u8LZZl3yijW+Qisrv5LXtLpPayN/Sz/F+5z7aOPb9N6WnrAt49DBnyj7QTpNjT86Knro4br//79NQgE0IMYwL3s3wehBv1jIXIQAmcGyEOup6OGW0cNDT+h/zBYgaECvSQKgvREDGvguyP7N+vkkk47/VdXt7EWx2kNlD3k34saLhilR1C3H/fiY09O/a7B8MiK49+M59eHHCkYaY2ibgLer0nSmWji+TPfjZ2dfUgkHuEZu4zn7UMPofAynsnXcSzjyacPNXosdMBZ+6bmX7M1khvufNbXd6C0dAz7xql/HgV7GDsW0jKeRvGdYALfDf7JeD7I87+xkYY3K6cxZ6NgnxmneedSuIfxY6MDX1Ed1dffzdsH2fyj/7KKaZqrtI6v6SLVBAvKMu8D4/iO/MSZQ+Y8OqyfNJRXzFAf05dLV6jrLCjbfDcZg7oP73h859ZPWYX5XwSulcWjSViTbFiBG1Qf8fhKto489RNM4n3Mm+bTFGqKDaVNfU/id/UFOm9MZL/DU/7n8f4NrH8+TW50YJpqpLHxF/LtPmdN/Tv+J1n9SzXDirJwj8oZKHltBlKprew5ZPJfXnET/U9THy49oWbZsewk5fn8hbuH/in/X2M76lr8mtxInaRaT879Sf7/WsPnb8a/YPU/VxSUnievH9T+QM/jjY1dzP8tbEti/jm15ouGDiyg3yno6lrBcwjg9VLjfw79F0+TE/KJfiurvoHUb1tQefbbTP4ZdeRCUbG0OXNm4ZNP70H12987+Vd840t180TQNs7Fxv0reccV6tbJYJ2Qzikni7z9anMaLzX+A6MJE/B4nBP1CPfNz8ssyS+KrzA2MrEwsdDLTM5nGAUjBOxThdAXWLDL82/t0GNgAgA6EApNetH3PwEAAAACAAAAMQAAANAEAAAAAAAAAQAAAAAAAAAAAAAA
+

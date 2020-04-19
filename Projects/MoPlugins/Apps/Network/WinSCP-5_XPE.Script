@@ -1,0 +1,381 @@
+[Main]
+Title=WinSCP-5
+Type=XPEPlugin
+Description=WinSCP is a popular free SFTP and FTP client for Windows, a powerful file manager that will improve your productivity. It supports also Amazon S3, FTPS, SCP and WebDAV protocols. Power users can automate WinSCP using .NET assembly.
+Author=KYHI
+Date=2019.04.01
+Credits=http://TheOven.org
+Contact=
+Version=003
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Plugin Created 2019.01.12
+History003=KYHI - Verify MUI & MUN Files - 2019.04.01
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=App10.jpg,1,5,145,35,250,167
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://winscp.net/eng/index.php
+FileAssoc_CheckBox="Create File Associations",1,3,10,175,134,18,False,"__Select To Associate Program File Types"
+LangTrans_CheckBox="Add All Language Translations",1,3,10,200,200,18,False,"__Select To All Language Translations - English Is Default - Additional 52MB Required"
+Update_Container_Button=U,1,8,520,4,14,14,Update_Container,0,False,"__Enter Program Version"
+ProgramVer_TextBox="Program Version:",1,0,430,20,82,21,5.17.3,"__Update-Encode Container File"
+
+[Variables]
+%ProgramTitle%=WinSCP-5
+%ProgramEXE%=WinSCP.exe
+%ProgramFolder%=WinSCP-5
+%ProgramFolderx64%=WinSCP-5_x64
+%SetupFile%=WinSCP-Setup.exe
+%PFSetupFile%=WinSCP-%ProgramVer_TextBox%-Setup.exe
+%ProvideFiles%=%UserProfile%\Downloads
+%FileContainer%=%ScriptDir%\WinSCP-5_XPE_File.Script
+%SetupURL%=https://iweb.dl.sourceforge.net/project/winscp/WinSCP/%ProgramVer_TextBox%/WinSCP-%ProgramVer_TextBox%-Setup.exe
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Not Found"
+If,%Architecture%%WoW64Support%,Equal,x64False,EchoExtended,"You Need To Enable WoW64 Basic To Run %ProgramTitle% In A 64-Bit Build",,,Message,2,Exit
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+DirMake,%Target_Prog%\%ProgramFolder%
+//--
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+Set,%Tapp%,%Target_Prog%\%ProgramFolder%
+//--
+If,%Architecture%,Equal,x86,Run,%ScriptFile%,Filesx86
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,Filesx64
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+If,%Architecture%,Equal,x64,ExtractSectionFiles,%ScriptFile%,AddFiles6432
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+If,%FileAssoc_CheckBox%,Equal,True,Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\Windows\System32\appresolver.dll
+\windows\System32\ColorAdapterClient.dll
+\Windows\System32\mscms.dll
+\windows\System32\rpcss.dll
+\windows\System32\security.dll
+\windows\System32\tzres.dll
+\windows\System32\??-??\appresolver.dll.mui
+\windows\System32\??-??\tzres.dll.mui
+\Windows\System32\??-??\mscms.dll.mui
+
+[AddFiles6432]
+\Windows\SysWOW64\appresolver.dll
+\windows\SysWOW64\ColorAdapterClient.dll
+\Windows\SysWOW64\mscms.dll
+\windows\SysWOW64\security.dll
+\windows\SysWOW64\tzres.dll
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{E15E1D68-0D1C-49F7-BEB8-812B1E00FA60},,"WinSCP Shell Extension"
+If,%Architecture%,Equal,x86,RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{E15E1D68-0D1C-49F7-BEB8-812B1E00FA60}\InProcServer32,,"%PE_Programs%\%Programfolder%\DragExt.dll"
+If,%Architecture%,Equal,x64,RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{E15E1D68-0D1C-49F7-BEB8-812B1E00FA60}\InProcServer32,,"%PE_Programs%\%Programfolder%\DragExt64.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\CLSID\{E15E1D68-0D1C-49F7-BEB8-812B1E00FA60}\InProcServer32,ThreadingModel,Apartment
+RegWrite,HKLM,0x1,Tmp_Software\Classes\dav,,"URL: dav Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\dav,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\dav,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\dav,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\dav\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\dav\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\davs,,"URL: davs Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\davs,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\davs,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\davs,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\davs\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\davs\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Directory\shellex\CopyHookHandlers\WinSCPCopyHook,,{E15E1D68-0D1C-49F7-BEB8-812B1E00FA60}
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftp,,"URL: ftp Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftp,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftp,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftp,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftp\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftp\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftpes,,"URL: ftpes Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftpes,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftpes,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftpes,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftpes\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftpes\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftps,,"URL: ftps Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftps,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftps,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ftps,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftps\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ftps\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\s3,,"URL: s3 Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\s3,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\s3,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\s3,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\s3\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\s3\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\scp,,"URL: scp Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\scp,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\scp,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\scp,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\scp\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\scp\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\sftp,,"URL: sftp Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\sftp,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\sftp,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\sftp,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\sftp\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\sftp\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ssh,,"URL: ssh Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ssh,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ssh,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\ssh,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ssh\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\ssh\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAV,,"URL: winscp-DAV Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAV,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-DAV,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-DAV,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAV\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAV\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAVS,,"URL: winscp-DAVS Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAVS,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-DAVS,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-DAVS,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAVS\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-DAVS\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTP,,"URL: winscp-FTP Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTP,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTP,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTP,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTP\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTP\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPES,,"URL: winscp-FTPES Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPES,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTPES,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTPES,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPES\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPES\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPS,,"URL: winscp-FTPS Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPS,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTPS,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-FTPS,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPS\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-FTPS\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTP,,"URL: winscp-HTTP Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTP,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-HTTP,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-HTTP,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTP\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTP\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTPS,,"URL: winscp-HTTPS Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTPS,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-HTTPS,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-HTTPS,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTPS\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-HTTPS\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-S3,,"URL: winscp-S3 Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-S3,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-S3,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-S3,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-S3\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-S3\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SCP,,"URL: winscp-SCP Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SCP,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SCP,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SCP,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SCP\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SCP\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SFTP,,"URL: winscp-SFTP Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SFTP,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SFTP,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SFTP,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SFTP\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SFTP\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SSH,,"URL: winscp-SSH Protocol"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SSH,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SSH,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\winscp-SSH,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SSH\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\winscp-SSH\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\WinSCP.Url,,"WinSCP URL"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\WinSCP.Url,"URL Protocol",
+RegWrite,HKLM,0x4,Tmp_Software\Classes\WinSCP.Url,EditFlags,2
+RegWrite,HKLM,0x4,Tmp_Software\Classes\WinSCP.Url,BrowserFlags,8
+RegWrite,HKLM,0x1,Tmp_Software\Classes\WinSCP.Url\DefaultIcon,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q,0"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\WinSCP.Url\shell\open\command,,"#$q%PE_Programs%\%Programfolder%\%ProgramExe%#$q /Unsafe #$q#$p1#$q"
+RegWrite,HKLM,0x4,"Tmp_Software\Martin Prikryl\WinSCP 2\DragExt",Enable,1
+RegWrite,HKLM,0x1,Tmp_Software\RegisteredApplications,WinSCP,"Software\Martin Prikryl\WinSCPCapabilities"
+//--
+RegWrite,HKLM,0x4,"Tmp_Software\Martin Prikryl\WinSCP 2",DefaultInterfaceInterface,1
+RegWrite,HKLM,0x4,"Tmp_Software\Martin Prikryl\WinSCP 2",Installations,1
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities",ApplicationDescription,"WinSCP is a popular free SFTP and FTP client for Windows"
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftp,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftps,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftpes,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",sftp,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",scp,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ssh,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",dav,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",davs,WinSCP.Url
+RegWrite,HKLM,0x1,"Tmp_Software\Martin Prikryl\WinSCPCapabilities\UrlAssociations",s3,WinSCP.Url
+If,%Architecture%,Equal,x64,Begin
+  RegWrite,HKLM,0x4,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCP 2",DefaultInterfaceInterface,1
+  RegWrite,HKLM,0x4,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCP 2",Installations,1
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities",ApplicationDescription,"WinSCP is a popular free SFTP and FTP client for Windows"
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftp,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftps,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ftpes,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",sftp,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",scp,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",ssh,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",dav,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",davs,WinSCP.Url
+  RegWrite,HKLM,0x1,"Tmp_Software\WOW6432Node\Martin Prikryl\WinSCPCapabilities\UrlAssociations",s3,WinSCP.Url
+  RegWrite,HKLM,0x1,Tmp_Software\WOW6432Node\RegisteredApplications,WinSCP,"Software\Martin Prikryl\WinSCPCapabilities"
+End
+RegHiveUnLoad,Tmp_Software
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Filesx86]
+Echo,"Copying %ScriptTitle% Program Files..."
+DirCopy,%Sapp%\Extensions,%Tapp%
+DirCopy,%Sapp%\PuTTY,%Tapp%
+If,%LangTrans_CheckBox%,Equal,True,DirCopy,%Sapp%\Translations,%Tapp%
+FileCopy,%Sapp%\DragExt.dll,%Tapp%
+FileCopy,%Sapp%\license.txt,%Tapp%
+FileCopy,%Sapp%\WinSCP.com,%Tapp%
+FileCopy,%Sapp%\WinSCP.exe,%Tapp%
+FileCopy,%Sapp%\WinSCP.ini,%Tapp%
+FileCopy,%Sapp%\WinSCP.map,%Tapp%
+FileCopy,%Sapp%\WinSCPnet.dll,%Tapp%
+
+[Filesx64]
+Echo,"Copying %ScriptTitle% Program Files..."
+DirCopy,%Sapp%\Extensions,%Tapp%
+DirCopy,%Sapp%\PuTTY,%Tapp%
+If,%LangTrans_CheckBox%,Equal,True,DirCopy,%Sapp%\Translations,%Tapp%
+FileCopy,%Sapp%\DragExt64.dll,%Tapp%
+FileCopy,%Sapp%\license.txt,%Tapp%
+FileCopy,%Sapp%\WinSCP.com,%Tapp%
+FileCopy,%Sapp%\WinSCP.exe,%Tapp%
+FileCopy,%Sapp%\WinSCP.ini,%Tapp%
+FileCopy,%Sapp%\WinSCP.map,%Tapp%
+FileCopy,%Sapp%\WinSCPnet.dll,%Tapp%
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+//If,%SetupContainerSize%-,Equal,-,EchoExtended,"You Must First Update The Container File",Warn,,Message,5,Exit
+If,%SetupContainerSize%-,Equal,-,Run,%Scriptfile%,Update_Container
+//--
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+Echo,"Extracting %ScriptTitle% Setup File..."
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/c %GTools%\innounp.exe -x -b -a -d#$q%GTemp%\%ProgramFolder%#$q #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q",%GTemp%\%ProgramFolder%
+ShellExecute,Hide,cmd.exe,"/C ren #$q%GTemp%\%ProgramFolder%\{app}#$q #$q%ProgramFolder%#$q"
+ExtractFile,%ScriptFile%,Folder,WinSCP.ini,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[PluginSetx64]
+Set,%ProgramFolder%,%ProgramFolderx64%
+
+[Launch_Program]
+Run,%ScriptFile%,Extract
+//--
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%
+//--
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x86
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx86
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\x64
+DirMake,%Tapp%
+Run,%ScriptFile%,Filesx64
+//-
+Set,%Tapp%,%GTemp%\%ProgramFolder%\%HostOSArch%
+//OpenDir,%Tapp%
+Start,,%ProgramEXE%,,%Tapp%
+
+[Update_Container_OLD]
+If,Not,ExistFile,%ProvideFiles%\%PFSetupFile%,Begin
+  ExtractandRun,%ScriptFile%,Folder,WinSCP-5 ReadMe.txt
+  Exit
+End
+If,Not,ExistFile,%ProvideFiles%\%PFSetupFile%,EchoExtended,"You Must First Download The %PFSetupFile%#$x%PFSetupFile% Was Not Found In %UserProfile%\Downloads",Warn,,Message,5,Exit
+Echo,"Your Files Are Being Encoded... Please Wait.."
+FileRename,%ProvideFiles%\%PFSetupFile%,%ProvideFiles%\%SetupFile%
+Encode,%Filecontainer%,Folder,%ProvideFiles%\%SetupFile%
+
+[Update_Container]
+Echo,"Your Files Are Being Updated... Please Wait.."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+Download,%GTemp%\%ProgramFolder%\%SetupFile%,%SetupURL%
+Encode,%Filecontainer%,Folder,%GTemp%\%ProgramFolder%\%SetupFile%
+
+[AuthorEncoded]
+WinSCP4848.ico=4365,5820
+Logo=WinSCP4848.ico
+
+[EncodedFile-AuthorEncoded-WinSCP4848.ico]
+lines=1
+0=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
+1=ee+rOdOYFswx0/lujqZFf59OlTXj/E/H6zdNZFzWwy9uRGBx1Ly0F1fe8HLJSTLXBuq8rIyPg7/yQm/H2iVQNzt/HTPbFm5aH9oNKecRuqnJmgHG0o82n2uHgOu1PoxTJe+bDTz/3Y4Sd+bFe2f5Mtrk62Vfn5+SD2I/GH2Ots2R9r4zxypJ6SKPelRL4U7/eSTfLkf6xDH/HjusKKCfdjG1I3hfy7VpqXLPoZSm3ZJzYI3FnuRzYEShzN9ZfY6+o0m/M/ePCA9wHUV8YutE/VUPvPMCbc16O19U/s/e9WdEy/FSljb1BJc9aH/AoKCuNE97Vg9Z+zhPzblpgXBmtAwSz2v23wk8x8FSB1Nt9fInWet+NbquFkQ2pqKp/3PTzcsuXl5anv1UX9jOrLhPu8fUTHmurq6pNxrq4lbuInO9CeGtE9tB/1tf2ET5S3OcTiZaA65M9gX7bBRyqvxF/2bqG/dOareS3PJwbPfEnfX1paCrg2gAMHDtD89Q7XV8+xh0tHpWIvcRSfj5DoGPuKa9hzVFJPQTWL7qc5HPuPt0z4mxaNT4P7zbwNQRb5/n0gx4Z93gZPGUG5d7MCga9sXomf9N2iBfLXri0ZfHsx9jMVFRVAdYh6AIojnKP5XEx9/4ei3oZ6N+o1aL4jdnqm62QXe7+X3KDaw/mT/S1y56rBfWv2qQ2usgBeLWurvJu/LfeWRRtk8kqC295/s1z1VlLs8rcUO1VVVfDkyRM+DjQfi3OT+D4UXROL/I+9EPm+QkJCguKr7bf4nvOv9bV46KUKNyazj2x47dwcBB6toNKjJcCc5jgOsoJyL+mCskD5x+XpMfl71sd7x8bGCg4fPgzFxcVQUFAA1BNhr8PnZeqLKK6wp6ljJlHMh4eHU/9ag+tQT1HcyDa07tTlb6Kn+T3PXpBpyepsyLNvAc/d5OG1W2sQuMlBpXtzAA/Z2ioPaUG5r1xB2XKNZ8Wn19+OXho6BVmuYI/8jtZUxHnixIm63oxYqUel/Ka4p/Uhrc2QvUBfX19HVJu+mZ30MtHN5JaHas2FCYzbcHu2HDx0VoA8Z3l47tIaXrvKgcC1BVS6YSy5S9dWe0oLKua2LigPV88vPZ18OyzYfyyubUZhXxmDdTTDxcUlF5Xn5OSUh3NVDvY7j7DGPMLnm6jk0aNHD2HCPo32Xj/p1RuquyvslB/OH/bslAWDKzNaw3UHRbjjqAAPHX+CPKc28NxZDl67tACBSzPMB2kAN0m0QQptaPGqPKzHU8HJtVkBnq46uJbvguubNqIaKPsFidcXEuwLa6VvUJOiuOmXz87qABftOkKmXXu4bt8O7jj8BA8d2kCeYyt45tQCXjs1g1JnGah0lgRwbVpb4964tMqj8YuqkI655SdWXZ7nPElJlINN6/GdP/L/XTR6EeugUrTK4c51f92ayw6dIcO2HWTZtoXb9m0g274V5kNLeObYDF47ykCpkxRUOjUFcGlc+86NldTMb/ey5mBwbtGJFPvviePvteG8l6VMYYKtx5vVDvuLEx3Ti5Nc0kuS3dNLNnimCTb5pL3d4pdWts0/rWJ70LHK3cHHqvYsTq06EHa08mBEzOP9v6h/bxx/h/7/+Bcf/wXwJkEceJzjC8/MC3YOMLEwsdDLTM5nGAUjC+xThdD7BbDLp8u/D2RgAgCQtwfeZ5xwuwEAAAACAAAAKgAAAL8QAAAAAAAAAQAAAAAAAAAAAAAA
+
+[InterfaceEncoded]
+WinSCP4848.ico=4365,5820
+Launch.bmp=913,1218
+App10.jpg=8494,11326
+
+[EncodedFile-InterfaceEncoded-WinSCP4848.ico]
+lines=1
+0=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
+1=ee+rOdOYFswx0/lujqZFf59OlTXj/E/H6zdNZFzWwy9uRGBx1Ly0F1fe8HLJSTLXBuq8rIyPg7/yQm/H2iVQNzt/HTPbFm5aH9oNKecRuqnJmgHG0o82n2uHgOu1PoxTJe+bDTz/3Y4Sd+bFe2f5Mtrk62Vfn5+SD2I/GH2Ots2R9r4zxypJ6SKPelRL4U7/eSTfLkf6xDH/HjusKKCfdjG1I3hfy7VpqXLPoZSm3ZJzYI3FnuRzYEShzN9ZfY6+o0m/M/ePCA9wHUV8YutE/VUPvPMCbc16O19U/s/e9WdEy/FSljb1BJc9aH/AoKCuNE97Vg9Z+zhPzblpgXBmtAwSz2v23wk8x8FSB1Nt9fInWet+NbquFkQ2pqKp/3PTzcsuXl5anv1UX9jOrLhPu8fUTHmurq6pNxrq4lbuInO9CeGtE9tB/1tf2ET5S3OcTiZaA65M9gX7bBRyqvxF/2bqG/dOareS3PJwbPfEnfX1paCrg2gAMHDtD89Q7XV8+xh0tHpWIvcRSfj5DoGPuKa9hzVFJPQTWL7qc5HPuPt0z4mxaNT4P7zbwNQRb5/n0gx4Z93gZPGUG5d7MCga9sXomf9N2iBfLXri0ZfHsx9jMVFRVAdYh6AIojnKP5XEx9/4ei3oZ6N+o1aL4jdnqm62QXe7+X3KDaw/mT/S1y56rBfWv2qQ2usgBeLWurvJu/LfeWRRtk8kqC295/s1z1VlLs8rcUO1VVVfDkyRM+DjQfi3OT+D4UXROL/I+9EPm+QkJCguKr7bf4nvOv9bV46KUKNyazj2x47dwcBB6toNKjJcCc5jgOsoJyL+mCskD5x+XpMfl71sd7x8bGCg4fPgzFxcVQUFAA1BNhr8PnZeqLKK6wp6ljJlHMh4eHU/9ag+tQT1HcyDa07tTlb6Kn+T3PXpBpyepsyLNvAc/d5OG1W2sQuMlBpXtzAA/Z2ioPaUG5r1xB2XKNZ8Wn19+OXho6BVmuYI/8jtZUxHnixIm63oxYqUel/Ka4p/Uhrc2QvUBfX19HVJu+mZ30MtHN5JaHas2FCYzbcHu2HDx0VoA8Z3l47tIaXrvKgcC1BVS6YSy5S9dWe0oLKua2LigPV88vPZ18OyzYfyyubUZhXxmDdTTDxcUlF5Xn5OSUh3NVDvY7j7DGPMLnm6jk0aNHD2HCPo32Xj/p1RuquyvslB/OH/bslAWDKzNaw3UHRbjjqAAPHX+CPKc28NxZDl67tACBSzPMB2kAN0m0QQptaPGqPKzHU8HJtVkBnq46uJbvguubNqIaKPsFidcXEuwLa6VvUJOiuOmXz87qABftOkKmXXu4bt8O7jj8BA8d2kCeYyt45tQCXjs1g1JnGah0lgRwbVpb4964tMqj8YuqkI655SdWXZ7nPElJlINN6/GdP/L/XTR6EeugUrTK4c51f92ayw6dIcO2HWTZtoXb9m0g274V5kNLeObYDF47ykCpkxRUOjUFcGlc+86NldTMb/ey5mBwbtGJFPvviePvteG8l6VMYYKtx5vVDvuLEx3Ti5Nc0kuS3dNLNnimCTb5pL3d4pdWts0/rWJ70LHK3cHHqvYsTq06EHa08mBEzOP9v6h/bxx/h/7/+Bcf/wXwJkEceJzjC8/MC3YOMLEwsdDLTM5nGAUjC+xThdD7BbDLp8u/D2RgAgCQtwfeZ5xwuwEAAAACAAAAKgAAAL8QAAAAAAAAAQAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-App10.jpg]
+lines=2
+0=eJzdeHs4lNvf941EJDmHNOUcIQlbZKKEVFJyZspZaBJC4S5KzpMURZqcQsVs5JBkciZElMkh45DzacZxhpn7fm/7t3+/Xe3n3dfzPP+81/WumXVds+57fdf6fNb6Hgf+Cg8C208cNz4OsLCwABeQDwAPAZIGgR6uAHDqFKAAAAAn8o4fYEN+sSCfPxrcBxwFWFlYNr5/NjZ2to22edMmNnaOzRwcG51zC/cWTk4uTg4OLh4uLu6tSOPYso2XZ+u2jd8bi2yIb0gh362cHJxb/8cNfg/wcQI5wBobiyTAysfCxscC1wEoBCs7yx8N+LOxsLJtYt+MQOLiRiaUbEfgs7GxImDZN21C3oYg74FNfOz8e1T1NguYXeSQ9BE8cCshnVNKv7Ba6OwnirSa49WwLVzCIjtExWRk5eT3KhxU19D8TevQ0WMGxw2NjE+cMz9vYWllbePk7OLq5u5xydfP/1pAYND18Nt3Iu5GRkXfT3zwMCn50eOUjMys7Oc5uXkviopfl5SWlb+pqKmtq29obGr+0Nn1+Us36WtP79DwyPfRsfGJySnqwuLS8soqjb62wYsFYGP5d/svefEhvFiRO9jEscGLhTVgYwLfJvY9qpv59cw4LvoISB64xSmon5BeWL1FSu0sRcjx6icuYemDQzLUDWp/MPvvEQv7XzH7D7G/ePUCW9lYkMtj4wPQwNrLFRztZV6wYAdjb0AmzXfd5qOz2qU29idnDwpTU6/WiezevJASML168Vp7cwnzaHVvVcxI2+bDJqbFsTZN82LMjNajsuejn+SJ7sTV+don1+J6VlpGLG87lVd5yyS1WXQYBmUrzR09Kl7K/dt77ZtSO2cZHB45UDM2yyb/3XOCk8flrIfRPCItBs3NNa/eXzVGn8N42x6M9eESeGIumeL5cFHT362t5H5V0uyLUqLA1mIBLYXXkPDb/DVbe6GyjgXyjK0KfbEYBojckCDo2AO2p+GZNAyFYAUDEQ6VMJAehmIIacLArkxI9PoiFMEJUszJjOuEdactDHI4DEiBM5WWC5Aio10Oqi+CAbw2ep1CHDJcUUpm0HtggHwHBriWcTSX6fa1HXtgoPocSJ1CDyUT0BMX7sIA+ykYaMyFvtaAmoMw0IQuomJaaIRFHfy6cAsUPAMD8zUwcAf1tRSzOO4GA6EiDMXuX6X/hvTf2HZDLfWgyjCxdQH8X9LEzcbKLYbyMsLXVYQYxGgYUGuGgUIv4vjHdoihQjNjxrjAgO41cHUIrHnn9LPoL5RL9+PbaOgF3v/OcUUwk+cFfYc5DUknsBD6FLpYpgMGHkeTEcbeCONJ0OsiOpUCfkf1BBJGGZb0p1IjaedOUXTv8ix1H/I1kM28eKHhzL0sx7EFccfRyMaW8cvV02Wiok3DrsxsHZTEjPB05rfib0ZRApwz+g9u5HpbHH1cjXqXprYF5W7Q7P7ACW12al2pzVfAUJboIY2tVZyUecDUS8mbwhT2H2pduW/vKeyrHvf+7W0J1ZV9tTvu5eI99+/ebsWfxbr/iPqTRS81mhs2EQYkR5IsMYJowUBMLSrSRq4eVaJUgJPJSjIzVGQ+59RoxSnVsYx8nbtGT0rEPVEMfjayydL6pwO1Cm1ZVeyq08iczMZDaBMY2FrvDwNHhYgQVx8M4LpjfquxtYZ4GVFQS90Sbhgn/w9HCtJcFQlrO/JhgGJBZoQmQqLR01CEIsgQKoMBFKIyHH+ozB7QZZiYTMWMBZn+JI/+69ItX8JArao92FGPhYGwUhgYWQJ/HXtdgIGfLugnTcH9oI1CUwiiVkvMkqotDAzmE2lM1C/Dvh3oMQaKzrHioEgHhSC3Bz/ob+ZPZnKdyFATIjG3WsAATRFRHMNfhisNvHQiB6THTI6GMPXg46EB1SrsVgP3bl3uz5UnSQfoV5WTmWmixRj6pFzv3AX2kEzl/pDed8M8opbG5VB7caFmIKvaSmAfan8zS3SY/vebVs63mghOiAk5ViAm9B/9nPj7kw0LR29YONjzCL9xIvidEEmDZGM5U59/KvjeUf9d6ZcKTyZRbY0+PZackgpgG1PWXd29jT04jTJ9tsOfl48eKkdS50GbLESp2ZxsU2Z+EPIpMn0Q1hfPYtA/eKLp91NrM6DLesROWthn3NENdUFcQ4RdKhTeDdL2ohnXq9A6Lb/3ROx1lIocLTrRnz/TN/cW/+oKZqd509U3o13V64Z73/jubVCyN7CWE/Vuoc2EHmMc6O4FowZE4whiBolWxWefO1bfStt8eHGJoTgLA9snS6eHuQdLKbdWovZvclpv7K2KoqJnqJoROloheRKu3SPrut/mTjqdVH2ssdfr8uJptfjy35bUF8mRemLMVWawMXI+YsvlbooR2x4aiFV1PS6Is2n5OB4+rLIDxFqmmw0x7xbHWJw9+66XZPTSpvEThlXaPZSFlvDlscSFhIcPBvOEVRd484PiS6jtZ7thwDMSEuujuby6rLSc018Kba8qiz/8m/2jzgXPZPLW7jEh6aIgeev31myAYpcuBww0V9Hw0LtsGOjknJ7SV7Ny9GxIks18IEjwI4RIlFl4nh/PSRgcyjvxXCwl9om3W3aJfclccOaw53ykDUedSYsJKnyAi8obUWuqXrIwbXJRNUq6YsvmGheyj6Th5fflEXzjgPPW1kK1Rk389teznicS9WinhsSnxfM1eqdWOm1fL74q4Gmhd4iHX4lsW7lwkz0urKnV5NDN/OUou5VM9yWC3OOnCaMgW7AEdpjI6rH6VJ6Cvetnf324R/pd16yzZof1B+vq80lGI650/adnLjy5Cjj1gjW5lEYm9xoaYpWjWepFy5fvhAGGAm4r2EHMRGxJEryDorzQUYUBfQgHAzejIKEOsxODvoj5/fRU8JeFDETY8IhtmQ3h1kSWQMYmU0omJGQYgZ7AfEJE+dA1FVzy5bvAEdzmSV2Rz5XaGqnPe6xMNDKoRiuUV16TK9pJvUY74z7kcMTmHr5zFQZEDhIEpwd43pRRQjOdsqdNfNkM1PsO+uz48iXLwiX+6KLs0M1n47SbbQEYIXBkuha9IggyJSsKLBvvT10JFKi77x4r1Z1o+sZbK1b3im0C247T7SN1qaEOTO2ufl6R8Br867Va7DgtZ2hTl8LLkx21/ljR4NYTtzUK+q462s2z3+QYlR8e6ari9QjV7TroIdJoU3bXX0n/2PFz2TXD8qjg6nv8CZdN5W01ht/G5vvU5CTFjIVyUfGNPAoSPoR8P7SAh8mlhYmyLqt6t7z+VukwGWOv2JWW7c4CrXz9Lo/CDxrlitWPx4DuMq+7+tYVhwh48SDSpGvcgQqhtODc2yTqfILp/e9qNTktR2Qkg9jzmCCGdKF/1b4YbDciziPOdji3R5OxFAMx8ZBCpace1bQh36RhTXKqAhO29G6bdtzaS+uKkx9Tv+mUP56LMUoVdV7cem1OTF3XNuLG9RW9kM1o0lEYCIk+otxMHM/CrCKekWrulQpdN0Byh3YYEDLsewYDT5FoSnbElenBwOF0GKiqB8RlkacJIBnxyfVmRVj6pAhzHc04j7ocDt34Y8Gkm5J/AYtL/A/cFzbyrEqJ/xX67Iz/jYgWOepyO6W97kbp/YqQGooq/h6pQVcKBhIi1qEqaRjoiAt5TJWDjHOi0NMN4zBgkEJrrwMX9pNBUh1+jY+Q20S8o4LpoFcujuDSlwzfwwBdkywAkl4T1/QkQowxSgxeGEgMoWoybyDxNIuP9Pnh8BhmXmAZyeS+tsDAt6EJQTODK2m3DATPsPzQOaSolpBupRoMXDREnIbiizHG2Q9VIiRuJ2yP7MfrTs3qncHnkZhM2AoDX81gYCl66g3zRp1FKG9HibfTmdSZ3tBErNLy5zr+PRHylY2hWkPmT7WGn66xLJL7IGnPUCWqYGdgotEnvxve+vJLkY4xBh7Y2QHa4+w9makfrGYgcwtfqSJ63Os3EejjNNNh8RjTiDWd0P2fddT8h0Gpa+kyme8vbrOOPHJeykIh27yi4dZjk01n9KMymEVV4t+MPvUGVpDPldveLbHym74RM+nqf03f7KLhAdnv6EOjpy3xab5ODsz8UAmak2
+1=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
+2=tY5maW2+Y677dc23XsmKJ6YBhv9UZRfrSu/HRjhIKxxlu+gbxou597eq5LgBY+916G7bOH5nCG/Gn/+4pf7nH7cTdOwgyEidjyJO92KYu+OrsggiB2AgEE+g72rAQPO8RzKiFW/P/Kt0+6troaKJ1OUh/DoXGkqwPy/27peiPPMIu6DZP/YdaMGN/DMwHKouQyHVVH3Vz7izqaYI7Uj0jDjiozPagm2H0fQdWOL0sCmTk/TZGaxJJkwEDwRRGzvWpH5lkAT9jSbVV2U1ag3ZYcYFBuYoSwiJ8tPvM6LlgR86WwLtJQygHERh4HckW5wU+mL2kvxjGvPiIGBmIPhPnSX8n3D3Yv6Z9HHD/+8vC70S3DX6BeL07L4i7zH3aTBW4LWwp/wD3777iv3gkFs/2EEY5l2nI7fULDQMA8UsjTXvDMvmOaTK1qTVSZMV15L8WoInr3swO1G0Zdx6Zm+lXQtzLDTnzyg1Bw65myJJLzESPT+LPJLeiO764JoQQw8GQC8iXbKSY5gQX2lKWa0PMDSkYbNpLQY3rHiyLJKILm+Mm558IGjIWgAG4izfG4B7cfMqDwW7q1gC161pCd4vwRp7ykdSdbG1DvaSc6xRmc8H5wuP3BPHozZdmskOF/4WGe94Wq343Df0LxjOhMq3cjBixGCAySxCDjJ65Hhqthukd919dV3aDZXtgwawOj55Nq/I2yuVBjFcnjEv7ft69Ybi9O31xWME45K0vicZ7XHxMFKW5Loml/ymLOmYXt4MkrqVyCDB3w2paYilGEaCIUNJizhhTSL+a1eL0Gpzhr4GDTyjWBuSYscHDWWJpRIpr5HqJx1Th1pdaUFqUyQo30lHM7mg3X8uYncySczrmldz1mTB1O0XzPvoRyO7/QhbKKuNmKik3job1zfr6B47O6XkvgKV19MTI8X2hcdtOGP0h43T6t7yPdVxPXi13IPHygZvAdZ04KE74HaQ3KcCGWVCwreRpF6RFg5BPeCCQXAZhbCSSoL2MEzCa9fuvn+J39b38n3FHWZd/GTOlotJBvt4ohUFRmN5Rtx9xujbPhmovJFQM5GC9FIc15nxarjaWOYB+Umf1KeyVB5SDGHJRUw5O6fxYuDqgRZfmUJ7ouvT/UC8pVdSwg0nYHFaPchwZvHGiPfpBkVcZKgwReU2w2Cl5atjCaUqXTnTWyZDyOq5R1aY8DdlMb1d7Qli++t0l00t8/5wDJn4ExGM4Qbs2hi5iaRJdWAGqw2aTDfZKGpE2PqrRXatXiLxZaIeOc0VX71+w9w8N11E85Nd9ENBybE1xTQL3uwdBBlayMjYl0rD3HpsYNXukhKTq9esZl0sH/P1H9fUNT/4ZJzD1Sc2patLV8rT5mlRKZ4SdlBp5yml6hthOumxz3fUCCbXstvNNYmXsopm8jqop7ej1Ff57hLEOsajJmiZO16BgtUSyRElxk7x8t8jOt0MzYE8zjq+pelTlIqpcKsKqLOw89WKqfQ1vOPDrMUhdh/p1IRrhdDgt9iQkZSvX/sX+tbz6WajZau2CwXatUlinjRfU9cuvxUnTz7p3nTpmZ2J0Yu4WBRfsNkgZsemjtBdHgPSnYNWPbOZnS6LysPuo4uytl9rG7dEm/Gn+mKlO/fue4J6sMA2oFMKTYeaB3kzuxkv60O5GGbdujJI8lBMFamxoBx+F6vr8q6tP+aqSmpbYNMZpU/mQOqbkEYtTifVFrkAwtfJwgnNtl1pOY2SfUbnk3qEHtz+bffI7vi6M7sM7fgeXeEdNfkX4stz3R9DQHNN4WvJ/EofbnbWFO3HSCofMDw5jvNFypn1l7NsNc9HaiBBCvTmJZ2a0TvAW/TeSW7cNUEqIdn9+0VxObbY78B1lSTyN+wHnBKxgvwweJwSMJITUxlE1SAbUEWqnSkFeJ9LMklzZ+a87EM/S/eTXbcbJ0d/0896g+TKPOJ2xwsmZ1E9iE9mXSIz2HEMeVbT6HAUTzDicy704ZjCnsNkPhhoqkUqNgw/OHG8qorKnxG8g8raKNYo1ndpz3lzhdxF2UGWzio9KooRq0leRoL+bc+pAypDJqQlXawObWTielkNpndX+1D7Hd2G0pXVFv8i1wMm0jdMH0Rasso20a+PE090Y3o99Qy4qsS7hMwvsPhrcEB6GdFzdRf2L+B1Mq8xyPQnS6oPR7ZZfWgOUlngpXm0cUB3vmnCAOsYDIwcBGtPu6OXlCeJNBHkmWhGdOO6NjcDHwMDaliCIxpPwXxXYRycu4N4trlUGLjlC1JTklpWXnxamr6TQj7S5fRQj6X+8xvRaVz/JwNUz1fMdwaGfpdUiGqnqSyogLVuSBXWoUyCATbEa40I9oBeL62HnUMU2hKqLc4F7N3Kewb0MRAkFl8hNtOIi7x/bumK6/XVY4MM2tT+rzjBH/b6CI1CR3Gzh9MTcDRDv/5t+MkNmNhfcctn/pvb/rU5KTpS3UPHutElDrjn/VH5SxKH9oY9HCg7+50tFrd8mIJWeAcDPHgsDBx5i2FsRXxrrNnfCPLSvNbBNfZeGBh0JjIccT8Po/eCrkNgIhUcQznUgehBYpNnaE/Sx2xbk2KFwN3fWtqhI89VZu8631XM6gnTjmkm0toEz0EfkbJaDgmCrbrvIiGwGryXv+5oXU5/nXpu+R3CJLYLHPrdC5zgc0NYJf7XrBAN5Al3wtM3WW8gITNc00Rm49y45+xl22w/O5ggpVJIbgZuZkZlIVSFUTv9FTfOEKGLTq6fnFDNeEHDmpw3u8n++RnLJE4W96u+mBmuXBOho0Wgi8szhosQNyMcEvNF9ksPQJLp928QChvqEo4c+1hSSNznLHDiJ4Arfx57GbHEApfb/7prQswrUVdTqyJZqUGL2f6MjSK0hZlzcCdiN2+fI+DtEPDR8n8/EyKlq2Ib+rt9F5qigIXUDP/pqv/cU98TXbILn0c7sWp416SosKwyzErT0EcxyME1YD9G2nk0aurADVK458Ce4mS7Spfys/na965pSvmsZETP117MM4vLe4n5PFRnmXcWUxlQlg73/B/2ndRzeJzjdCwoMDTQyypIZxgFIxDwakDopwrY5We8StvGwAQAimgG1QsNTSEBAAAAAgAAACUAAADlIAAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+WinSCP.ini=3829,5106
+WinSCP-5 ReadMe.txt=338,451
+
+[EncodedFile-Folder-WinSCP.ini]
+lines=1
+0=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
+1=u/z1Tr11PtWfd/L9We/ZapVr87M6+cnAdSxnPRNGwFKE/K5Ts2qYjNdZxqo16rQnGFbKBoGRsIFRFv2VO0YaX+zq+TjgrqzDsqa+V+rrgVEoX5TqtOrAtdJbpyV2kV0fEVcE1oAo+KSzOOCprfwxUxB7XJOmBdqAJ2xSnQiiB4ulgThMCjgtCMo4Lk99BhpAK6ghBYF6SAXUEKtCJI/azBr1GOitRw+nB8WlW4+nnEWbtTo9UFbTibeIWUi0y1dT3ClOBcWF2IGyFKU3JBX59SmGINJk/zemWCK16doGWr42XBGuNKlXJEvKagcnRWRcimiHLeq9FqojbHk0ZSWeBKNCmwI0KWQ8kr9IpglThSYDVRqlGkApbZr8SQAjvCfjmAvEIvPKyMOezXgkcFddhvCB2EN0WOCuGIIA1h49ikikgNMaPVr5Jq4jVGjCZKUR/qfrTllFo5lAs3EgqqGl0IWmIuVBPRqRJdSD+eHCrViCXQ1IglzLCcF/PXUcLdAtFBmxh36U28V9dr76iipd6B0Ib2ocBLHUQBHzl8Ge8l9JQq/+zK+BeMzMsY598lvRRbPrM05SHNyZyvs/+Dg5K2N+h5A/y2YNBr2ZMS+6KFTktys8H3afZbB+KpOLqhb013KZN8dLCfSuSAfTm1kpzPE62nYo8f+OFBMBnSB6zB3rzWo29s8Str/qLwlKDxu5uG45XPhbK+NBxjlQ6xWsVRFh1gdeyhVWfQHuSvz0uqK46I3OMg+0rVq4MNR2uVgyXvGx0sfXY+y/uq6P/l+V2nOMH7nSpkyYO9jNThC33+egPO7XyiTl/Lu8gnLqN1RN+AffWDhM/eF/2pUPGVcPH+3n5bZ5AqYL+wXE5mlZn0Ra3Cb4+bSF9nyn+NKb/GVAJWkbJQf03/rfj7N8XA3I54nOMKz8wLdg7Qy8zLZBgFIw8oGkPo1XzY5X/pHchnYAIAut0G8+UkNLIBAAAAAgAAACYAAACrDgAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-Folder-WinSCP-5 ReadMe.txt]
+lines=0
+0=eJx1kM1OwzAQhO+V8g4jn8gBJH7KtRKBqj2QRjSh4ujEm2DV8RbHoeXtcYqCKlSuuzvfzGw0uY6RGF1twRb+nSAW3BIy2ZCA0fZ3npm+0RZL68nVsqJoEk1u/mofeW8NS4WU9wIPvfdsh8PbGM9yS2HsCasa+QB03DjZ4pVcpwMg7duSHFY2bKU/YW2oPMYZQHcxLl7oo9eOVIz8a0c/1//AQlo+momcDr7kgxj456pMxyphf2K9TNdJhunVbCYgrYJYy8/wmJzxxr2DKLrgEsxrbQijrBOYs1HkBvB9jIUOdYrxH+cSDMBip6SnyydbsSIkbL3UNtDnAf0NZxKHAXicEw7PzAt2DtA1VQhKTUzxTdUrqShhGAUjBixnhDIYsct/Xf1pKQMTAKXkCkgXElcpAQAAAAIAAAAuAAAAAAEAAAAAAAABAAAAAAAAAAAAAAA
+

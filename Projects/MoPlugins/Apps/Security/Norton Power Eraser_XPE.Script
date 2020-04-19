@@ -1,0 +1,100 @@
+[Main]
+Title=Norton Power Eraser
+Type=XPEPlugin
+Description=(Current Version Download) Norton Power Eraser uses our most aggressive scanning technology to eliminate threats that traditional virus scanning doesn’t always detect
+Author=KYHI
+Date=2019.06.08
+Credits=
+Contact=
+Version=003
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Plugin Created 2018.05.14
+History003=KYHI - Updated Download Link - added WoW Basic & MSI Requirements - 2019.06.08
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=,1,5,145,45,300,225
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,_Launch_Program_,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://theoven.org/index.php?topic=2421.0
+
+[Variables]
+%ProgramTitle%=Norton Power Eraser
+%ProgramExe%=NPE.exe
+%ProgramFolder%=Norton Power Eraser
+%SetupURL%=https://support.norton.com/sp/static/external/NPE/5.3/prod/en/NPE.exe
+
+[Saved]
+%SetupURL%=http://liveupdate.symantec.com/upgrade/NPE/1033/NPE.exe
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,%Architecture%%WoW64Support%,Equal,x64False,EchoExtended,"You Need To Enable WoW64 Basic To Run %ProgramTitle% In A 64-Bit Build",,,Message,2,Exit
+Iniread,%ProjectDir%\Script.Project,Features,Msi,%Msi%
+//If,%Msi%,Equal,False,EchoExtended,"You Need To Enable > MSI Windows Installer < In Build Core To Run %ProgramTitle%",,,Message,4,Exit
+If,%Msi%,Equal,False,Exec,%ProjectDir%\Features\Msi.Script,Process
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+DirMake,%Target_Prog%\%ProgramFolder%
+Download,%Target_Prog%\%ProgramFolder%\%ProgramExe%,%SetupURL%
+If,Not,ExistFile,%Target_Prog%\%ProgramFolder%\%ProgramExe%,EchoExtended,"Error: %SetupFile% Has Not Been Downloaded.",Warn,,Message,5,Exit
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+If,%Architecture%,Equal,x64,ExtractSectionFiles,%ScriptFile%,AddFiles6432
+//--
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[AddFiles]
+\Windows\System32\sfc.dll
+\Windows\System32\sfc.exe
+\Windows\System32\sfc_os.dll
+\windows\System32\amsi.dll
+\windows\System32\credssp.dll
+\windows\System32\imagehlp.dll
+\Windows\System32\??-??\sfc.exe.mui
+
+[AddFiles6432]
+\Windows\SysWoW64\sfc.dll
+\Windows\SysWoW64\sfc.exe
+\Windows\SysWoW64\sfc_os.dll
+\windows\SysWOW64\amsi.dll
+\windows\SysWOW64\credssp.dll
+\windows\SysWOW64\imagehlp.dll
+
+[Launch_Program]
+Run,%ScriptFile%,Process
+OpenDir,%Target_Prog%\%ProgramFolder%
+//Start,,%ProgramExe%,,%Target_Prog%\%ProgramFolder%
+
+[AuthorEncoded]
+Logo=NPE4848.ico
+NPE4848.ico=2951,3935
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+
+[EncodedFolders]
+Folder
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[Folder]
+
+[EncodedFile-AuthorEncoded-NPE4848.ico]
+lines=0
+0=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
+

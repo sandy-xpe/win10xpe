@@ -1,0 +1,321 @@
+[Main]
+Title=Acronis Disk Director 12.5
+Type=XPEPlugin
+Description=(v12.5.0.163) Disk Director delivers a set of powerful tools that work together to optimize your disk usage and protect your data.
+Author=KYHI
+Date=2019.05.08
+Credits=http://TheOven.org
+Contact=
+Version=003
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Packed Plugin Created 2018.12.20
+History002=KYHI - M&M Check - 2019.03.31
+History003=KYHI - Reg Import Fix - 2019.05.08
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,False,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=DiskDirector4848.ico,1,5,145,35,250,180
+Button_Launch_Program=Extract,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://www.acronis.com/en-us/support/more/diskdirector/12.5
+Update_Container_Button=U,1,8,540,1,14,14,Update_Container,0,False,"__Update Plugin Program File"
+ReleaseNotes_WebLabel="Release Notes",1,10,408,6,86,18,https://www.acronis.com/en-us/support/updates/changes.html?p=41323
+IScsiSupport_CheckBox="Add ISCSI Support",1,3,5,272,122,18,False
+Import_Bevel=Import_Bevel,1,12,4,180,436,86
+Import_Button="  Import Registry Serial Number From Host Installed Acronis Disk Director 12",1,8,10,185,424,25,Import_Button,Registry.bmp,False,"__Import Serial Number From Host Installed Acronis DiskDirector, To Populate Text Box Below"
+SNrTI_TextLabel="HKEY_LOCAL_MACHINE\SOFTWARE\Acronis\DiskDirector,Enterprise",1,1,10,220,424,18,8,Normal
+SNrTI_TextBox=,1,0,10,240,424,21,
+
+[Variables]
+%ProgramTitle%=Acronis Disk Director
+%ProgramExe%=DiskDirector.exe
+%ProgramExex64%=DiskDirector.exe
+%ProgramFolder%=DiskDirector
+%ProgramFolderx64%=DiskDirector_x64
+%SetupFile%=DiskDirectorPE86.zip
+%SetupFilex64%=DiskDirectorPE64.zip
+%FileContainer%=%ScriptDir%\AcronisDiskDirector_XPE_File.Script
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,Not,ExistFile,%FileContainer%,Exit,"%FileContainer% Container File Not Found"
+//If,%Architecture%%WoW64Support%,Equal,x64False,EchoExtended,"You Need To Enable WoW64 Basic To Run %ProgramTitle% In A 64-Bit Build",,,Message,2,Exit
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+If,%Architecture%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+//--
+Run,%ScriptFile%,CheckWriteSettingsSerial
+//--
+Run,%ScriptFile%,Extract
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+If,Not,ExistDir,%Target_Prog%\%ProgramFolder%,DirMake,%Target_Prog%\%ProgramFolder%
+Run,%ScriptFile%,AcronisDiskDirector6432
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//-
+If,%IScsiSupport_CheckBox%,Equal,True,Run,%ScriptFile%,iscsi_support
+//--
+Run,%ScriptFile%,Add_Registry
+//--
+Run,%ScriptFile%,Add_Shortcuts
+
+[AddFiles]
+\Windows\System32\drivers\fltmgr.sys
+\Windows\System32\drivers\??-??\fltmgr.sys.mui
+\Windows\System32\activeds.dll
+\Windows\System32\ADSLDPC.dll
+\Windows\System32\credui.dll
+\Windows\System32\iernonce.dll
+\Windows\System32\shfolder.dll
+\Windows\System32\msimg32.dll
+\Windows\System32\ntmarta.dll
+\Windows\System32\??-??\activeds.dll.mui
+\Windows\System32\??-??\adsldpc.dll.mui
+\Windows\System32\??-??\iernonce.dll.mui
+\Windows\System32\??-??\ntmarta.dll.mui
+
+[AcronisDiskDirector6432]
+Set,%Sapp%,%GTemp%\%ProgramFolder%\%ProgramFolder%\Files
+Set,%Tapp%,%Target_Prog%\%ProgramFolder%
+Set,%Sdrvr%,%Sapp%\Drivers
+Set,%VC8%,%Sdrvr%\Microsoft.VC80.CRT
+Set,%Rprt%,%Tapp%\AdvReport
+Set,%Scsi%,%Sapp%\ISCSI
+DirMake,%Rprt%
+//
+FileCopy,%Sapp%\systeminfo.exe,%Rprt%
+FileCopy,%VC8%\Microsoft.VC80.CRT.manifest,%Rprt%
+FileCopy,%VC8%\msvcm80.dll,%Rprt%
+FileCopy,%VC8%\msvcp80.dll,%Rprt%
+FileCopy,%VC8%\msvcr80.dll,%Rprt%
+//-
+FileCopy,%VC8%\Microsoft.VC80.CRT.manifest,%Tapp%
+FileCopy,%VC8%\msvcm80.dll,%Tapp%
+FileCopy,%VC8%\msvcp80.dll,%Tapp%
+FileCopy,%VC8%\msvcr80.dll,%Tapp%
+//-
+FileCopy,%Sapp%\bootmenu.bin,%Tapp%
+FileCopy,%Sapp%\bootwiz.bin,%Tapp%
+FileCopy,%Sapp%\core_workers_shared_context.dll,%Tapp%
+FileCopy,%Sapp%\DiskBundleEx.config,%Tapp%
+FileCopy,%Sapp%\DiskBundleEx.dll,%Tapp%
+FileCopy,%Sapp%\DiskDirector.exe,%Tapp%
+//FileCopy,%Sapp%\DiskDirector.exe.manifest,%Tapp%
+FileCopy,%Sapp%\events_trace.dll,%Tapp%
+FileCopy,%Sapp%\f11.cfg,%Tapp%
+FileCopy,%Sapp%\fnls.dll,%Tapp%
+FileCopy,%Sapp%\fox.dll,%Tapp%
+FileCopy,%Sapp%\ftrace.dll,%Tapp%
+FileCopy,%Sapp%\gc.dll,%Tapp%
+FileCopy,%Sapp%\hddhook.com,%Tapp%
+FileCopy,%Sapp%\icu38.dll,%Tapp%
+FileCopy,%Sapp%\icudt38.dll,%Tapp%
+//FileCopy,%Sapp%\kb_link.dll,%Tapp%
+FileCopy,%Sapp%\libcrypto10.dll,%Tapp%
+FileCopy,%Sapp%\libssl10.dll,%Tapp%
+FileCopy,%Sapp%\mms.config,%Tapp%
+FileCopy,%Sapp%\mmsBundle.dll,%Tapp%
+FileCopy,%Sapp%\RecoveryExpert.exe,%Tapp%
+FileCopy,%Sapp%\resource.dll,%Tapp%
+FileCopy,%Sapp%\rpc_client.dll,%Tapp%
+//FileCopy,%Sapp%\shfolder.dll,%Tapp%
+FileCopy,%Sapp%\thread_pool.dll,%Tapp%
+FileCopy,%Sapp%\trueimage_starter.exe,%Tapp%
+//-
+FileCopy,%Sdrvr%\snapapi.dll,%GTarget_Sys%
+FileCopy,%Sdrvr%\fltsrv.sys,%GTarget_Sys%\Drivers
+FileCopy,%Sdrvr%\snapman.sys,%GTarget_Sys%\Drivers
+//FileCopy,%Sdrvr%\ramdrv.sys,%GTarget_Sys%\Drivers
+
+[iscsi_support]
+Echo,"Adding iscsi Support..."
+DirMake,%Gtarget_Win%\ISCSI
+FileCopy,%Scsi%\iscsicli.exe,%GTarget_Sys%
+FileCopy,%Scsi%\iscsicpl.cpl,%GTarget_Sys%
+FileCopy,%Scsi%\iscsidip.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsidsc.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsiexe.exe,%GTarget_Sys%
+FileCopy,%Scsi%\iscsilog.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsipp.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsium.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsiwmi.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsixip.dll,%GTarget_Sys%
+FileCopy,%Scsi%\iscsiprt.sys,%GTarget_Sys%\Drivers
+FileCopy,%Scsi%\msiscsi.sys,%GTarget_Sys%\Drivers
+FileCopy,%Scsi%\iscsi.inf,%GTarget_Win%\INF
+FileCopy,%Scsi%\iscsi.cat,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsi.inf,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsidsc.mof,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsievt.mof,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsihba.mof,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsilog.dll,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsiprf.mof,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsiprt.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\iscsirem.mof,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpdev.inf,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpdev.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpio.cat,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpio.inf,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpio.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\mpspfltr.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\msiscdsm.inf,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\msiscdsm.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\msiscsi.sys,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\readme.txt,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\relnotes.txt,%Gtarget_Win%\iscsi
+FileCopy,%Scsi%\uguide.doc,%Gtarget_Win%\iscsi
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector,RecoveryExpertPath,"%PE_Programs%\%ProgramFolder%\RecoveryExpert.exe"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector,enterprise,%SerialNumber%
+//--
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector,RecoveryExpertPath,"%PE_Programs%\%ProgramFolder%\RecoveryExpert.exe"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector,enterprise,%SerialNumber%
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,resource.dll,"%PE_Programs%\%ProgramFolder%\resource.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,icu38.dll,"%PE_Programs%\%ProgramFolder%\icu38.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,libcrypto9.dll,"%PE_Programs%\%ProgramFolder%\libcrypto9.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,thread_pool.dll,"%PE_Programs%\%ProgramFolder%\thread_pool.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,gc.dll,"%PE_Programs%\%ProgramFolder%\gc.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,libssl9.dll,"%PE_Programs%\%ProgramFolder%\libssl9.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,rpc_client.dll,"%PE_Programs%\%ProgramFolder%\rpc_client.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,timounter.dll,"%PE_Programs%\%ProgramFolder%\timounter.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,fnls.dll,"%PE_Programs%\%ProgramFolder%\fnls.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,ftrace.dll,"%PE_Programs%\%ProgramFolder%\ftrace.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,core_workers_shared_context.dll,"%PE_Programs%\%ProgramFolder%\core_workers_shared_context.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,events_trace.dll,"%PE_Programs%\%ProgramFolder%\events_trace.dll"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\CommonComponents,kb_link.dll,"%PE_Programs%\%ProgramFolder%\kb_link.dll"
+RegWrite,HKLM,0x4,Tmp_Software\Acronis\DiskDirector\Settings,Standalone,1
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\Settings,WorkingDir,"%PE_Programs%\%ProgramFolder%"
+RegWrite,HKLM,0x1,Tmp_Software\Acronis\DiskDirector\Settings,SystemInfoPath,"%PE_Programs%\%ProgramFolder%\AdvReport\systeminfo.exe"
+RegHiveUnLoad,Tmp_Software
+//
+RegHiveLoad,Tmp_System,%RegSystem%
+System,ERROROFF,2
+RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{4D36E967-E325-11CE-BFC1-08002BE10318},UpperFilters,Append,PartMgr,fltsrv
+RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{71A27CDD-812A-11D0-BEC7-08002BE2092F},UpperFilters,Append,fltsrv
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\fltsrv,DisplayName,"Acronis Storage Filter Management"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\fltsrv,ErrorControl,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\fltsrv,Group,"PnP Filter"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\fltsrv,ImagePath,System32\Drivers\fltsrv.sys
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\fltsrv,Start,0
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\fltsrv,Tag,8
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\fltsrv,Type,1
+//--
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\snapman,DisplayName,"Acronis Snapshot Manager"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\snapman,ErrorControl,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\snapman,ImagePath,System32\Drivers\snapman.sys
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\snapman,Start,0
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\snapman,Type,1
+RegHiveUnLoad,Tmp_System
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+//--
+Set,%ProgramTitle%,Acronis Recovery Expert
+Set,%ProgramExe%,RecoveryExpert.exe
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+
+[Extract]
+Set,%SetupContainerSize%,""
+IniRead,%FileContainer%,Folder,%SetupFile%,%SetupContainerSize%
+If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
+//--
+Echo,"Extracting %ScriptTitle% Setup File..."
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
+
+[PluginSetx64]
+Set,%SetupFile%,%SetupFilex64%
+//Set,%ProgramFolder%,%ProgramFolderx64%
+
+[Launch_Program]
+If,%HostOSArch%,Equal,x64,Run,%ScriptFile%,PluginSetx64
+Run,%ScriptFile%,Extract
+OpenDir,%GTemp%\%ProgramFolder%\%ProgramFolder%
+
+[Update_Container]
+Exec,%FileContainer%,Process
+
+[Import_Button]
+Run,%ScriptFile%,Import_Serialnr,Import_Button
+
+[Import_Serialnr]
+System,REGREDIRECT,64
+If,ExistRegKey,HKLM,SOFTWARE\Acronis\DiskDirector,enterprise,Begin
+Set,%temp_reg_key%,""
+RegRead,HKLM,SOFTWARE\Acronis\DiskDirector,enterprise,%temp_reg_key%
+If,Not,%temp_reg_key%-,Equal,-,Begin
+If,#1,Equal,Import_Button,Begin
+Set,%answer%,No
+If,Question,"Acronis Disk Director Registry Key:#$x#$x#$q%temp_reg_key%#$q#$x#$xThe Existing Text Box Key On Plugin Will Be Overwritten#$c Continue ?",Set,%answer%,Yes
+If,%answer%,Equal,Yes,Begin
+Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
+System,REFRESHINTERFACE
+End
+End
+Else,Begin
+Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
+System,REFRESHINTERFACE
+End
+End
+Else,Begin
+If,#1,Equal,Import_Button,Message,"The Host %ScriptTitle% Registry Key Was Not Imported!",Error
+End
+End
+Else,Begin
+If,#1,Equal,Import_Button,EchoExtended,"The Host %ScriptTitle% Registry Key Was Not Found!#$xPlease Manually Enter Serial Number Into Interface Text Box",,,Message,10,Warn
+End
+System,REGREDIRECT,OFF
+
+[CheckWriteSettingsSerial]
+Set,%SerialNumber%,%SNrTI_TextBox%
+If,%SerialNumber%-,Equal,-,Begin
+Run,%ScriptFile%,Import_Serialnr
+Set,%SerialNumber%,%SNrTI_TextBox%
+End
+If,%SerialNumber%-,Equal,-,Set,%SerialNumber%,""
+
+[AuthorEncoded]
+DiskDirector4848.ico=4508,6011
+Logo=DiskDirector4848.ico
+
+[EncodedFile-AuthorEncoded-DiskDirector4848.ico]
+lines=1
+0=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
+1=4MV2vD1CT1KQjT3oBYHxtk38lEfcMzdHb1smOHDarxPaw+1sfqaQNs3TZAOpSljZqbGpCVmY4gmg1MjIygoqIGRUUm5OQOQYF0tMzSVVg2bz4kNojiiPweWB6Rxmn9vbhguAOJ+qK4qbkCmcxpSN43FpFSY+G3bQZ2CnDFfiv/SEfdgdMuJxESGobbaRmopP7VSv2rizQcS2/2sXoYoaeLlcOsXB7SpTQ70zz2kmateprDcnApKhLuLA1NZ6GnqwUdraPQ19PBjF/GYuaECdhOeoEV+7q6unA+6UQzUQRu3ryJO9m5yMjJQ+LVKwjy84bHMflv3ntW/KdejqCebYQAXy/kZmejsbERL168AM3HeEYzAOv6cX09amtrUV1djarKSsrxSlRUVLDXWsnylPOsvv2Ifq/Jv4+69FwUJt6EjZExOKZMwRKqn+pKcrAyOQYbMyO4ONojyNcb8ZT3uRlpqK4oRVtDNepqalCYn4f8nPS+b+WfRrN2WVEBHtdS7pSX4z5p+YKCgn9DYWHhV8F6fyG9J/dWGmJ8gnBw124sIJ3G3LkbJ6kPXFBRRGFKKKpTXHEn+Bgij2+Fj7IobPevh9aWFdgvsATi/Nyk/bew5/uo8FCUFWR/8xlUFt3rLSh8gII/8fkePHjwALdSbsDjhCNUSb/ctDyFChN7ZAtvQI4EP/LkRZAWexovi/wxWOSGrrAdaHNYjmemnGg05MBj/VkoOTITsdIzYbFxBrRE5uHA5nWvv5U/y2pqirdXVZbdKSsr6y8uLv6D25f7/CU+339QVITikhJUUoxlH1WEhaQ4RKlmzpozBzw0Y/me9sYeOo990vvBVFKm2VEHdqaGcDHVhauBCjw098LzkCCct0xCtiTj/fdw/5qVlJQsoDjfQ3FuRvAtLyuLLS8tTSsrLS0sLy+ly7Ja+lFXVlbSXFZS2lJc/LClqrq6efTPP2Ob1BY42lggKsQf1jQTO9ja0DyvAlUV4q6nB3ea+aMizuNKdAwux1xEckI8sm/fQsnDQiQkJSM4wO/Af2MN/4k50iytriCHRaTPxo+fiIULF8Hv9Gm42FvCxEALhqTRjhvowZi0hg3NVy7OpN2DzyDjRjIaq4tQXlqMB3mZ3xz//0Vjf2e5atVqaGpoICbQDRXxHmgMkEVn00PgdQzwNAI9l9XwyIYPedrLkaTEiTDpOTghMRtaohT3QsugsG8b3Owt/g7+bENtLB4FyeGmHj98NHfjkNRvpOsMYaajDHsdGfgf24Vw3c2I1xNC8lEeJCtzIllhOhL2/YJQcQZu72ZgD+/U2X8Xf+Yecazk4sKEiZOxgms5jqoxce1yLA6TLlWQV2Br6qOa2rCwtkFQUCgyMrNo9riH6JhYuLt7frQx1n99XE9vzd/FX3zjBtiZG3+KCjkDO7PjEN8gAjUVJo5R32UqKkKRtLWuliZO2tsh6sJZVJJea6YeWVFWQv0zE+k3EpGe8u36579tsnt20nzF9WnWjBnYtW07vN1dcfVSNG4kXkbylRiw5qWQMz7wdHWG0wlbWFuYwtTY8JONucknJwfbD97up95G0tr/Lv7RURG4k5aK1Ou0jzcTkZocj5SEOEIsEuOicDnqPM6HBL4PDfB+e9rDpcPD2bHd1enEYx+PUwWBvp7Xgn29vElbyP1d/H/YD/thP+xLG/rG8nt8FmMTyzcy2N9OfmA95FcGg3XJ+h/nLJYnxWM//PzPPuvP1yO+7rOGn9M1/Fz28zn/x7/9wv/b678O3/+T//DFc772+qfh19E1dA3WQoe82BfXf+W/az//BRsC4ap4nBNxySzOdsksSk0uyS8ysTCx0MtMzmcYBSMF7FOF0B6C2OXnKjJzMjABADKVCSXDui/qAQAAAAIAAAAwAAAASBEAAAAAAAABAAAAAAAAAAAAAAA
+
+[InterfaceEncoded]
+Launch.bmp=913,1218
+Registry.bmp=963,1284
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Registry.bmp]
+lines=0
+0=eJxz8n3GwgAGZkCsAcQiUMzIIMEAA0LcEAwD//GCP3/+4FeAFfz79+/e/XtdU7oOHj745euXv3//Eqnxy5cvszfM0eky5e6XEiyTsSlzqp/RsPfg3tevXwPNxGPdk+dP0voy5Rbpia7X4JohwzVVTmC2utRcQ7UWU+sc+46pHZeuXQYajmYIkDt/3QLjflv1rQ7qB5xU99kLL9IWnqsjtcRUaa2D8mJ7lm5R7h4Z+Rbd0O6YW3duIWvsWdInNUdbbI2WxclI6yvxFpdi5NdZyyyzUFnnrL3NV3ulJ9cEOcE5GhJLjA0WuR04fhCu99evX9ErM7ROeqrvcvS6XeT/osbvRbXOTi+1De662wNN9kcZbQgWmaUju9xCZb2L5crgg6h6UzaVOj/Itr2YFPqsKehljf2VaNOTXlanQx3OJrpcyLHcGi27wEJzs5fh7lDHjXEHjx9C1puzuynic6ftkTiDDa7mR3ycrsT63M4KfVwR97I54GK+/EJj9jYJ8Um62iu9nNcnHDpxGMXeVcWa252FV6iyTRTnnaggv8DUcnuoz4lsnU3OwstV+ZcqckyW4Z2uIjJHR2eawyFUe8OXJascspffbsE3S1lwtqbEImP51bZyc01F12kKr1EXXK4KFJRcbKywytZ4iQ/cv8BA/v7je/zKXGDwmpwNl1hiKA2MlzUOWlt8dNd6aR/xUtlrL7PRRHqpufJaR62t3tarwyD+ffjmUefR/qB1MVJztEQmqTqcSVHd5KyyzkVnq5/xvkirXTHej8scb2UYHfVX3+yityPAZF+k0+ZEoN5///+Vb68T3aAlvFaNZ54cW7+EyBR1nXV2NmciXS5kup7Pc9ibFPC43OV6guPlaNfriV43M/2vFERtLbj78N6rD6+8Tqbpn/RX3esgMEcVmIpklluorXb22hAfdCTP70K2z7WsgBsFQZeLArdnVe7pWHlh0+mbZ9+8ewN08K47hyLft/s+q7Q6Hye12AToR+2tvqY7Iq49vH73wd1le1Z1Hp7ecnzamv0bP33+hJb4Z5xc4HQ11uJ8oMlxT/093ga7QiwOJyTvqfr95zc8GHFlQKCa2WcWeByLdL4W538/N+BuuduFgiWX1+PJa8jg77+/N17czDxZl3qrtfRSX/vx6c/fvyBGIxx8/fH17ae3P37+IF4LAEYlJhF4nOMJSk3PLC4pqtRLyi1gGAUjDTxjgdDlzNjlZXg++TAwAQB1SAef7kzN7QEAAAACAAAAKAAAAHcDAAAAAAAAAQAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+

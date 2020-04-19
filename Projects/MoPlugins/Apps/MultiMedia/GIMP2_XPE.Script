@@ -1,0 +1,246 @@
+[Main]
+Title=GNU Image Manipulation Program (GIMP)
+Type=XPEPlugin
+Description=Whether you are a graphic designer, photographer, illustrator, or scientist, GIMP provides you with sophisticated tools to get your job done. (v2.10.12.0)
+Author=KYHI
+Date=2019.08.08
+Credits=TheOven.org Forum
+Contact=
+Version=001
+Level=5
+Download_Level=2
+Selected=False
+Mandatory=False
+NoWarning=False
+History001=KYHI Initial XPE Innounp Plugin Created 2019.08.08
+History002=
+
+[Interface]
+Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
+Desktop_CheckBox="Desktop Shortcut",1,3,10,10,122,18,True,"__Add Desktop Shortcut"
+StartMenu_CheckBox="Start Menu Shortcut",1,3,10,28,122,18,True,"__Add Start Menu Shortcut"
+TaskBpin_CheckBox="Pin To TaskBar",1,3,10,46,122,18,False,"__Add Pin To Taskbar Shortcut"
+StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To StartMenu Shortcut"
+StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,,"__Start Menu Folder Name"
+RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
+Image_Software=gimp-24848.ico,1,5,145,35,48,48
+Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
+HomePage_WebLabel="Home Page",1,10,275,6,75,18,https://www.gimp.org/
+Download_WebLabel="Download Installer",1,10,350,6,75,18,https://download.gimp.org/pub/gimp/v2.10/windows/gimp-2.10.18-setup.exe
+https://download.gimp.org/mirror/pub/gimp/v2.10/windows/gimp-2.10.18-setup.exe
+
+[Variables]
+%ProgramTitle%=GIMP
+%ProgramEXE%=Bin\gimp-2.10.exe
+%ProgramFolder%=GIMP 2
+%SetupFile%=GIMP2_x86_XPE_File.7z
+%SetupFilex64%=GIMP2_x64_XPE_File.7z
+
+[Process]
+Echo,"Processing %ScriptTitle%..."
+If,%Architecture%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+If,Not,ExistFile,%ScriptDir%\%SetupFile%,Exit,"%ScriptDir%\%SetupFile% File Not Found"
+If,%RunFromWhere_ScrollBox%,Equal,"Run From RAM",RunFromRAM
+//--
+If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
+If,Not,ExistDir,%Target_Prog%\%ProgramFolder%,DirMake,%Target_Prog%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ScriptDir%\%SetupFile%#$q -y -o#$q%Target_Prog%\%ProgramFolder%#$q"
+//--
+Run,%ScriptFile%,Add_Shortcuts
+//--
+ExtractSectionFiles,%ScriptFile%,AddFiles
+//--
+Run,%ScriptFile%,Add_Registry
+
+[AddFiles]
+\Windows\System32\glu32.dll
+\Windows\System32\mscms.dll
+\Windows\System32\opengl32.dll
+\Windows\System32\??-??\glu32.dll.mui
+\Windows\System32\??-??\mscms.dll.mui
+
+[Add_Registry]
+Echo,"Writing %ScriptTitle% Registry Settings..."
+RegHiveLoad,Tmp_Software,%RegSoftware%
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe,FriendlyAppName,GIMP
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\DefaultIcon,,"%PE_Programs%\%ProgramFolder%\bin\gimp-2.10.exe,1"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\shell\open\command,,"#$q%PE_Programs%\%ProgramFolder%\bin\gimp-2.10.exe#$q #$q#$p1#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.xcf,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.bmp,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.dds,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.g3,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.cel,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.dcm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.dicom,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.exr,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.gif,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.heif,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.heic,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.jp2,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.j2k,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.j2c,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.jpc,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pcx,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pcc,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pdf,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.png,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pnm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.ppm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pgm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pbm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pfm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.ps,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.eps,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.psp,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.tub,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pspimage,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.im1,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.im8,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.im24,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.im32,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.rs,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.ras,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.svg,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.tga,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.vda,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.icb,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.vst,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.tif,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.tiff,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.webp,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.wmf,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.apm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.xpm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.xwd,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.fit,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.fits,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.fli,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.flc,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.jpg,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.jpeg,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.jpe,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.psd,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.sgi,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.rgb,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.rgba,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.bw,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.icon,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.pix,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.matte,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.mask,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.alpha,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.als,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.xbm,
+RegWrite,HKLM,0x1,Tmp_Software\Classes\Applications\gimp-2.10.exe\SupportedTypes,.ico,
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities",ApplicationName,GIMP
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities",ApplicationIcon,"%PE_Programs%\%ProgramFolder%\bin\gimp-2.10.exe,0"
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities",ApplicationDescription,"GIMP is a free raster graphics editor used for image retouching and editing, free-form drawing, converting between different image formats, and more specialized tasks."
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.xcf,GIMP2.xcf
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.bmp,GIMP2.bmp
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.dds,GIMP2.dds
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.g3,GIMP2.g3
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.cel,GIMP2.cel
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.dcm,GIMP2.dcm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.dicom,GIMP2.dicom
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.exr,GIMP2.exr
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.gif,GIMP2.gif
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.heif,GIMP2.heif
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.heic,GIMP2.heic
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.jp2,GIMP2.jp2
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.j2k,GIMP2.j2k
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.j2c,GIMP2.j2c
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.jpc,GIMP2.jpc
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pcx,GIMP2.pcx
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pcc,GIMP2.pcc
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pdf,GIMP2.pdf
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.png,GIMP2.png
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pnm,GIMP2.pnm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.ppm,GIMP2.ppm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pgm,GIMP2.pgm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pbm,GIMP2.pbm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pfm,GIMP2.pfm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.ps,GIMP2.ps
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.eps,GIMP2.eps
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.psp,GIMP2.psp
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.tub,GIMP2.tub
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pspimage,GIMP2.pspimage
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.im1,GIMP2.im1
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.im8,GIMP2.im8
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.im24,GIMP2.im24
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.im32,GIMP2.im32
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.rs,GIMP2.rs
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.ras,GIMP2.ras
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.svg,GIMP2.svg
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.tga,GIMP2.tga
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.vda,GIMP2.vda
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.icb,GIMP2.icb
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.vst,GIMP2.vst
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.tif,GIMP2.tif
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.tiff,GIMP2.tiff
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.webp,GIMP2.webp
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.wmf,GIMP2.wmf
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.apm,GIMP2.apm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.xpm,GIMP2.xpm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.xwd,GIMP2.xwd
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.fit,GIMP2.fit
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.fits,GIMP2.fits
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.fli,GIMP2.fli
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.flc,GIMP2.flc
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.jpg,GIMP2.jpg
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.jpeg,GIMP2.jpeg
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.jpe,GIMP2.jpe
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.psd,GIMP2.psd
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.sgi,GIMP2.sgi
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.rgb,GIMP2.rgb
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.rgba,GIMP2.rgba
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.bw,GIMP2.bw
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.icon,GIMP2.icon
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.pix,GIMP2.pix
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.matte,GIMP2.matte
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.mask,GIMP2.mask
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.alpha,GIMP2.alpha
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.als,GIMP2.als
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.xbm,GIMP2.xbm
+RegWrite,HKLM,0x1,"Tmp_Software\GIMP 2.10\Capabilities\FileAssociations",.ico,GIMP2.ora
+RegHiveUnLoad,Tmp_Software
+
+[Add_Shortcuts]
+If,%Desktop_CheckBox%,Equal,True,AddShortcut,Desktop
+If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBox%
+If,%StartMpin_CheckBox%,Equal,True,AddPin,StartMenu
+If,%TaskBpin_CheckBox%,Equal,True,AddPin,TaskBar
+
+[Launch_Program]
+Echo,"Extracting %ScriptTitle% Setup File..."
+If,%HostOSArch%,Equal,x64,Set,%SetupFile%,%SetupFilex64%
+If,ExistDir,%GTemp%\%ProgramFolder%,DirDeleteQ,%GTemp%\%ProgramFolder%
+DirMake,%GTemp%\%ProgramFolder%
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ScriptDir%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%#$q"
+OpenDir,%GTemp%\%ProgramFolder%\Bin
+//Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%
+
+[AuthorEncoded]
+gimp-24848.ico=2653,3538
+Logo=gimp-24848.ico
+
+[EncodedFile-AuthorEncoded-gimp-24848.ico]
+lines=0
+0=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
+
+[InterfaceEncoded]
+gimp-24848.ico=2653,3538
+Launch.bmp=913,1218
+
+[EncodedFile-InterfaceEncoded-gimp-24848.ico]
+lines=0
+0=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
+
+[EncodedFile-InterfaceEncoded-Launch.bmp]
+lines=0
+0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFolders]
+Folder
+
+[Folder]
+
