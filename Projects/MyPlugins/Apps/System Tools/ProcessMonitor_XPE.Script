@@ -1,9 +1,9 @@
 [Main]
 Title=Process Monitor
 Type=XPEPlugin
-Description=(v3.52.0) Process Monitor (Procmon) is an advanced monitoring tool for Windows that shows real-time file system, Registry and process/thread activity
+Description=(v3.53.0) Process Monitor (Procmon) is an advanced monitoring tool for Windows that shows real-time file system, Registry and process/thread activity
 Author=ChrisR
-Date=2019.07.12
+Date=2020.07.06
 Credits=
 Contact=
 Version=002
@@ -13,7 +13,7 @@ Selected=True
 Mandatory=False
 NoWarning=False
 History001=ChrisR Initial XPE Plugin Created 2018.05.30
-History002=ChrisR Updated v3.52
+History002=ChrisR Updated v3.53
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,85
@@ -29,7 +29,7 @@ HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://docs.microsoft.com/en-us/
 [Variables]
 %ProgramTitle%=ProcessMonitor
 %ProgramExe%=Procmon.exe
-%ProgramExex64%=Procmon.exe
+%ProgramExex64%=Procmon64.exe
 %ProgramFolder%=ProcessMonitor
 %ProgramFolderx64%=ProcessMonitor_x64
 %SetupFile%=ProcessMonitor.7z
@@ -98,7 +98,7 @@ ExtractFile,%FileContainer%,Folder,%SetupFile%,%GTemp%\%ProgramFolder%
 ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -y -o#$q%GTemp%\%ProgramFolder%\%ProgramFolder%#$q"
 
 [PluginSetx64]
-Set,%ProgramFolder%,%ProgramFolderx64%
+//Set,%ProgramFolder%,%ProgramFolderx64%
 Set,%ProgramExe%,%ProgramExex64%
 Set,%SetupFile%,%SetupFilex64%
 

@@ -6,14 +6,14 @@ Author=KYHI
 Date=2019.06.06
 Credits=NightMan, JonF, Joshua, ChrisR, 2aCD
 Contact=
-Version=007
+Version=008
 Level=5
 Download_Level=2
 Selected=False
 Mandatory=False
 NoWarning=False
 History001=KYHI Initial XPE Plugin Created - 2018.11.13
-History007=ChrisR NLA Support only works with admin - Patch Controller.dll is an Option in Build Core - 2019.09.06
+History008=ChrisR NLA Support only works with admin - Patch Controller.dll is an Option in Build Core - 2019.09.06
 
 [Notes]
 // Patch Controller.dll to Get the Credentials Window is an Option in Build Core, Build Options.
@@ -32,7 +32,7 @@ StartMpin_CheckBox="Pin To StartMenu",1,3,10,64,122,18,False,"__Add Pin To Start
 StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,100,121,18,Network,"__Start Menu Folder Name"
 Image_Software=RDC.jpg,1,5,147,6,196,121
 HomePage_WebLabel="Home Page",1,10,351,6,54,18,http://theoven.org/index.php?board=39.0
-Launcher_CheckBox="Use mstsc.cmd Launcher to Get#$xthe Credentials Window. Only if#$xControler.dll is Not Patched in Build Core",0,3,351,28,241,40,False,"__Use mstsc.cmd To Modify Registry and Get the Credentials Window. Only If Controler.dll is Not Patched in Build Core Options"
+Launcher_CheckBox="Use mstsc.cmd Launcher to Get#$xthe Credentials Window. Only if#$xControler.dll is Not Patched in Build Core",1,3,351,28,241,40,False,"__Use mstsc.cmd To Modify Registry and Get the Credentials Window. Only If Controler.dll is Not Patched in Build Core Options"
 NLAsupport_Bevel=NLAsupport_Bevel,1,12,4,135,365,80
 NLAsupport_CheckBox="Connection With Network Level Authentication",1,3,10,140,244,18,True,"__Use the Connection With Network Level Authentication"
 NLAsupport_TextLabel="* NLA Support Requires Logon as Admin",1,1,23,158,220,18,8,Normal
@@ -151,11 +151,14 @@ HiveLoadALL
 If,Not,%FullSoftware%,Equal,True,Begin
   Run,%ScriptFile%,AssociateRDP
   RegCopyKey,HKLM,"Tmp_Software\Microsoft\Terminal Server Client"
+  //RegCopyKey,HKLM,Tmp_System\ControlSet001\Control\Lsa
+  //RegCopyKey,HKLM,Tmp_System\ControlSet001\Control\SecurityProviders
 End
 //--
 RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Control\Lsa,LimitBlankPasswordUse,0
 RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Control\Lsa,LmCompatibilityLevel,%LM_Level_ScrollBox%
 System,ErrorOff,2
+//RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Lsa,"Security Packages",tspkg
 RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Lsa\OSConfig,"Security Packages",kerberos,msv1_0,tspkg,pku2u,livessp,wdigest,schannel
 RegWrite,HKLM,0x4,"Tmp_System\ControlSet001\Control\Terminal Server",fDenyTSConnections,0
 RegWrite,HKLM,0x4,"Tmp_System\ControlSet001\Control\Terminal Server\WinStations\RDP-Tcp",UserAuthentication,0

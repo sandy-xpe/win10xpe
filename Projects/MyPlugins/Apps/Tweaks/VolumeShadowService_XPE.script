@@ -50,9 +50,9 @@ If,%StartMenu_CheckBox%,Equal,True,AddShortcut,StartMenu,%StartMenuFolder_TextBo
 If,%Desktop_CheckBox%,Equal,True,AddShortcut,StartMenu,,#$pSystemRoot#$p\system32\start_vss.cmd,%ProgramTitle%,,#$pSystemRoot#$p\system32\filemgmt.dll|0
 //--
 If,%VSS_Startup_CheckBox%,Equal,True,Begin
-TXTReplace,%GTarget_Sys%\autorun.cmd,Exit,""
-TXTAddLine,%GTarget_Sys%\autorun.cmd,"Call #$pSystemRoot#$p\system32\start_vss.cmd",Append
-TXTAddLine,%GTarget_Sys%\autorun.cmd,Exit,Append
+  TXTReplace,%GTarget_Sys%\autorun.cmd,Exit,""
+  TXTAddLine,%GTarget_Sys%\autorun.cmd,"Call #$pSystemRoot#$p\system32\start_vss.cmd",Append
+  TXTAddLine,%GTarget_Sys%\autorun.cmd,Exit,Append
 End
 
 [Vss_AddFiles]
@@ -106,8 +106,8 @@ ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Sys%\vssapi.dll#$q -s 530
 ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Sys%\VSSVC.exe#$q -s 4D0069006E0069004E0054 -r 4D0069006E0069004E0058"
 //-
 If,ExistFile,%GTarget_Win%\SysWOW64\vssapi.dll,Begin
-ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Win%\SysWOW64\vssapi.dll#$q -s 4D0069006E0069004E0054 -r 4D0069006E0069004E0058"
-ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Win%\SysWOW64\vssapi.dll#$q -s 530079007300740065006D005300650074007500700049006E00500072006F00670072006500730073 -r 530079007300740065006D005300650074007500700049006E00500072006F00670072006500730074"
+  ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Win%\SysWOW64\vssapi.dll#$q -s 4D0069006E0069004E0054 -r 4D0069006E0069004E0058"
+  ShellExecute,Hide,%GTools%\binmay.exe,"-u  #$q%GTarget_Win%\SysWOW64\vssapi.dll#$q -s 530079007300740065006D005300650074007500700049006E00500072006F00670072006500730073 -r 530079007300740065006D005300650074007500700049006E00500072006F00670072006500730074"
 End
 
 [AuthorEncoded]

@@ -1,19 +1,19 @@
 [Main]
 Title=HWinfo
 Type=XPEPlugin
-Description=(v6.20) HWinfo Comprehensive Hardware Analysis, Monitoring and Reporting
+Description=(v6.28) HWinfo Comprehensive Hardware Analysis, Monitoring and Reporting
 Author=ChrisR
-Date=2019.11.05
+Date=2020.06.15
 Credits=
 Contact=
-Version=009
+Version=010
 Level=5
 Download_Level=2
-Selected=True
+Selected=False
 Mandatory=False
 NoWarning=False
 History001=ChrisR Initial XPE Plugin Created 2018.07.12
-History009=KYHI - Added Additional URL - 2019.11.05
+History010=KYHI - Additional INI Support Update - 2020.06.15
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
@@ -27,7 +27,8 @@ Image_Software=HWinfo.jpg,1,5,145,34,250,225
 Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
 HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://www.hwinfo.com/Download
 Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update Plugin Program File"
-ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,6.22,"__Program Version To Download and Update Plugin"
+ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,6.28,"__Program Version To Download and Update Plugin"
+History_WebLabel="Version History",1,10,450,50,72,18,https://www.hwinfo.com/version-history
 
 [Variables]
 %ProgramTitle%=HWinfo
@@ -52,7 +53,7 @@ Run,%ScriptFile%,Extract
 //--
 If,ExistDir,%Target_Prog%\%ProgramFolder%,DirDeleteQ,%Target_Prog%\%ProgramFolder%
 If,Not,ExistDir,%Target_Prog%\%ProgramFolder%,DirMake,%Target_Prog%\%ProgramFolder%
-FileCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%\%ProgramINI%,%Target_Prog%\%ProgramFolder%
+FileCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%\hwInfo32.ini,%Target_Prog%\%ProgramFolder%\%ProgramINI%
 FileCopy,%GTemp%\%ProgramFolder%\%ProgramFolder%\%ProgramExe%,%Target_Prog%\%ProgramFolder%
 //--
 Run,%ScriptFile%,Add_Shortcuts

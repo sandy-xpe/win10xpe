@@ -223,9 +223,13 @@ RegWrite,HKLM,0x1,Tmp_Software\Acronis\TrueImageHome\Settings,ServiceDir,"%PE_Pr
 RegHiveUnLoad,Tmp_Software
 //--
 RegHiveLoad,Tmp_System,%RegSystem%
-System,ERROROFF,2
-RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{4D36E967-E325-11CE-BFC1-08002BE10318},UpperFilters,Append,PartMgr,fltsrv
-RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{71A27CDD-812A-11D0-BEC7-08002BE2092F},UpperFilters,Append,fltsrv
+If,Not,ExistRegKey,HKLM,Tmp_System\ControlSet001\Control\Class\{4d36e967-e325-11ce-bfc1-08002be10318},UpperFilters,RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Class\{4d36e967-e325-11ce-bfc1-08002be10318},UpperFilters,PartMgr,fltsrv
+Else,Begin
+  RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{4d36e967-e325-11ce-bfc1-08002be10318},UpperFilters,Append,PartMgr
+  RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{4d36e967-e325-11ce-bfc1-08002be10318},UpperFilters,Append,fltsrv
+End
+If,Not,ExistRegKey,HKLM,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,fltsrv
+Else,RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,Append,fltsrv
 //--
 RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\fltsrv,DisplayName,"Acronis Storage Filter Management"
 RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\fltsrv,ErrorControl,1
@@ -249,43 +253,96 @@ RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\volume_tracker,Type,1
 RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\volume_tracker,Group,"PnP Filter"
 RegHiveUnLoad,Tmp_System
 
-[Scsi]
+[SCSI]
 Echo,"Adding iscsi Support..."
-DirMake,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsicli.exe,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsicpl.cpl,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidip.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidsc.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiexe.exe,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsilog.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsipp.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsium.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiwmi.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsixip.dll,%GTarget_Sys%
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprt.sys,%GTarget_Sys%\Drivers
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscsi.sys,%GTarget_Sys%\Drivers
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.inf,%GTarget_Win%\INF
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.cat,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.inf,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidsc.mof,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsievt.mof,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsihba.mof,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsilog.dll,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprf.mof,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprt.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsirem.mof,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpdev.inf,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpdev.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.cat,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.inf,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpspfltr.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscdsm.inf,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscdsm.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscsi.sys,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\readme.txt,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\relnotes.txt,%Gtarget_Win%\iscsi
-FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\uguide.doc,%Gtarget_Win%\iscsi
+DirMake,%Gtarget_Win%\ISCSI
+If,Not,ExistDir,%Gtarget_Win%\INF,DirMake,%Gtarget_Win%\INF
+FileCopy,%Sapp%\IScsi\iscsicli.exe,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsicpl.cpl,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsidip.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsidsc.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsiexe.exe,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsilog.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsipp.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsium.dll,%GTarget_Sys%
+If,ExistFile,%Sapp%\IScsi\iscsiwip.dll,FileCopy,%Sapp%\IScsi\iscsiwip.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsiwmi.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsixip.dll,%GTarget_Sys%
+FileCopy,%Sapp%\IScsi\iscsiprt.sys,%GTarget_Sys%\Drivers
+FileCopy,%Sapp%\IScsi\msiscsi.sys,%GTarget_Sys%\Drivers
+FileCopy,%Sapp%\IScsi\iscsi.inf,%GTarget_Win%\INF
+FileCopy,%Sapp%\IScsi\iscsi.cat,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsi.inf,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsidsc.mof,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsievt.mof,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsihba.mof,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsilog.dll,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsiprf.mof,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsiprt.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\iscsirem.mof,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpdev.inf,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpdev.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpio.cat,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpio.inf,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpio.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\mpspfltr.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\msiscdsm.inf,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\msiscdsm.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\msiscsi.sys,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\readme.txt,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\relnotes.txt,%Gtarget_Win%\iscsi
+FileCopy,%Sapp%\IScsi\uguide.doc,%Gtarget_Win%\iscsi
+RegHiveLoad,Tmp_System,%RegSystem%
+//- Service iScsiPrt
+RegWrite,HKLM,0x2,Tmp_System\ControlSet001\Services\iScsiPrt,ImagePath,system32\DRIVERS\msiscsi.sys
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt,Type,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt,Start,3
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt,ErrorControl,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\iScsiPrt,DisplayName,"iScsiPort Driver"
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Services\iScsiPrt,Owners,iscsi.inf
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt,BootFlags,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\iScsiPrt,Group,iSCSI
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\iScsiPrt\Enum,0,ROOT\ISCSIPRT\0000
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt\Enum,Count,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt\Enum,NextInstance,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt\Enum,INITSTARTFAILED,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\iScsiPrt\Parameters,BusType,9
+//- Service MSiSCSI
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI,ErrorControl,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI,ImagePath,system32\iscsiexe.exe
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI,Start,2
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI,Type,16
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI,Description,"Manages Internet SCSI (iSCSI) sessions from this computer to remote iSCSI target devices. If this service is stopped, this computer will not be able to login or access iSCSI targets. If this service is disabled, any services that explicitly depend on it will fail to start."
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI,DisplayName,"Microsoft iSCSI Initiator Service"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI,Objectname,LocalSystem
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI,Group,iSCSI
+RegWrite,HKLM,0x3,Tmp_System\ControlSet001\Services\MSiSCSI,FailureActions,80,51,01,00,00,00,00,00,00,00,00,00,03,00,00,00,14,00,00,00,02,00,00,00,60,ea,00,00,02,00,00,00,60,ea,00,00,02,00,00,00,60,ea,00,00
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI\Enum,Count,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI\Enum,NextInstance,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\MSiSCSI\Enum,INITSTARTFAILED,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\MSiSCSI\Enum,0,ROOT\LEGACY_MSISCSI\0000
+RegWrite,HKLM,0x0,Tmp_System\Setup\AllowStart\MSiSCSI
+//-
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,ClassGUID,{4D36E97B-E325-11CE-BFC1-08002BE10318}
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,Class,SCSIAdapter
+RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,HardwareID,Root\iSCSIPrt
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,Driver,{4D36E97B-E325-11CE-BFC1-08002BE10318}\0000
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,Mfg,Microsoft
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,Service,iScsiPrt
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,DeviceDesc,"Microsoft iSCSI Initiator"
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,ConfigFlags,0
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000,Capabilities,0
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000\Control,ActiveService,iScsiPrt
+RegWrite,HKLM,0x0,Tmp_System\ControlSet001\Enum\Root\ISCSIPRT\0000\LogConf
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI,NextInstance,1
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,Service,MSiSCSI
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,Legacy,1
+RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,ConfigFlags,0
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,Class,LegacyDriver
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,ClassGUID,{8ECC055D-047F-11D1-A537-0000F8753ED1}
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000,DeviceDesc,"Microsoft iSCSI Initiator Service"
+RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Enum\Root\LEGACY_MSISCSI\0000\Control,ActiveService,MSiSCSI
+RegHiveUnload,Tmp_System
 
 [Import_Button]
 Run,%ScriptFile%,Import_Serialnr,Import_Button
@@ -367,10 +424,15 @@ lines=1
 
 [InterfaceEncoded]
 opendir.bmp=571,762
+Registry.bmp=963,1284
 
 [EncodedFile-InterfaceEncoded-opendir.bmp]
 lines=0
 0=eJyVkt1LU3EYx382esMuBFEKE8GLLL0IbyYhpEUI4aKytilTFN1xOrvxohpI9/0FlYESXUR2EXmxi4S9hYF4IZhOSdZMzJdtx+HwvO1sh2/P8cyxYFh9+TzPxXm+v+9z+J1z847ZxA5lprpMVZarEnbeGNC8vNSoI+E/5Z6YZs++Mk+QPTnkaaiAo4ee0LVPEcN/4tViTRjuNB7Jeh/cAxfPcEnNtY8hAW4ZwwqGVbCxL3k/D5zxC71x9AjoTsGRgG0jbY2K1siBfV2ybyjd2xkHr7HHIcO/CZh8ApdEfwIDKXASnAr6BDh4dG5mbVHJui727ar0VuQ/924tCtyNoTwgGFQGdZyxrHMfLgUuFYMShg4wIOrhVTNb3zVYdtCbQD+vQ4sqQwKhH/cLFQGx1C+W+EQWlC/Nyw0LqRUVt7fQtZPDvgtrDB2JHD1JnJrl8/dpjqjLipb3P9zG/Ti+qQirWJY1Yi0L06pW6F+QtJZf+grCEkOYrus5q/iJ06tgiwoLZ+0v3vyRnwEdoailtG6ufllVN1FXO36x6Pcd8wYogXJOrqDsB66+rTdPtV7/aGmcar0weeX4f6N2srrpQ/ON6Xvt3i7q9e+bz74uvqVQt7wPOn0c9b86DbV9tjlnR6n/o39kzmNQdPoblHVTL3ic484vSM1LySzSS8otYBgFIw6YMUPoD4zY5WddWriPgQkAk7cIYWOapDwBAAAAAgAAACcAAADwAQAAAAAAAAEAAAAAAAAAAAAAAA
+
+[EncodedFile-InterfaceEncoded-Registry.bmp]
+lines=0
+0=eJxz8n3GwgAGZkCsAcQiUMzIIMEAA0LcEAwD//GCP3/+4FeAFfz79+/e/XtdU7oOHj745euXv3//Eqnxy5cvszfM0eky5e6XEiyTsSlzqp/RsPfg3tevXwPNxGPdk+dP0voy5Rbpia7X4JohwzVVTmC2utRcQ7UWU+sc+46pHZeuXQYajmYIkDt/3QLjflv1rQ7qB5xU99kLL9IWnqsjtcRUaa2D8mJ7lm5R7h4Z+Rbd0O6YW3duIWvsWdInNUdbbI2WxclI6yvxFpdi5NdZyyyzUFnnrL3NV3ulJ9cEOcE5GhJLjA0WuR04fhCu99evX9ErM7ROeqrvcvS6XeT/osbvRbXOTi+1De662wNN9kcZbQgWmaUju9xCZb2L5crgg6h6UzaVOj/Itr2YFPqsKehljf2VaNOTXlanQx3OJrpcyLHcGi27wEJzs5fh7lDHjXEHjx9C1puzuynic6ftkTiDDa7mR3ycrsT63M4KfVwR97I54GK+/EJj9jYJ8Um62iu9nNcnHDpxGMXeVcWa252FV6iyTRTnnaggv8DUcnuoz4lsnU3OwstV+ZcqckyW4Z2uIjJHR2eawyFUe8OXJascspffbsE3S1lwtqbEImP51bZyc01F12kKr1EXXK4KFJRcbKywytZ4iQ/cv8BA/v7je/zKXGDwmpwNl1hiKA2MlzUOWlt8dNd6aR/xUtlrL7PRRHqpufJaR62t3tarwyD+ffjmUefR/qB1MVJztEQmqTqcSVHd5KyyzkVnq5/xvkirXTHej8scb2UYHfVX3+yityPAZF+k0+ZEoN5///+Vb68T3aAlvFaNZ54cW7+EyBR1nXV2NmciXS5kup7Pc9ibFPC43OV6guPlaNfriV43M/2vFERtLbj78N6rD6+8Tqbpn/RX3esgMEcVmIpklluorXb22hAfdCTP70K2z7WsgBsFQZeLArdnVe7pWHlh0+mbZ9+8ewN08K47hyLft/s+q7Q6Hye12AToR+2tvqY7Iq49vH73wd1le1Z1Hp7ecnzamv0bP33+hJb4Z5xc4HQ11uJ8oMlxT/093ga7QiwOJyTvqfr95zc8GHFlQKCa2WcWeByLdL4W538/N+BuuduFgiWX1+PJa8jg77+/N17czDxZl3qrtfRSX/vx6c/fvyBGIxx8/fH17ae3P37+IF4LAEYlJhF4nOMJSk3PLC4pqtRLyi1gGAUjDTxjgdDlzNjlZXg++TAwAQB1SAef7kzN7QEAAAACAAAAKAAAAHcDAAAAAAAAAQAAAAAAAAAAAAAA
 
 [EncodedFolders]
 Folder

@@ -1,7 +1,7 @@
 [Main]
 Title=AOMEI Partition Assistant
 Type=XPEPlugin
-Description=(v8.5.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
+Description=(v8.8.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
 Author=KYHI
 Date=2020.01.24
 Credits=
@@ -44,7 +44,7 @@ DDM_StartMenu_CheckBox="Start Menu Shortcut",1,3,10,246,122,18,False,"__Add Dyna
 DDM_Bevel=DDM_Bevel,1,12,4,205,133,65
 
 [Variables]
-%CheckVersion%=8.7.0
+%CheckVersion%=8.8.0
 %ProgramTitle%=AOMEI Partition Assistant
 %ProgramEXE%=PartAssist.exe
 %ProgramFolder%=AOMEI Partition Assistant
@@ -93,6 +93,7 @@ StrFormat,Left,%ProgramVersion%,5,%ProgramVersion%
 If,%ProgramVersion%,Bigger,%CheckVersion%,EchoExtended,"You are using an Un-Tested Program Version %ProgramVersion%#$x#$xIf it works update the #$pCheckVersion#$p variable#$xOtherwise you Must Update this Plugin",Warn,,MessageInformation,10
 StrFormat,Left,%ProgramVersion%,3,%DisplayVersion%
 Set,%ProgramTitle%,%ProgramTitle% %EditionKey_ScrollBox% Edition %DisplayVersion%
+//--
 If,Not,%RegKey_TextBox%-,Equal,-,Run,%ScriptFile%,PAkey
 //--
 Run,%ScriptFile%,Add_Shortcuts
@@ -333,7 +334,10 @@ If,Not,ExistFile,%ProvideFiles%\%SetupFile%,Message,"Your Download Folder Has Be
 [Example_Information]
 //Echo,"Information on Message Box"
 Message,"Example Message...............................",Information
-//ExtractAndRun,%ScriptFile%,Folder,ReadMe.txt
+//If,Not,ExistDir,%GTemp%,DirMake,%GTemp%
+//ExtractFile,%ScriptFile%,Folder,Readme.txt,%GTemp%
+//System,FILEREDIRECT,OFF
+//ShellExecute,Open,notepad.exe,%GTemp%\ReadMe.txt
 
 [PAkey]
 If,%EditionKey_ScrollBox%,Equal,Standard,Set,%EditionKey%,2

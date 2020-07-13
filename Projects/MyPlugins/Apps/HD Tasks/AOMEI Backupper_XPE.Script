@@ -1,7 +1,7 @@
 [Main]
 Title=AOMEI Backupper
 Type=XPEPlugin
-Description=(v5.6.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
+Description=(v5.8.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
 Author=ChrisR
 Date=2019.12.20
 Credits=
@@ -39,7 +39,7 @@ Serial_TextBox=,1,0,10,331,429,21,
 Serial_TextLabel3=" Otherwise Leave Blank and The Standard Free Version Shall Apply To Build",1,1,14,353,414,18,8,Normal
 
 [Variables]
-%CheckVersion%=5.6.0.0
+%CheckVersion%=5.8.0.0
 %ProgramTitle%=AOMEI Backupper
 %ProgramEXE%=Backupper.exe
 %ProgramFolder%=AOMEI Backupper
@@ -108,8 +108,8 @@ Set,%SetupContainerSize%,""
 IniRead,%FileContainer%,Folder,%PackFile%,%SetupContainerSize%
 If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
 Else,Begin
-  ExtractFile,%FileContainer%,Folder,%PackFile%,%TempFolder%
-  ExtractFile,%FileContainer%,Folder,%PackDrivers%,%TempFolder%
+ExtractFile,%FileContainer%,Folder,%PackFile%,%TempFolder%
+ExtractFile,%FileContainer%,Folder,%PackDrivers%,%TempFolder%
 End
 //-
 Echo,"Extract %PackFile%..."
@@ -132,8 +132,8 @@ Else,RegWrite,HKLM,0x3,Tmp_Software\Microsoft\Windows\CurrentVersion,ProgramData
 RegHiveUnLoad,Tmp_Software
 //-
 RegHiveLoad,Tmp_System,%RegSystem%
-System,ERROROFF
-RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{71A27CDD-812A-11D0-BEC7-08002BE2092F},UpperFilters,Append,ambakdrv
+If,Not,ExistRegKey,HKLM,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,RegWrite,HKLM,0x7,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,ambakdrv
+Else,RegMulti,HKLM,Tmp_System\ControlSet001\Control\Class\{71a27cdd-812a-11d0-bec7-08002be2092f},UpperFilters,Append,ambakdrv
 RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Control,SystemStartOptions,winpe.wim
 RegWrite,HKLM,0x1,Tmp_System\ControlSet001\Services\ambakdrv,DisplayName,ambakdrv
 RegWrite,HKLM,0x4,Tmp_System\ControlSet001\Services\ambakdrv,ErrorControl,0
@@ -176,8 +176,8 @@ Echo,"Update %ScriptTitle%..."
 Set,%SetupContainerSize%,""
 IniRead,%FileContainer%,Folder,%PackFile%,%SetupContainerSize%
 If,Not,%SetupContainerSize%-,Equal,-,Begin
-  If,ExistFile,%FileContainer%.%CheckVersion%,FileDeleteQ,%FileContainer%.%CheckVersion%
-  FileCopy,%FileContainer%,%FileContainer%.%CheckVersion%
+If,ExistFile,%FileContainer%.%CheckVersion%,FileDeleteQ,%FileContainer%.%CheckVersion%
+FileCopy,%FileContainer%,%FileContainer%.%CheckVersion%
 End
 Run,%ScriptFile%,Download
 Run,%ScriptFile%,ExtractSetupFile
@@ -196,10 +196,10 @@ Download,%ProvideFiles%\%SetupFile%,%SetupURL%,NoExitOnError
 If,Not,ExistFile,%ProvideFiles%\%SetupFile%,Download,%ProvideFiles%\%SetupFile%,%SetupURL2%
 // Rename Setup File with the Version
 If,ExistFile,%ProvideFiles%\%SetupFile%,Begin
-  Retrieve,FileVersion,%ProvideFiles%\%SetupFile%,%SetupFileVer%
-  If,ExistFile,%ProvideFiles%\Backupper_%SetupFileVer%.exe,FileDeleteQ,%ProvideFiles%\Backupper_%SetupFileVer%.exe
-  FileRename,%ProvideFiles%\%SetupFile%,%ProvideFiles%\Backupper_%SetupFileVer%.exe
-  Set,%SetupFile%,Backupper_%SetupFileVer%.exe
+Retrieve,FileVersion,%ProvideFiles%\%SetupFile%,%SetupFileVer%
+If,ExistFile,%ProvideFiles%\Backupper_%SetupFileVer%.exe,FileDeleteQ,%ProvideFiles%\Backupper_%SetupFileVer%.exe
+FileRename,%ProvideFiles%\%SetupFile%,%ProvideFiles%\Backupper_%SetupFileVer%.exe
+Set,%SetupFile%,Backupper_%SetupFileVer%.exe
 End
 
 [ExtractSetupFile]
@@ -297,6 +297,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\lang\zh-TW.txt
 {app}\2Gpt_BCD
 {app}\2Mbr_BCD
+{app}\amnet.dll
 {app}\awsSns.dll
 {app}\Backup.dll
 {app}\Backupper.exe
@@ -312,6 +313,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\DiskMgr.dll
 {app}\Encrypt.dll
 {app}\EnumFolder.dll
+{app}\FileDialog.dll
 {app}\FlBackup.dll
 {app}\FuncLogic.dll
 {app}\GptBcd.dll
@@ -344,6 +346,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\msvcr80.dll
 {app}\msvcr80,1.dll
 {app}\msvcr90.dll
+{app}\NTHelp.dll
 {app}\QtCore4.dll
 {app}\QtCore4,1.dll
 {app}\QtGui4.dll
@@ -357,6 +360,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\UiLogic.dll
 {app}\UsbDetect.dll
 {app}\vcomp,1.dll
+{app}\Winpe64\amnet.dll
 {app}\Winpe64\awsSns.dll
 {app}\Winpe64\Backup.dll
 {app}\Winpe64\Backupper.exe
@@ -372,6 +376,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\Winpe64\DiskMgr.dll
 {app}\Winpe64\Encrypt.dll
 {app}\Winpe64\EnumFolder.dll
+{app}\Winpe64\FileDialog.dll
 {app}\Winpe64\FlBackup.dll
 {app}\Winpe64\FuncLogic.dll
 {app}\Winpe64\GptBcd.dll
@@ -407,6 +412,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\Winpe64\msvcp90.dll
 {app}\Winpe64\msvcr80.dll
 {app}\Winpe64\msvcr90.dll
+{app}\Winpe64\NTHelp.dll
 {app}\Winpe64\phonon4.dll
 {app}\Winpe64\QtCore4.dll
 {app}\Winpe64\QtCore4,1.dll
@@ -428,18 +434,18 @@ If,%HostOSArch%,Equal,x86,Set,%wow64Node%,""
 Else,Set,%wow64Node%,Wow6432Node\
 // Import Backupper serialnr
 If,ExistRegKey,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,Begin
-  RegRead,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,%Tmp_Serial%
-  If,Not,%Tmp_Serial%-,Equal,-,Begin
-    //Set,%Serial_TextBox%,%Tmp_Serial%,Permanent
-    IniWrite,%ScriptFile%,Interface,Serial_TextBox,",1,0,10,331,429,21,#$q%Tmp_Serial%#$q"
-    System,RefreshInterface
-  End
-  Else,Begin
-    Message,"%ProgramTitle% Registry Key Not Found!",Warning
-  End
+RegRead,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,%Tmp_Serial%
+If,Not,%Tmp_Serial%-,Equal,-,Begin
+//Set,%Serial_TextBox%,%Tmp_Serial%,Permanent
+IniWrite,%ScriptFile%,Interface,Serial_TextBox,",1,0,10,331,429,21,#$q%Tmp_Serial%#$q"
+System,RefreshInterface
 End
 Else,Begin
-  Message,"%ProgramTitle% Registry Key Not Found!",Warning
+Message,"%ProgramTitle% Registry Key Not Found!",Warning
+End
+End
+Else,Begin
+Message,"%ProgramTitle% Registry Key Not Found!",Warning
 End
 
 [AuthorEncoded]

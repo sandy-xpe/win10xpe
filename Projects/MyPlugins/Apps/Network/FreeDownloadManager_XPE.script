@@ -9,7 +9,7 @@ Contact=
 Version=001
 Level=5
 Download_Level=2
-Selected=True
+Selected=False
 Mandatory=False
 NoWarning=False
 History001=ChrisR - Initial version
@@ -75,8 +75,8 @@ ExtractFile,%FileContainer%,FDM,FDM.7z,%GTemp%\%ProgramFolder%
 ExtractFile,%FileContainer%,FDM,FDMUser.7z,%GTemp%\%ProgramFolder%
 //-
 If,Not,ExistDir,%Target_Prog%\%ProgramFolder%,DirMake,%Target_Prog%\%ProgramFolder%
-ShellExecute,Hide,%Tools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\FDM.7z#$q -y -o#$q%Target_Prog%\%ProgramFolder%#$q"
-ShellExecute,Hide,%Tools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\FDMUser.7z#$q -y -o#$q%TargetAppDataRoaming%#$q"
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\FDM.7z#$q -y -o#$q%Target_Prog%\%ProgramFolder%#$q"
+ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\FDMUser.7z#$q -y -o#$q%TargetAppDataRoaming%#$q"
 
 [WriteSettings_FDM]
 RegImportFile,%GTemp%\%ProgramFolder%\FDM_Registry_%Architecture%.txt

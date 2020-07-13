@@ -151,12 +151,12 @@ ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\InfTrim.7z#$q -y
 FileDelete,%GTemp%\%ProgramFolder%\InfTrim.7z
 //-
 If,%Extract_CheckBox%,Equal,True,Begin
-ExtractFile,%FileContainer%,Folder,%PackDriver%,%GTemp%\%ProgramFolder%
-ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%PackDriver%#$q -y -o#$q%GTemp%\%ProgramFolder%\Drivers#$q"
-FileDelete,%GTemp%\%ProgramFolder%\%PackDriver%
-ExtractFile,%FileContainer%,Folder,nvidia-418.81-win10-64bit_Original_Inf.7z,%GTemp%\%ProgramFolder%
-ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf.7z#$q -y -o#$q%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf#$q"
-FileDelete,%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf.7z
+  ExtractFile,%FileContainer%,Folder,%PackDriver%,%GTemp%\%ProgramFolder%
+  ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%PackDriver%#$q -y -o#$q%GTemp%\%ProgramFolder%\Drivers#$q"
+  FileDelete,%GTemp%\%ProgramFolder%\%PackDriver%
+  ExtractFile,%FileContainer%,Folder,nvidia-418.81-win10-64bit_Original_Inf.7z,%GTemp%\%ProgramFolder%
+  ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf.7z#$q -y -o#$q%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf#$q"
+  FileDelete,%GTemp%\%ProgramFolder%\nvidia-418.81-win10-64bit_Original_Inf.7z
 End
 //-
 OpenDir,%GTemp%\%ProgramFolder%

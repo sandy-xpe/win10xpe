@@ -1,19 +1,19 @@
 [Main]
 Title=Sumatra PDF
 Type=XPEPlugin
-Description=(v3.1.2.0) Sumatra PDF is a slim, free, open-source PDF viewer for Windows. Sumatra has a minimalistic design. It's small and starts up very fast.
+Description=(v3.2.0) Sumatra PDF is a slim, free, open-source PDF viewer for Windows. Sumatra has a minimalistic design. It's small and starts up very fast.
 Author=KYHI
-Date=2019.04.02
-Credits=
+Date=2020.06.15
+Credits=TheOven.org Forum
 Contact=
-Version=003
+Version=001
 Level=5
 Download_Level=2
 Selected=True
 Mandatory=False
 NoWarning=False
-History001=KYHI Initial XPE Plugin Created 2018.05.10
-History003=KYHI - M&M Check - 2019.04.02
+History001=KYHI Initial XPE Plugin Created 2020.06.15
+History002=
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,85
@@ -36,12 +36,17 @@ HomePage_WebLabel="Home Page",1,10,313,6,54,18,https://www.sumatrapdfreader.org/
 
 [Variables]
 %ProgramTitle%=SumatraPDF
-%ProgramExe%=SumatraPDF.exe
-%ProgramExex64%=SumatraPDF.exe
+%ProgramExe%=SumatraPDF-3.2-32.exe
+%ProgramExex64%=SumatraPDF-3.2-64.exe
 %ProgramFolder%=SumatraPDF
 %ProgramFolderx64%=SumatraPDF_x64
-%SetupFile%=SumatraPDF.7z
-%SetupFilex64%=SumatraPDF64.7z
+%SetupFile%=SumatraPDF.zip
+%SetupFilex64%=SumatraPDF64.zip
+%DLSetupFile%=SumatraPDF.zip
+%DLSetupFilex64%=SumatraPDF64.zip
+%SetupURL%=https://www.sumatrapdfreader.org/dl2/SumatraPDF-3.2.zip
+%SetupURLx64%=https://www.sumatrapdfreader.org/dl2/SumatraPDF-3.2-64.zip
+%ProvideFiles%=%ProgCache%\%ProgramFolder%
 %FileContainer%=%ScriptDir%\SumatraPDF_XPE_File.Script
 
 [Process]
@@ -98,7 +103,6 @@ ShellExecute,Hide,%GTools%\7z.exe,"x #$q%GTemp%\%ProgramFolder%\%SetupFile%#$q -
 Set,%ProgramFolder%,%ProgramFolderx64%
 Set,%ProgramExe%,%ProgramExex64%
 Set,%SetupFile%,%SetupFilex64%
-Set,%SetupURL%,%SetupURLx64%
 
 [Launch_Program]
 If,%HostOSArch%,Equal,x64,Run,%ScriptFile%,PluginSetx64
@@ -106,7 +110,14 @@ Run,%ScriptFile%,Extract
 Start,,%ProgramExe%,,%GTemp%\%ProgramFolder%\%ProgramFolder%
 
 [Update_Container]
-Exec,%FileContainer%,Process
+If,ExistDir,%ProvideFiles%,DirDeleteQ,%ProvideFiles%
+DirMake,%ProvideFiles%
+Download,%ProvideFiles%\%DLSetupFile%,%SetupURL%
+Encode,%FileContainer%,Folder,%ProvideFiles%\%DLSetupFile%
+Download,%ProvideFiles%\%DLSetupFilex64%,%SetupURLx64%
+Encode,%FileContainer%,Folder,%ProvideFiles%\%DLSetupFilex64%
+DirDeleteQ,%ProvideFiles%
+
 
 [AuthorEncoded]
 Logo=SumatraPDF4848.ico
