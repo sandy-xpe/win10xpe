@@ -1,12 +1,12 @@
 [Main]
 Title=WinNTSetup4
 Type=XPEPlugin
-Description=(v4.2.1) Install Windows 2k/XP/2003/2008/2012/Vista/7/8/8.1/10 x86/x64. It runs even on the most minimalistic WinPE
+Description=(v4.2.5) Install Windows 2k/XP/2003/2008/2012/Vista/7/8/8.1/10 x86/x64. It runs even on the most minimalistic WinPE
 Author=ChrisR
-Date=2020.07.03
+Date=2020.10.24
 Credits=TheOven.org Forum
 Contact=
-Version=003
+Version=004
 Level=5
 Download_Level=2
 Selected=False
@@ -14,6 +14,7 @@ Mandatory=False
 NoWarning=False
 History001=ChrisR Initial XPE Packed Plugin Created 2019.12.16
 History002=ChrisR Update 4.2.1.0 - 2020.07.03
+History004=APT Update 4.2.5.0 - 2020.10.24
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
@@ -35,7 +36,7 @@ HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://msfn.org/board/topic/1496
 %ProvideFiles%=%ProgCache%\%ProgramFolder%
 %SetupFile%=WinNTSetup4.rar
 %FileContainer%=%ScriptDir%\WinNTSetup4_XPE_File.Script
-%ProgramVersion%=4.2.1.0
+%ProgramVersion%=4.2.5.0
 
 [Process]
 Echo,"Processing %ScriptTitle%..."

@@ -1,7 +1,7 @@
 [Main]
 Title=MPC-BE
 Type=XPEPlugin
-Description=(v1.5.4.4969) Media Player Classic - BE is based on the original "Media Player Classic" and "Media Player Classic Home Cinema" project, contains additional features and bug fixes.
+Description=(v1.5.5.5433) Media Player Classic - BE is based on the original "Media Player Classic" and "Media Player Classic Home Cinema" project, contains additional features and bug fixes.
 Author=ChrisR
 Date=2020.02.17
 Credits=
@@ -13,7 +13,7 @@ Selected=False
 Mandatory=False
 NoWarning=False
 History001=ChrisR Initial XPE Plugin Created 2018.05.30
-History004=ChrisR Updated v1.5.4.4969 - 2020.02.17
+History004=ChrisR Updated v1.5.5.5433 - 2020.09.06
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
@@ -37,14 +37,14 @@ Release_WebLabel="Release Page",1,10,338,6,55,18,https://sourceforge.net/project
 %ProgramFolder%=MPC-BE
 %ProgramFolderx64%=MPC-BE_x64
 %ProvideFiles%=%ProgCache%\MPC-BE
-%SetupSubFolder%=MPC-BE.1.5.4.4969.x86
-%SetupSubFolderx64%=MPC-BE.1.5.4.4969.x64
-%SetupFile%=MPC-BE.1.5.4.4969.x86.7z
-%SetupFilex64%=MPC-BE.1.5.4.4969.x64.7z
-%SetupURL%=https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/1.5.4/MPC-BE.1.5.4.4969.x86.7z/download
-%SetupURLx64%=https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/1.5.4/MPC-BE.1.5.4.4969.x64.7z/download
-%SetupURL2%=https://svwh.dl.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.4/MPC-BE.1.5.4.4969.x86.7z
-%SetupURL2x64%=https://svwh.dl.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.4/MPC-BE.1.5.4.4969.x64.7z
+%SetupSubFolder%=MPC-BE.1.5.5.5433.x86
+%SetupSubFolderx64%=MPC-BE.1.5.5.5433.x64
+%SetupFile%=MPC-BE.1.5.5.5433.x86.7z
+%SetupFilex64%=MPC-BE.1.5.5.5433.x64.7z
+%SetupURL%=https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/1.5.5/MPC-BE.1.5.5.5433.x86.7z/download
+%SetupURLx64%=https://sourceforge.net/projects/mpcbe/files/MPC-BE/Release%20builds/1.5.5/MPC-BE.1.5.5.5433.x64.7z/download
+%SetupURL2%=https://svwh.dl.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.5/MPC-BE.1.5.5.5433.x86.7z
+%SetupURL2x64%=https://svwh.dl.sourceforge.net/project/mpcbe/MPC-BE/Release%20builds/1.5.5/MPC-BE.1.5.5.5433.x64.7z
 
 [Process]
 Echo,"Processing %ScriptTitle%..."

@@ -1,19 +1,19 @@
 [Main]
 Title=AOMEI Partition Assistant
 Type=XPEPlugin
-Description=(v8.8.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
+Description=(v9.0.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
 Author=KYHI
-Date=2020.01.24
+Date=2020.11.19
 Credits=
 Contact=
-Version=006
+Version=007
 Level=5
 Download_Level=2
 Selected=True
 Mandatory=False
 NoWarning=False
 History001=KYHI Initial XPE Plugin Created 2019.01.26
-History006=KYHI - PE Support v8.6 - 2020.01.24
+History007=KYHI - Support v8.10 - 2020.09.15
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
@@ -44,7 +44,7 @@ DDM_StartMenu_CheckBox="Start Menu Shortcut",1,3,10,246,122,18,False,"__Add Dyna
 DDM_Bevel=DDM_Bevel,1,12,4,205,133,65
 
 [Variables]
-%CheckVersion%=8.8.0
+%CheckVersion%=9.0
 %ProgramTitle%=AOMEI Partition Assistant
 %ProgramEXE%=PartAssist.exe
 %ProgramFolder%=AOMEI Partition Assistant
@@ -89,9 +89,9 @@ If,%Architecture%%WoW64Support%%DDM_CheckBox%,Equal,x64TrueTrue,Run,%ScriptFile%
 Set,%ProgramVersion%,""
 Set,%DisplayVersion%,""
 Retrieve,Fileversion,%Target_Prog%\%ProgramFolder%\%ProgramExe%,%ProgramVersion%
-StrFormat,Left,%ProgramVersion%,5,%ProgramVersion%
-If,%ProgramVersion%,Bigger,%CheckVersion%,EchoExtended,"You are using an Un-Tested Program Version %ProgramVersion%#$x#$xIf it works update the #$pCheckVersion#$p variable#$xOtherwise you Must Update this Plugin",Warn,,MessageInformation,10
-StrFormat,Left,%ProgramVersion%,3,%DisplayVersion%
+StrFormat,SPLIT,%ProgramVersion%,.,1,%ProgramMajorVersion%
+StrFormat,SPLIT,%ProgramVersion%,.,2,%ProgramMinorVersion%
+If,Not,%ProgramMajorVersion%.%ProgramMinorVersion%,Equal,%CheckVersion%,EchoExtended,"You are using an Un-Tested Program Version %ProgramVersion%#$x#$xIf it works update the #$pCheckVersion#$p variable#$xOtherwise you Must Update this Plugin",Warn,,MessageInformation,10
 Set,%ProgramTitle%,%ProgramTitle% %EditionKey_ScrollBox% Edition %DisplayVersion%
 //--
 If,Not,%RegKey_TextBox%-,Equal,-,Run,%ScriptFile%,PAkey
@@ -358,7 +358,7 @@ TXTAddLine,%Tapp%\cfg.ini,KEY=%RegKey_TextBox%,Append
 TXTAddLine,%Tapp%\cfg.ini,"",Append
 TXTAddLine,%Tapp%\cfg.ini,[PA],Append
 TXTAddLine,%Tapp%\cfg.ini,POPUPMESSAGE=1,Append
-If,%DisplayVersion%,Bigger,8.5,TXTAddLine,%GTarget_Sys%\Drivers\etc\Hosts,127.0.0.1  www.aomeitech.com,Append
+TXTAddLine,%GTarget_Sys%\Drivers\etc\Hosts,127.0.0.1  www.aomeitech.com,Append
 
 [DDMkey]
 If,%EditionKey_ScrollBox%,Equal,Standard,Set,%EditionDDM%,1

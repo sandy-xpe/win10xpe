@@ -27,7 +27,7 @@ Image_Software=Image.jpg,1,5,145,35,250,135
 Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
 HomePage_WebLabel="Home Page",1,10,338,6,55,18,http://www.scootersoftware.com/features.php
 Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update XPEPlugin Program File"
-ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,4.3.4.24657,"__Program Version To Download and Update Plugin"
+ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,4.3.7.25118,"__Program Version To Download and Update Plugin"
 Lang_TextLabel=Language,1,1,452,42,47,18,8,Normal
 Lang_ScrollBox="English                       ",1,4,450,56,104,21,"English                       ","German                      -de","French                      -fr","Japanese                    -jp","Chinese Simplified          -zh"
 

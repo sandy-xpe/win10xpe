@@ -12,7 +12,7 @@ Download_Level=1
 Selected=False
 Mandatory=False
 NoWarning=False
-History001=KYHI Initial XPE Plugin Created 2030.05.22
+History001=KYHI Initial XPE Plugin Created 2020.05.22
 History002=
 
 [Interface]
@@ -27,8 +27,8 @@ Lang_TextLabel=Language,1,1,145,70,56,18,8,Normal
 ScrollBox_Lang="English                               |1|EN",1,4,145,85,130,21,"Default                               |0|EN","English                               |1|EN","Brazil                                    |11|BZ","Chinese                               |13|SC","Chinese Traditional                      |14|TC","Czech                                    |8|CZ","Dutch                                    |6|NL","Espana                                  |27|ES","French                                   |17|FR","German                                   |2|GE","Italian                                  |15|IT","Japanese                                 |9|JA","Korean                                   |3|KR","Polish                                   |5|PL","Portuguese                           |19|BR","Russian                                  |0|RU","Spanish                                  |12|ES"
 IScsiSupport="Add SCSI Support",1,3,146,109,122,18,False
 HomePage_WebLabel="Acronis Home Page",1,10,285,6,120,18,http://www.acronis.com/en-us/personal/computer-backup/
-Release_WebLabel="Acronis Release Notes",1,10,285,26,120,18,https://www.acronis.com/en-us/support/updates/changes.html?p=41999
-Build_TextBox="Acronis Build Number:",1,0,145,50,130,21,beta
+Release_WebLabel="Acronis Release Notes",1,10,285,26,120,18,https://www.acronis.com/en-us/support/updates/changes.html?p=42226
+Build_TextBox="Acronis Build Number:",1,0,145,50,130,21,32010
 pBevel3=pBevel3,1,12,140,6,139,126
 ProvideFile_Opendir_Button="You Can Place ATI Installer or WinPE.zip File Here",1,8,285,76,275,25,ProvideFiles_OpenDir_P_B,opendir.bmp,False,_ProvideFiles_OpenDir_P_B_,False,"__Click Here To Add Your Own Acronis WinPE.zip File:"
 DL_TextLabel="WinPE.zip Is Automatically Extracted From The Installer.",1,1,285,56,275,27,8,Normal
@@ -47,7 +47,7 @@ SNrTI_TextBox=,1,0,10,201,425,21,
 %SetupFile%=AcronisTrueImage2021_%Build_TextBox%.exe
 %SetupURL%=https://dl.acronis.com/u/%SetupFile%
 %Container%=_55_52D78812FFC93DDE133DECBB0875BCA0
-%Container1%=_45_52D78812FFC93DDE133DECBB0875BCA0
+%Container1%=_56_52D78812FFC93DDE133DECBB0875BCA0
 
 [info]
 %SetupURL%=https://dl.acronis.com/u/%SetupFile%
@@ -89,8 +89,8 @@ If,Not,ExistFile,%ProvideFiles%\Files\A43.exe,Set,%SourceExist%,No
 If,Not,ExistFile,%ProvideFiles%\Files32\%ProgramExe%,Set,%SourceExist%,No
 If,Not,ExistFile,%ProvideFiles%\Files64\%ProgramExe%,Set,%SourceExist%,No
 If,%SourceExist%,Equal,No,Begin
-If,Not,ExistFile,%ProvideFiles%\WinPE.zip,EchoExtended,"%ProgramTitle% Files or WinPE.zip not found in %ProvideFiles%!",Warn,,MessageError,,Exit
-Else,ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ProvideFiles%\WinPE.zip#$q -y -o#$q%ProvideFiles%#$q"
+  If,Not,ExistFile,%ProvideFiles%\WinPE.zip,EchoExtended,"%ProgramTitle% Files or WinPE.zip not found in %ProvideFiles%!",Warn,,MessageError,,Exit
+  Else,ShellExecute,Hide,%GTools%\7z.exe,"x #$q%ProvideFiles%\WinPE.zip#$q -y -o#$q%ProvideFiles%#$q"
 End
 
 [CopyProgramFiles]
@@ -146,9 +146,9 @@ FileCopy,%ProvideFiles%\%Source_FilesArch%\Drivers\volume_tracker.sys,%GTarget_S
 FileCopy,%ProvideFiles%\%Source_FilesArch%\Drivers\volume_tracker_driver_api.dll,%GTarget_Sys%
 //--
 If,%Source_FilesArch%,Equal,Files64,Begin
-FileCopy,%ProvideFiles%\Files\auto_reactivate64.bin,%Target_Prog%\%ProgramFolder%
-FileCopy,%ProvideFiles%\Files\bootwiz64.efi,%Target_Prog%\%ProgramFolder%
-FileCopy,%ProvideFiles%\Files\Drivers\snapapint64.dll,%GTarget_Sys%
+  FileCopy,%ProvideFiles%\Files\auto_reactivate64.bin,%Target_Prog%\%ProgramFolder%
+  FileCopy,%ProvideFiles%\Files\bootwiz64.efi,%Target_Prog%\%ProgramFolder%
+  FileCopy,%ProvideFiles%\Files\Drivers\snapapint64.dll,%GTarget_Sys%
 End
 
 [AddFiles]
@@ -257,41 +257,41 @@ RegHiveUnLoad,Tmp_System
 Echo,"Adding iscsi Support..."
 DirMake,%Gtarget_Win%\ISCSI
 If,Not,ExistDir,%Gtarget_Win%\INF,DirMake,%Gtarget_Win%\INF
-FileCopy,%Sapp%\IScsi\iscsicli.exe,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsicpl.cpl,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsidip.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsidsc.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsiexe.exe,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsilog.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsipp.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsium.dll,%GTarget_Sys%
-If,ExistFile,%Sapp%\IScsi\iscsiwip.dll,FileCopy,%Sapp%\IScsi\iscsiwip.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsiwmi.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsixip.dll,%GTarget_Sys%
-FileCopy,%Sapp%\IScsi\iscsiprt.sys,%GTarget_Sys%\Drivers
-FileCopy,%Sapp%\IScsi\msiscsi.sys,%GTarget_Sys%\Drivers
-FileCopy,%Sapp%\IScsi\iscsi.inf,%GTarget_Win%\INF
-FileCopy,%Sapp%\IScsi\iscsi.cat,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsi.inf,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsidsc.mof,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsievt.mof,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsihba.mof,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsilog.dll,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsiprf.mof,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsiprt.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\iscsirem.mof,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpdev.inf,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpdev.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpio.cat,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpio.inf,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpio.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\mpspfltr.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\msiscdsm.inf,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\msiscdsm.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\msiscsi.sys,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\readme.txt,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\relnotes.txt,%Gtarget_Win%\iscsi
-FileCopy,%Sapp%\IScsi\uguide.doc,%Gtarget_Win%\iscsi
+If,Not,ExistFile,%GTarget_Sys%\iscsicli.exe,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsicli.exe,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsicpl.cpl,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidip.dll,%GTarget_Sys%
+If,Not,ExistFile,%GTarget_Sys%\iscsidsc.dll,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidsc.dll,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiexe.exe,%GTarget_Sys%
+If,Not,ExistFile,%GTarget_Sys%\iscsilog.dll,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsilog.dll,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsipp.dll,%GTarget_Sys%
+If,Not,ExistFile,%GTarget_Sys%\iscsium.dll,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsium.dll,%GTarget_Sys%
+If,ExistFile,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiwip.dll,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiwip.dll,%GTarget_Sys%
+If,Not,ExistFile,%GTarget_Sys%\iscsiwmi.dll,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiwmi.dll,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsixip.dll,%GTarget_Sys%
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprt.sys,%GTarget_Sys%\Drivers
+If,Not,ExistFile,%GTarget_Sys%\Drivers\msiscsi.sys,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscsi.sys,%GTarget_Sys%\Drivers
+If,Not,ExistFile,%GTarget_Win%\INF\iscsi.inf,FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.inf,%GTarget_Win%\INF
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.cat,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsi.inf,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsidsc.mof,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsievt.mof,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsihba.mof,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsilog.dll,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprf.mof,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsiprt.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\iscsirem.mof,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpdev.inf,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpdev.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.cat,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.inf,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpio.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\mpspfltr.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscdsm.inf,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscdsm.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\msiscsi.sys,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\readme.txt,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\relnotes.txt,%Gtarget_Win%\iscsi
+FileCopy,%ProvideFiles%\%Source_FilesArch%\IScsi\uguide.doc,%Gtarget_Win%\iscsi
 RegHiveLoad,Tmp_System,%RegSystem%
 //- Service iScsiPrt
 RegWrite,HKLM,0x2,Tmp_System\ControlSet001\Services\iScsiPrt,ImagePath,system32\DRIVERS\msiscsi.sys
@@ -353,41 +353,41 @@ Else,Set,%wow64Node%,Wow6432Node\
 // Get Acronis TrueImage installed version
 Set,%TI_installedVersion%,0
 If,ExistRegKey,HKLM,Software\%wow64Node%Acronis\TrueImageHome\Settings,MainExePath,Begin
-RegRead,HKLM,Software\%wow64Node%Acronis\TrueImageHome\Settings,MainExePath,%reg_key_exe%
-Retrieve,FILEVERSION,%reg_key_exe%,%TI_installedVersion%
+  RegRead,HKLM,Software\%wow64Node%Acronis\TrueImageHome\Settings,MainExePath,%reg_key_exe%
+  Retrieve,FILEVERSION,%reg_key_exe%,%TI_installedVersion%
 End
 // Import Acronis TrueImage serialnr
 If,ExistRegKey,HKLM,Software\%wow64Node%Acronis\TrueImage,standard,Begin
-Set,%temp_reg_key%,""
-RegRead,HKLM,Software\%wow64Node%Acronis\TrueImage,standard,%temp_reg_key%
-If,Not,%temp_reg_key%-,Equal,-,Begin
-If,#1,Equal,Import_Button,Begin
-Set,%answer%,No
-//If,Question,"Acronis True Image Version %TI_installedVersion% Registry Key:#$x#$x%temp_reg_key%#$x#$xThe existing key in Plugin will be overwritten#$c continue ?",10,True,Set,%answer%,Yes
-If,Question,"Acronis True Image Version %TI_installedVersion% Registry Key:#$x#$x#$q%temp_reg_key%#$q#$x#$xThe existing key in Plugin will be overwritten#$c continue ?",Set,%answer%,Yes
-If,%answer%,Equal,Yes,Begin
-Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
-System,REFRESHINTERFACE
-End
+  Set,%temp_reg_key%,""
+  RegRead,HKLM,Software\%wow64Node%Acronis\TrueImage,standard,%temp_reg_key%
+  If,Not,%temp_reg_key%-,Equal,-,Begin
+    If,#1,Equal,Import_Button,Begin
+      Set,%answer%,No
+      //If,Question,"Acronis True Image Version %TI_installedVersion% Registry Key:#$x#$x%temp_reg_key%#$x#$xThe existing key in Plugin will be overwritten#$c continue ?",10,True,Set,%answer%,Yes
+      If,Question,"Acronis True Image Version %TI_installedVersion% Registry Key:#$x#$x#$q%temp_reg_key%#$q#$x#$xThe existing key in Plugin will be overwritten#$c continue ?",Set,%answer%,Yes
+      If,%answer%,Equal,Yes,Begin
+        Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
+        System,REFRESHINTERFACE
+      End
+    End
+    Else,Begin
+      Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
+      System,REFRESHINTERFACE
+    End
+  End
+  Else,Begin
+    If,#1,Equal,Import_Button,Message,"No %ProgramTitle% Registry Key Found!",Error
+  End
 End
 Else,Begin
-Set,%SNrTI_TextBox%,%temp_reg_key%,Permanent
-System,REFRESHINTERFACE
-End
-End
-Else,Begin
-If,#1,Equal,Import_Button,Message,"No %ProgramTitle% Registry Key Found!",Error
-End
-End
-Else,Begin
-If,#1,Equal,Import_Button,Message,"No %ProgramTitle% Registry Key Found!",Error
+  If,#1,Equal,Import_Button,Message,"No %ProgramTitle% Registry Key Found!",Error
 End
 
 [WriteSettingsProfile]
 Set,%serial%,%SNrTI_TextBox%
 If,%serial%-,Equal,-,Begin
-Run,%ScriptFile%,Import_Serialnr
-Set,%serial%,%SNrTI_TextBox%
+  Run,%ScriptFile%,Import_Serialnr
+  Set,%serial%,%SNrTI_TextBox%
 End
 If,%serial%-,Equal,-,EchoExtended,"No %ProgramTitle% Registry Key or Serial Number Found!",Warn,,MessageError,4
 //-
@@ -400,9 +400,14 @@ OpenDir,%ProvideFiles%
 
 [Download]
 If,Not,ExistDir,%ProvideFiles%,DirMake,%ProvideFiles%
+If,ExistFile,%ProvideFiles%\AcronisTrueImage2021.exe,Begin
+  Retrieve,FILEVERSION,%ProvideFiles%\AcronisTrueImage2021.exe,%Result1%
+  StrFormat,RIGHT,%Result1%,5,%Result2%
+  FileRename,%ProvideFiles%\AcronisTrueImage2021.exe,%ProvideFiles%\AcronisTrueImage2021_%Result2%.exe
+End
 If,Not,ExistFile,%ProvideFiles%\%SetupFile%,Begin
-Echo,"Downloading ATI Installer 595MB.. Please Wait..."
-Download,%ProvideFiles%\%SetupFile%,%SetupURL%
+  Echo,"Downloading ATI Installer 595MB.. Please Wait..."
+  Download,%ProvideFiles%\%SetupFile%,%SetupURL%
 End
 Echo,"Extracting WinPE from ATI Installer.. Please Wait..."
 If,Not,ExistDir,%GTemp%\AcronisTemp,DirMake,%GTemp%\AcronisTemp
@@ -425,6 +430,7 @@ lines=1
 
 [InterfaceEncoded]
 opendir.bmp=571,762
+Registry.bmp=963,1284
 
 [EncodedFile-InterfaceEncoded-opendir.bmp]
 lines=0

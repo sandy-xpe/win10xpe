@@ -118,7 +118,6 @@ Download,%ProvideFiles%\%DLSetupFilex64%,%SetupURLx64%
 Encode,%FileContainer%,Folder,%ProvideFiles%\%DLSetupFilex64%
 DirDeleteQ,%ProvideFiles%
 
-
 [AuthorEncoded]
 Logo=SumatraPDF4848.ico
 SumatraPDF4848.ico=3060,4080

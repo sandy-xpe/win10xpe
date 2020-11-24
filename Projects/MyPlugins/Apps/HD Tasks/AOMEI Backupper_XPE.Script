@@ -1,9 +1,9 @@
 [Main]
 Title=AOMEI Backupper
 Type=XPEPlugin
-Description=(v5.8.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
+Description=(v6.2.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
 Author=ChrisR
-Date=2019.12.20
+Date=2020.11.19
 Credits=
 Contact=
 Version=005
@@ -39,7 +39,7 @@ Serial_TextBox=,1,0,10,331,429,21,
 Serial_TextLabel3=" Otherwise Leave Blank and The Standard Free Version Shall Apply To Build",1,1,14,353,414,18,8,Normal
 
 [Variables]
-%CheckVersion%=5.8.0.0
+%CheckVersion%=6.2
 %ProgramTitle%=AOMEI Backupper
 %ProgramEXE%=Backupper.exe
 %ProgramFolder%=AOMEI Backupper
@@ -53,8 +53,8 @@ Serial_TextLabel3=" Otherwise Leave Blank and The Standard Free Version Shall Ap
 %PackDrivers86%=Drivers_x86.7z
 %PackDrivers64%=Drivers_x64.7z
 %FileContainer%=%ScriptDir%\AOMEI Backupper_XPE_File.Script
-%SetupURL2%=http://www.aomeisoftware.com/download/adb/AOMEIBackupperStd.exe
 %SetupURL%=http://www2.aomeisoftware.com/download/adb/AOMEIBackupperStd.exe
+%SetupURL2%=http://www.aomeisoftware.com/download/adb/AOMEIBackupperStd.exe
 
 [Process]
 Echo,"Processing %ScriptTitle%..."
@@ -75,8 +75,9 @@ Run,%ScriptFile%,Add_Registry
 Run,%ScriptFile%,Add_Shortcuts
 //--
 Retrieve,Fileversion,%Target_Prog%\%ProgramFolder%\%ProgramExe%,%ProgramVersion%
-StrFormat,Left,%ProgramVersion%,5,%ProgramVersion%
-If,%ProgramVersion%,Bigger,%CheckVersion%,EchoExtended,"You are using an UnTested Program version %ProgramVersion%#$x#$xIf it works update the #$pCheckVersion#$p variable#$xOtherwise you Must Update this Plugin",Warn,,MessageInformation,10
+StrFormat,SPLIT,%ProgramVersion%,.,1,%ProgramMajorVersion%
+StrFormat,SPLIT,%ProgramVersion%,.,2,%ProgramMinorVersion%
+If,Not,%ProgramMajorVersion%.%ProgramMinorVersion%,Equal,%CheckVersion%,EchoExtended,"You are using an Un-Tested Program Version %ProgramVersion%#$x#$xIf it works update the #$pCheckVersion#$p variable#$xOtherwise you Must Update this Plugin",Warn,,MessageInformation,10
 
 [AddFiles]
 \Windows\System32\wtsapi32.dll
@@ -108,8 +109,8 @@ Set,%SetupContainerSize%,""
 IniRead,%FileContainer%,Folder,%PackFile%,%SetupContainerSize%
 If,%SetupContainerSize%-,Equal,-,Run,%ScriptFile%,Update_Container
 Else,Begin
-ExtractFile,%FileContainer%,Folder,%PackFile%,%TempFolder%
-ExtractFile,%FileContainer%,Folder,%PackDrivers%,%TempFolder%
+  ExtractFile,%FileContainer%,Folder,%PackFile%,%TempFolder%
+  ExtractFile,%FileContainer%,Folder,%PackDrivers%,%TempFolder%
 End
 //-
 Echo,"Extract %PackFile%..."
@@ -176,8 +177,8 @@ Echo,"Update %ScriptTitle%..."
 Set,%SetupContainerSize%,""
 IniRead,%FileContainer%,Folder,%PackFile%,%SetupContainerSize%
 If,Not,%SetupContainerSize%-,Equal,-,Begin
-If,ExistFile,%FileContainer%.%CheckVersion%,FileDeleteQ,%FileContainer%.%CheckVersion%
-FileCopy,%FileContainer%,%FileContainer%.%CheckVersion%
+  If,ExistFile,%FileContainer%.%CheckVersion%,FileDeleteQ,%FileContainer%.%CheckVersion%
+  FileCopy,%FileContainer%,%FileContainer%.%CheckVersion%
 End
 Run,%ScriptFile%,Download
 Run,%ScriptFile%,ExtractSetupFile
@@ -196,10 +197,10 @@ Download,%ProvideFiles%\%SetupFile%,%SetupURL%,NoExitOnError
 If,Not,ExistFile,%ProvideFiles%\%SetupFile%,Download,%ProvideFiles%\%SetupFile%,%SetupURL2%
 // Rename Setup File with the Version
 If,ExistFile,%ProvideFiles%\%SetupFile%,Begin
-Retrieve,FileVersion,%ProvideFiles%\%SetupFile%,%SetupFileVer%
-If,ExistFile,%ProvideFiles%\Backupper_%SetupFileVer%.exe,FileDeleteQ,%ProvideFiles%\Backupper_%SetupFileVer%.exe
-FileRename,%ProvideFiles%\%SetupFile%,%ProvideFiles%\Backupper_%SetupFileVer%.exe
-Set,%SetupFile%,Backupper_%SetupFileVer%.exe
+  Retrieve,FileVersion,%ProvideFiles%\%SetupFile%,%SetupFileVer%
+  If,ExistFile,%ProvideFiles%\Backupper_%SetupFileVer%.exe,FileDeleteQ,%ProvideFiles%\Backupper_%SetupFileVer%.exe
+  FileRename,%ProvideFiles%\%SetupFile%,%ProvideFiles%\Backupper_%SetupFileVer%.exe
+  Set,%SetupFile%,Backupper_%SetupFileVer%.exe
 End
 
 [ExtractSetupFile]
@@ -434,18 +435,18 @@ If,%HostOSArch%,Equal,x86,Set,%wow64Node%,""
 Else,Set,%wow64Node%,Wow6432Node\
 // Import Backupper serialnr
 If,ExistRegKey,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,Begin
-RegRead,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,%Tmp_Serial%
-If,Not,%Tmp_Serial%-,Equal,-,Begin
-//Set,%Serial_TextBox%,%Tmp_Serial%,Permanent
-IniWrite,%ScriptFile%,Interface,Serial_TextBox,",1,0,10,331,429,21,#$q%Tmp_Serial%#$q"
-System,RefreshInterface
+  RegRead,HKLM,Software\%wow64Node%Microsoft\Windows\CurrentVersion,ProgramData,%Tmp_Serial%
+  If,Not,%Tmp_Serial%-,Equal,-,Begin
+    //Set,%Serial_TextBox%,%Tmp_Serial%,Permanent
+    IniWrite,%ScriptFile%,Interface,Serial_TextBox,",1,0,10,331,429,21,#$q%Tmp_Serial%#$q"
+    System,RefreshInterface
+  End
+  Else,Begin
+    Message,"%ProgramTitle% Registry Key Not Found!",Warning
+  End
 End
 Else,Begin
-Message,"%ProgramTitle% Registry Key Not Found!",Warning
-End
-End
-Else,Begin
-Message,"%ProgramTitle% Registry Key Not Found!",Warning
+  Message,"%ProgramTitle% Registry Key Not Found!",Warning
 End
 
 [AuthorEncoded]

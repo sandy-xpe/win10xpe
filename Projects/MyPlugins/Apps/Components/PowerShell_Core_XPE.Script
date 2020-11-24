@@ -3,17 +3,17 @@ Title=PowerShell Core
 Type=XPEPlugin
 Description=PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data.
 Author=KYHI
-Date=2020.03.29
+Date=2020.07.15
 Credits=TheOven.org Forum
 Contact=
-Version=004
+Version=005
 Level=5
 Download_Level=2
 Selected=False
 Mandatory=False
 NoWarning=False
 History001=KYHI Initial XPE Plugin Created 2018.07.27
-History004=KYHI - Use ScriptDir Download & ProgramVersion ScrollBox - 2020.03.29
+History005=KYHI - Use ScriptDir Download & ProgramVersion *TextBox - 2020.07.15
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,121
@@ -27,7 +27,10 @@ Image_Software=pwsh4848.ico,1,5,145,35,48,48
 Button_Launch_Program=Launch,1,8,10,142,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
 HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://github.com/PowerShell/PowerShell
 ProgramVer_TextLabel="Program Version:",1,1,440,4,85,18,8,Normal
-ProgramVer_ScrollBox=7.0.2,1,4,440,20,85,21,6.2.3,6.2.4,7.0.0,7.0.1,7.0.2,"__Program Version To Download"
+ProgramVer_TextBox=,1,0,440,20,85,21,7.1.0,"__Program Version To Download"
+
+[Info]
+// 6.2.3 6.2.4 7.0.0 7.0.1 7.0.2
 
 [Variables]
 %ProgramTitle%=PowerShell Core
@@ -35,10 +38,10 @@ ProgramVer_ScrollBox=7.0.2,1,4,440,20,85,21,6.2.3,6.2.4,7.0.0,7.0.1,7.0.2,"__Pro
 %ProgramExex64%=pwsh.exe
 %ProgramFolder%=PowerShell Core
 %ProgramFolderx64%=PowerShell Core_x64
-%SetupFile%=PowerShell-%ProgramVer_ScrollBox%-win-x86.zip
-%SetupFilex64%=PowerShell-%ProgramVer_ScrollBox%-win-x64.zip
-%SetupURL%=https://github.com/PowerShell/PowerShell/releases/download/v%ProgramVer_ScrollBox%/PowerShell-%ProgramVer_ScrollBox%-win-x86.zip
-%SetupURLx64%=https://github.com/PowerShell/PowerShell/releases/download/v%ProgramVer_ScrollBox%/PowerShell-%ProgramVer_ScrollBox%-win-x64.zip
+%SetupFile%=PowerShell-%ProgramVer_TextBox%-win-x86.zip
+%SetupFilex64%=PowerShell-%ProgramVer_TextBox%-win-x64.zip
+%SetupURL%=https://github.com/PowerShell/PowerShell/releases/download/v%ProgramVer_TextBox%/PowerShell-%ProgramVer_TextBox%-win-x86.zip
+%SetupURLx64%=https://github.com/PowerShell/PowerShell/releases/download/v%ProgramVer_TextBox%/PowerShell-%ProgramVer_TextBox%-win-x64.zip
 
 [Process]
 Echo,"Processing %ScriptTitle%..."
@@ -127,10 +130,8 @@ lines=0
 lines=0
 0=eJxN0WtMFFcUAGCM/W/SXzSxaZOmTX8YtdLSJk1jQsIPpUZNSGMTWk1tKvFVMDVGCaIWRKWGgrLaRbq4AruwT92XWoshUVAhKtFAYVmWZXdgdmdnZ+beedy587gdXJr05JyTm3O/5J7kVuywrS15E+VWfWzVOqvetmpNSemb+b7V+/8HI5vLgggx+K73x2/sP1Tb9+QBRXEwrxAG4qyk0lClgcxAhRBi+RN/L1T9efTM+OUQgZ38qyvceHW0YWNrVe2z7M/j7OGXuYNP0keD443PmcHnScvvdbbXPTz4gtBVd2sqQ19vi+yqffHb7uBPW7tPHM+QujjfEOdqwzORR8PR0IDlNzeXX50fmCTshp7yj65vXt/xbmVg//6RptIDa05myeEptmGG/d73OjI3N70wY/myXze1TfXO6sInPV+WXn7vw65Pz0LSkHy67tuSJo7Uz3Dn4uze4GSMQs8oYPmd16p33N3zWX/F5wNbKz3bym5u6dZIa+r+O4fWnufI8Vm+dY7bd2fyr2X5ZZqx/BGvw5/wD9H3jzz6pe5xfWcieo/I2/u/qLhxqjlLTs0LzQnu2IPpO6zqja/4jleZGm99cMo3QWanyNI0EWsCu8u6djUmwOkkbEyClhRoHk20zxUuTaQs75wHLlY8FLF91bLlgwNvbTr9flVf04UMOk+pZ5LCSqbAxTgT/mcJIGz53oVCRCFejUTISt4mpEckXTncRsELadCyCFsWhba0NEbxxf9yLhRCkuli8S3esBc0O610MehqDlm9dRFepJQ2ClxKwdF0oehdiyAsmR6o9YtGH685AHEUkJ3F13JKO610LMPfl8ROGo1luKJ3Z8CwSvyi7gG6W8C3CoqTQw5e6ykgW06x5dCVnGzLCKOZ1X2GKPAAkaho+CTNJ+o+qLtFw5lXbuZRd16+zqAbednBoKdLQtEPUmAYkduyFlRwUMbWYh5Bc0tmn/WWbHQzkp03/qClCRoWvUdQR1RzBJv3kBlTjZhihJDmFbWAZAwJ2MXjQQH7eXWCWfVuWgwDHBNxTDKioh6GWgjggIADvOrnsItTvSyyZ+Wx7KoHmlFM0TBF3YS6aZ3hf0Pe6lhnNUPWjKL/F4rXcD14nOPySSzNS87QS8otYBgFIw9MY4bQ7szY5SXNdJ4zMAEARyYGGuVhjnsBAAAAAgAAACYAAABHAwAAAAAAAAEAAAAAAAAAAAAAAA
 
-
 [EncodedFolders]
 Folder
-
 
 [Folder]
 

@@ -3,7 +3,7 @@ Title=NSudo - Run As Trusted Installer
 Type=XPEPlugin
 Description=(v8.0) NSudo is a System management tool for advanced users to launch programs with Full Privileges
 Author=KYHI
-Date=2020.07.06
+Date=2020.09.06
 Credits=
 Contact=
 Version=004
@@ -15,7 +15,7 @@ NoWarning=False
 History001=KYHI Initial XPE Plugin Created 2018.05.14
 History002=ChrisR Updated to v6.1.1811.18
 History003=Dell Updated to v6.2.1812.31 - 2019.01.12
-History004=ChrisR Updated to v8.0.0.0 - 2020.07.06
+History004=ChrisR Updated to v8.0.0.0 - 2020.09.06
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,85
@@ -61,14 +61,14 @@ Run,%ScriptFile%,Add_Registry
 RegHiveLoad,Tmp_Software,%RegSoftware%
 RegWrite,HKLM,0x1,Tmp_Software\Classes\*\shell\NSudo,SubCommands,NSudo.RunAs.TrustedInstaller;NSudo.RunAs.System
 RegWrite,HKLM,0x1,Tmp_Software\Classes\*\shell\NSudo,MUIVerb,NSudo
-RegWrite,HKLM,0x1,Tmp_Software\Classes\*\shell\NSudo,Icon,#$q%PE_Programs%\%ProgramFolder%\NSudo.exe#$q
+RegWrite,HKLM,0x1,Tmp_Software\Classes\*\shell\NSudo,Icon,#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q
 RegWrite,HKLM,0x1,Tmp_Software\Classes\*\shell\NSudo,Position,1
 RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.System,,"Run As System"
 RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.System,HasLUAShield,
-RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.System\command,,"#$q%PE_Programs%\%ProgramFolder%\NSudo.exe#$q -U:S -P:E #$q#$q#$p1#$q#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.System\command,,"#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q -U:S -P:E #$q#$p1#$q"
 RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.TrustedInstaller,,"Run As TrustedInstaller"
 RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.TrustedInstaller,HasLUAShield,
-RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.TrustedInstaller\command,,"#$q%PE_Programs%\%ProgramFolder%\NSudo.exe#$q -U:T -P:E #$q#$q#$p1#$q#$q"
+RegWrite,HKLM,0x1,Tmp_Software\Microsoft\Windows\CurrentVersion\Explorer\CommandStore\shell\NSudo.RunAs.TrustedInstaller\command,,"#$q%PE_Programs%\%ProgramFolder%\%ProgramExe%#$q -U:T -P:E #$q#$p1#$q"
 RegHiveUnLoad,Tmp_Software
 
 [Add_Shortcuts]
