@@ -1,9 +1,9 @@
 [Main]
 Title=AOMEI Backupper
 Type=XPEPlugin
-Description=(v6.2.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
+Description=(v6.3.0.0) Aomei Backupper is a backup software provides basic and advanced features to ensure the safety of your system and data.
 Author=ChrisR
-Date=2020.11.19
+Date=2020.12.03
 Credits=
 Contact=
 Version=005
@@ -39,7 +39,7 @@ Serial_TextBox=,1,0,10,331,429,21,
 Serial_TextLabel3=" Otherwise Leave Blank and The Standard Free Version Shall Apply To Build",1,1,14,353,414,18,8,Normal
 
 [Variables]
-%CheckVersion%=6.2
+%CheckVersion%=6.3
 %ProgramTitle%=AOMEI Backupper
 %ProgramEXE%=Backupper.exe
 %ProgramFolder%=AOMEI Backupper
@@ -348,6 +348,7 @@ Encode,%FileContainer%,Folder,%TempFolder%\%PackFile64%
 {app}\msvcr80,1.dll
 {app}\msvcr90.dll
 {app}\NTHelp.dll
+{app}\NTLog.dll
 {app}\QtCore4.dll
 {app}\QtCore4,1.dll
 {app}\QtGui4.dll

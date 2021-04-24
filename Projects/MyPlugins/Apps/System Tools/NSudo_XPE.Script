@@ -1,21 +1,19 @@
 [Main]
 Title=NSudo - Run As Trusted Installer
 Type=XPEPlugin
-Description=(v8.0) NSudo is a System management tool for advanced users to launch programs with Full Privileges
+Description=(v8.0.1) NSudo is a System management tool for advanced users to launch programs with Full Privileges
 Author=KYHI
-Date=2020.09.06
+Date=2021.01.15
 Credits=
 Contact=
-Version=004
+Version=005
 Level=5
 Download_Level=2
 Selected=True
 Mandatory=False
 NoWarning=False
 History001=KYHI Initial XPE Plugin Created 2018.05.14
-History002=ChrisR Updated to v6.1.1811.18
-History003=Dell Updated to v6.2.1812.31 - 2019.01.12
-History004=ChrisR Updated to v8.0.0.0 - 2020.09.06
+History005=ChrisR Updated to v8.0.1.0 - 2021.01.15
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,85

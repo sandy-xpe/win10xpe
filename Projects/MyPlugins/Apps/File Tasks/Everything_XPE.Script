@@ -1,7 +1,7 @@
 [Main]
 Title=Everything
 Type=XPEPlugin
-Description=(v1.4.1.992) Everything Search Engine. Locate files and folders by name instantly.
+Description=(v1.4.1.1003) Everything Search Engine. Locate files and folders by name instantly.
 Author=ChrisR
 Date=2019.04.01
 Credits=
@@ -25,7 +25,7 @@ Image_Software=Everything.jpg,1,5,145,34,240,205
 Button_Launch_Program=Launch,1,8,10,122,119,25,Launch_Program,Launch.bmp,False,"__Click Here To Launch Program"
 HomePage_WebLabel="Home Page",1,10,338,6,55,18,https://www.voidtools.com/
 Update_Container_Button=U,1,8,540,4,14,14,Update_Container,0,False,"__Update Plugin Program File"
-ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,1.4.1.992,"__Program Version To Download and Encode Into Container File"
+ProgramVer_TextBox="Program Version:",1,0,450,20,82,21,1.4.1.1003,"__Program Version To Download and Encode Into Container File"
 
 [Variables]
 %ProgramTitle%=Everything

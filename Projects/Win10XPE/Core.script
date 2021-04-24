@@ -3,8 +3,8 @@ Title=Build Core
 Type=XPEPlugin
 Description=Build Win10XPE Core based on WinRE.wim Recovery Environment with Features additions and Options
 Author=ChriSR
-Date=2020.09.16
-Version=007
+Date=2020.12.17
+Version=008
 Selected=True
 Mandatory=True
 NoWarning=False
@@ -13,7 +13,7 @@ Download_Level=0
 Credits=
 Contact=
 Interface=InterfaceMain
-History07=Add Host Net Drivers
+History08=ChrisR Check winre.wim Version
 
 [Variables]
 %AdditionalFiles%=%BaseDir%\Projects\Include\%Architecture%\AdditionalFiles
@@ -66,7 +66,7 @@ Drivers_CheckBox="Integrate Drivers",1,3,276,284,112,18,True,"__Integrate Your C
 PauseDrivers_CheckBox=Pause,1,3,392,284,52,18,False,"__Pause When Integrating Drivers"
 DriversOpen_Button="Copy Drivers Here",1,8,274,303,144,34,DriversOpen,opendir.bmp,True,"__Copy Your Custom Drivers Here"
 DriversPlay_Button=,1,8,419,303,24,34,DriversPlay,Play16.bmp,False,"__Integrate Provided Drivers Into The Build"
-ExportDrivers_Button=Export,1,8,444,303,48,34,ExportDrivers,0,False,"__Export Host PC Drivers With Dism"
+ExportDrivers_Button=Export,1,8,444,303,48,34,ExportDrivers,0,False,"__Export Host Third-Party (OEM) Driver Packages"
 HostNetDrivers_Bevel=HostNetDrivers_Bevel,1,12,270,339,226,29
 HostNetDrivers_CheckBox="Add Host Net Drivers",1,3,276,345,144,18,False,"__Add the Host's Network Drivers (If Same OS and Architecture)"
 HostNetDriversPlay_Button=,1,8,464,342,28,24,HostNetDriversPlay,Play16.bmp,False,"__Extract and Integrate Host's Network Drivers Into The Build"
@@ -171,8 +171,8 @@ Splitter1_Bevel=Splitter1_Bevel,1,12,0,190,578,4
 IE11Shortcut_Bevel=IE11Shortcut_Bevel,1,12,4,201,133,121
 IE11Desktop_CheckBox="Desktop Shortcut",1,3,10,205,122,18,True,"__Add IE11 Desktop Shortcut"
 IE11StartMenu_CheckBox="Start Menu Shortcut",1,3,10,223,122,18,True,"__Add IE11 Start Menu Shortcut"
-IE11TaskBpin_CheckBox="Pin To TaskBar",1,3,10,241,122,18,True,"__Add IE11 Pin To Taskbar Shortcut"
-IE11StartMpin_CheckBox="Pin To StartMenu",1,3,10,259,122,18,True,"__Add IE11 Pin To StartMenu Shortcut"
+IE11TaskBpin_CheckBox="Pin To TaskBar",1,3,10,241,122,18,False,"__Add IE11 Pin To Taskbar Shortcut"
+IE11StartMpin_CheckBox="Pin To StartMenu",1,3,10,259,122,18,False,"__Add IE11 Pin To StartMenu Shortcut"
 IE11StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,295,121,21,Network,"__IE11 Start Menu Folder Name"
 IE11_TextLabel=IE11,1,1,164,212,36,18,8,Bold
 IE11_Image=IE11_64.ico,1,5,143,226,64,64
@@ -383,6 +383,8 @@ ShellExecute,Hide,%GTools%\wimlib-imagex.exe,"extract #$q%GSource%\sources\insta
 If,%ExitCode%,Equal,0,Echo,"Wimlib extract Winre.wim image file from install.wim return: %ExitCode%"
 Else,EchoExtended,"Error: Wimlib extract Winre.wim image file from install.wim return: %ExitCode%",Warn,,MessageError,,Halt
 //-
+If,Not,%SourceBuild%,Smaller,19041,Run,%ScriptFile%,Check_Winre_Version
+//-
 If,ExistFile,%XPECache%\HiveCache.ini,Begin
   IniRead,%XPECache%\HiveCache.ini,Cache,FullSoftware,%FullSoftwareIni%
   If,%FullSoftwareIni%,Equal,True,Begin
@@ -588,6 +590,27 @@ If,Not,ExistFile,%GTemp%\WimInfo.ini,EchoExtended,"Error: Wim file information m
 IniRead,%GTemp%\WimInfo.ini,Attributes,ImageCount,%ImageCountVar%
 If,%ImageCountVar%,Smaller,1,EchoExtended,"Error: Wim file information missing. A problem occurred to Get Image Information.#$x#$xTry using official MS sources.",Warn,,MessageError,,Halt
 
+[Check_Winre_Version]
+If,%SourceVersion%,Bigger,10.0.19041.264,Begin
+  If,Not,ExistDir,%GTemp%,DirMake,%GTemp%
+  ShellExecute,Hide,%GTools%\WimInfo.exe,"-wim:#$q%GTemp%\winre.wim#$q -ini:#$q%GTemp%\WinreInfo.ini#$q"
+  If,Not,ExistFile,%GTemp%\WinreInfo.ini,EchoExtended,"Error: Winre.wim Image information missing. A problem occurred to Get Image Information.#$x#$xTry using official MS sources.",Warn,,MessageError,,Halt
+  IniRead,%GTemp%\WinreInfo.ini,1,VERSION,%WinreVersion%
+  If,Not,%WinreVersion%,Equal,%SourceVersion%,Begin
+    Set,%answer%,No
+    If,%SourceBuild%,Equal,19041,Begin
+      If,Question,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%)#$x#$xIncompatibilities Are Likely to Occur With Perhaps an Unreliable Result.#$x#$xPreferably Use Windows 10 version 2004 - 20H1#$x#$x Continue Anyway ?",20,False,Set,%answer%,Yes
+      If,%answer%,Equal,No,Halt,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%). Incompatibilities Are Likely to Occur With Perhaps an Unreliable Result. Preferably Use Windows 10 version 2004 - 20H1"
+      Else,Echo,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%). Incompatibilities Are Likely to Occur With Perhaps an Unreliable Result. Preferably Use Windows 10 version 2004 - 20H1",Warn
+    End
+    Else,Begin
+      If,Question,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%)#$x#$xIncompatibilities Are Likely to Occur With Perhaps an Unreliable Result.#$x#$xPreferably Use Another Windows 10 Version#$x#$x Continue Anyway ?",20,False,Set,%answer%,Yes
+      If,%answer%,Equal,No,Halt,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%). Incompatibilities Are Likely to Occur With Perhaps an Unreliable Result. Preferably Use Another Windows 10 Version"
+      Else,Echo,"Winre.wim Version (%WinreVersion%) Does Not match Install.wim Version (%SourceVersion%). Incompatibilities Are Likely to Occur With Perhaps an Unreliable Result. Preferably Use Another Windows 10 Version",Warn
+    End
+  End
+End
+
 [ClearMakeFolder]
 DirDeleteQ,%GTarget%
 DirMake,%GTarget%
@@ -754,6 +777,15 @@ End
 OpenDir,%GCustom%\%Architecture%\Drivers
 
 [ExportDrivers]
+Echo,"Export Host Third-Party (OEM) Driver Packages..."
+If,ExistDir,%GCustom%\ExportDrivers\x86,DirDeleteQ,%GCustom%\ExportDrivers\x86
+If,ExistDir,%GCustom%\ExportDrivers\x64,DirDeleteQ,%GCustom%\ExportDrivers\x64
+If,Not,ExistDir,%GCustom%\ExportDrivers\%HostOSArch%,DirMake,%GCustom%\ExportDrivers\%HostOSArch%
+If,%PauseDrivers_CheckBox%,Equal,True,ShellExecute,%OpenHideOutput%,cmd.exe,"/D /K Start #$qExport Host Third-Party (OEM) Driver Packages...#$q /W /B #$q%GTools%\ExportHostDrv.exe#$q #$q%GCustom%\ExportDrivers\%HostOSArch%#$q"
+Else,ShellExecute,%OpenHideOutput%,%GTools%\ExportHostDrv.exe,"#$q%GCustom%\ExportDrivers\%HostOSArch%#$q"
+OpenDir,%GCustom%\ExportDrivers\%HostOSArch%
+
+[Dism_ExportDrivers]
 Echo,"Export Host PC Drivers..."
 If,ExistDir,%GCustom%\ExportDrivers\x86,DirDeleteQ,%GCustom%\ExportDrivers\x86
 If,ExistDir,%GCustom%\ExportDrivers\x64,DirDeleteQ,%GCustom%\ExportDrivers\x64

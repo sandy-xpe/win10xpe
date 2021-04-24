@@ -1,7 +1,7 @@
 [Main]
 Title=AOMEI Partition Assistant
 Type=XPEPlugin
-Description=(v9.0.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
+Description=(v9.1.0.0) Aomei Partition Assistant is a disk partition management software. It comes with so many powerful features that you can completely control your hard disk and partition.
 Author=KYHI
 Date=2020.11.19
 Credits=
@@ -44,7 +44,7 @@ DDM_StartMenu_CheckBox="Start Menu Shortcut",1,3,10,246,122,18,False,"__Add Dyna
 DDM_Bevel=DDM_Bevel,1,12,4,205,133,65
 
 [Variables]
-%CheckVersion%=9.0
+%CheckVersion%=9.1
 %ProgramTitle%=AOMEI Partition Assistant
 %ProgramEXE%=PartAssist.exe
 %ProgramFolder%=AOMEI Partition Assistant

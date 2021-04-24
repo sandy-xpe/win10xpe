@@ -30,10 +30,10 @@ Button_Launch_Program="  Download Files",1,8,10,325,165,60,Launch_Program,MEGAcm
 HomePage_WebLabel="MegaCmd User Manual",1,10,200,319,109,18,https://github.com/meganz/MEGAcmd/blob/master/UserGuide.md#exit
 WarnOverwrite="Enable OverWrite Warning Before Extraction",1,3,200,338,251,18,True,"__Allows You To Receive Warning Before Package Extraction OverWrite's Existing Scripts"
 RemoveCache="Remove Downloaded File Cache After Extraction",1,3,200,356,275,18,False
-RemoveTemp="Remove MegaCmd Program Files Upon Completion",1,3,200,374,275,18,False
+RemoveTemp="Remove MegaCmd Program Files Upon Completion",1,3,200,374,275,18,True
 Download_MegaCmd_Button=U,0,8,425,319,14,14,Download_MegaCmd,0,False,"__Update-Encode MegaCmd Program Files."
 ProvideFile_Opendir_Button=,1,8,450,319,25,25,ProvideFiles_OpenDir_P_B,opendir.bmp,False,"__Click Here To Open The Mega Download Cache Folder."
-Verified_Date="Version: 2020.11.20",1,1,318,321,110,18,8,Normal
+Verified_Date="Version: 2021.01.09",1,1,318,321,110,18,8,Normal
 pCheckBox1=JRE-8U211-Windows-x86,1,3,10,30,220,18,False
 pCheckBox2=JRE-8U211-Windows-x64,1,3,10,50,220,18,False
 pCheckBox3="MS Visual C++ Runtime 2005-2019",1,3,10,70,220,18,False
@@ -64,7 +64,7 @@ pCheckBox27="Internet Download Manager",1,3,310,250,220,18,False
 pCheckBox28="Reserved 28",0,3,310,270,220,18,False
 pCheckBox29="Reserved 29",0,3,310,290,220,18,False
 pCheckBox30=,1,3,10,10,18,18,True
-pTextLabel1="XPE OPTIONAL ADD-ON BASE PACKAGE",1,1,28,12,250,18,8,Bold
+pTextLabel1="XPE OPTIONAL ADD-ON BASE PACKAGE",1,1,28,12,250,18,8,Bold,"__Updated 12.15.2020"
 
 [Process]
 Echo,"There Is Nothing To Process - Use Download Button"
@@ -126,8 +126,8 @@ Run,%ScriptFile%,Download
 
 [VcRunTimes_XPE]
 Set,%AppLoc%,%MoApps%\Components
-Set,%AppFile%,VcRunTimes_082320.7z
-Set,%AppURL%,https://mega.nz/file/PHpBkS4J#u-MqwTc1ISe91vfk6H5DpuTxEuGc8VvosbRkfAvCLuA
+Set,%AppFile%,VcRunTimes_010921.7z
+Set,%AppURL%,https://mega.nz/file/mLYSVBDS#vyQKefyjchIhbhLCOJLUeicW6s1x_T4zuG6m5u_j1wc
 Run,%ScriptFile%,Download
 
 [UnlockIT_XPE]
@@ -162,8 +162,8 @@ Run,%ScriptFile%,Download
 
 [GIMP2_XPE]
 Set,%AppLoc%,%MoApps%\Multimedia
-Set,%AppFile%,GIMP2_082320.7z
-Set,%AppURL%,https://mega.nz/file/2HhxHADC#ETWTomaia2Dhl14wjEUg6Zy_azt7FWw7LI68IlV3BCM
+Set,%AppFile%,GIMP2_121620.7z
+Set,%AppURL%,https://mega.nz/file/2TIGDB7L#kDzYWlu7XWLVZxd9k010k9vN9qVLmBbH9m_LQ9kpGQQ
 Run,%ScriptFile%,Download
 
 [Winamp_XPE]
@@ -174,14 +174,14 @@ Run,%ScriptFile%,Download
 
 [TeraByte_Image_for_Windows_XPE]
 Set,%AppLoc%,%MoApps%\HD Tasks
-Set,%AppFile%,TB_Image_for_Windows_082320.7z
-Set,%AppURL%,https://mega.nz/file/3C5AVaCT#UgDmsdjvObGpLAjFSLTwDhyn95kjWS19Vormbyxg93Q
+Set,%AppFile%,TB_Image_for_Windows_010921.7z
+Set,%AppURL%,https://mega.nz/file/XCY03ZqA#icqNXL_Gmy9FRtZh42xsLNSU_9htw5h8Hi9uK9m3IlY
 Run,%ScriptFile%,Download
 
 [FlashPlayer_XPE]
 Set,%AppLoc%,%MoApps%\Network
-Set,%AppFile%,FlashPlayer_111420.7z
-Set,%AppURL%,https://mega.nz/file/na4hSSRT#Mdket8Q92hRkraJXVfmTIpEgRnBVGktUGLAgeZKvYGc
+Set,%AppFile%,FlashPlayer_465.7z
+Set,%AppURL%,https://mega.nz/file/vO42hIza#S4Mx8-GxIeYGtS2odBNLpyoYB-VYW9BJPhRovIa3Izw
 Run,%ScriptFile%,Download
 
 [Kingsoft_WPS_Office_2016_XPE]
@@ -258,8 +258,8 @@ Run,%ScriptFile%,Download
 
 [WiseCare365_MiniTool_XPE]
 Set,%AppLoc%,%MoApps%\xPC Host Tools
-Set,%AppFile%,WiseCare365_082320.7z
-Set,%AppURL%,https://mega.nz/file/iK40FAZA#JG-2iqdBE_itbhwil0j1LqCnVt6I10cQ1iVQJAwXwko
+Set,%AppFile%,WiseCare365_122520.7z
+Set,%AppURL%,https://mega.nz/file/yKQiwTJa#liANC1asDH8GVYPSfaij7tGO1SMUsaf7fejNFS5Y7BU
 Run,%ScriptFile%,Download
 
 [TorBrowser_x64_XPE]
@@ -270,8 +270,8 @@ Run,%ScriptFile%,Download
 
 [Internet_Download_Manager_XPE]
 Set,%AppLoc%,%MoApps%\Network
-Set,%AppFile%,Internet_Download_Manager_100920.7z
-Set,%AppURL%,https://mega.nz/file/TSBH1Kgb#5jQC-k7xs1MEhZEg2TPkYTfKE2XrZNczFHTet_eKTMQ
+Set,%AppFile%,Internet_Download_Manager_082520.7z
+Set,%AppURL%,https://mega.nz/file/GbxGRQKQ#iagWvRW-Qb9a7TM37hH2j4_iUqlo8mFuHBAhG1iXOPY
 Run,%ScriptFile%,Download
 
 [App28]
@@ -288,8 +288,8 @@ Run,%ScriptFile%,Download
 
 [MoPlugins_AddOn_Package_XPE]
 Set,%AppLoc%,%BaseDir%\Projects
-Set,%AppFile%,AddOn112020.7z
-Set,%AppURL%,https://mega.nz/file/uT5m3DhT#kEJJk5Be7rVnhkTr6ZUg_xeej7XeiE8T4NOdDajPgIU
+Set,%AppFile%,AddOn121520.7z
+Set,%AppURL%,https://mega.nz/file/jbJlkara#-CpRVDxGvMtWGsxITvzwQNFjUaYNmm5dIej93xBlPAk
 Run,%ScriptFile%,Download
 
 [Download_SingleFile]
@@ -404,5 +404,7 @@ If,ExistFile,%MoApps%\Security\MBAM3_Setup_XPE_File.Script,FileDelete,%MoApps%\S
 If,ExistFile,%BaseDir%\Projects\MyPlugins\Utilities\MegaCmd_XPE.Script,FileDelete,%BaseDir%\Projects\MyPlugins\Utilities\MegaCmd_XPE.Script
 If,ExistFile,%MoApps%\Recovery\PowerDataRecovery8_XPE.Script,FileDeleteQ,%MoApps%\Recovery\PowerDataRecovery8_XPE.Script
 If,ExistFile,%MoApps%\Recovery\PowerDataRecovery8_XPE_File.Script,FileDeleteQ,%MoApps%\Recovery\PowerDataRecovery8_XPE_File.Script
+If,ExistFile,%MyApps%\HD Tasks\Auslogics_DiskDefrag9_XPE.Script,FileDeleteQ,%MyApps%\HD Tasks\Auslogics_DiskDefrag9_XPE.Script
+If,ExistFile,%MyApps%\HD Tasks\Auslogics_DiskDefrag9_XPE_File.Script,FileDeleteQ,%MyApps%\HD Tasks\Auslogics_DiskDefrag9_XPE_File.Script
 System,ReScanScripts
 

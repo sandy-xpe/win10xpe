@@ -1,20 +1,20 @@
 [Main]
 Title=IrfanView
 Type=XPEPlugin
-Description=(v4.56) IrfanView is a very fast, small, compact and innovative FREEWARE (for non-commercial use) graphic viewer.
+Description=(v4.57) IrfanView is a very fast, small, compact and innovative FREEWARE (for non-commercial use) graphic viewer.
 Author=ChrisR
-Date=2019.12.12
+Date=2021.01.13
 Credits=
 Contact=
-Version=006
+Version=007
 Level=5
 Download_Level=2
 Selected=True
 Mandatory=False
 NoWarning=False
 History001=ChrisR Initial XPE Plugin Created 2018.06.19
-History005=KYHI update to 4.54 - 2019.12.12
-History006=APT update to 4.56 - 2020.10.21
+History006=APT - update to 4.56 - 2020.10.21
+History007=ChrisR - update to 4.57 - 2021.01.13
 
 [Interface]
 Shortcut_Bevel=Shortcut_Bevel,1,12,4,6,133,85
@@ -24,7 +24,7 @@ StartMenuFolder_TextBox="Start Menu Folder:",1,0,10,64,121,21,,"__Start Menu Fol
 RunFromWhere_ScrollBox="Run From USB",1,4,145,6,104,21,"Run From USB","Run From RAM"
 Lang_Bevel=Lang_Bevel,1,12,4,98,133,44
 Lang_TextLabel=Language:,1,1,12,102,55,18,8,Normal
-Lang_ScrollBox=English,1,4,10,116,119,21,English,Deutsch,French,Italian,Korean,Nederlands,Portuguese,Russian,Spanish,Turkish
+Lang_ScrollBox=English,1,4,10,116,119,21,English,chinese,czech,deutsch,estonian,french,hungarian,italian,japanese,korean,nederlands,polski,portugues-brasil,portuguese,russian,slovak,spanish,turkish,ukrainian
 Associate_Bevel=Associate_Bevel,1,12,4,148,133,61
 CheckBox_bmp=.bmp,1,3,10,152,56,18,True
 CheckBox_gif=.gif,1,3,10,170,56,18,True
@@ -44,8 +44,8 @@ HomePage_WebLabel="Home Page",1,10,319,6,54,18,https://www.irfanview.com/
 %IniFilex64%=i_view64.ini
 %ProgramFolder%=IrfanView
 %ProgramFolderx64%=IrfanView_x64
-%SetupFile%=iview456.7z
-%SetupFilex64%=iview456_x64.7z
+%SetupFile%=iview457.7z
+%SetupFilex64%=iview457_x64.7z
 %FileContainer%=%ScriptDir%\IrfanView_XPE_File.Script
 
 [Process]
